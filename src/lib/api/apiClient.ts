@@ -5,8 +5,11 @@ export type ApiErrorItem = {
   message: string;
 };
 
+type ValidationProblemErrors = Record<string, string[]>;
+
 type ApiErrorResponse = {
-  errors?: ApiErrorItem[];
+  title?: string;
+  errors?: ApiErrorItem[] | ValidationProblemErrors;
 };
 
 export class ApiError extends Error {
@@ -54,9 +57,24 @@ export async function apiRequest<T>(
       errorResponse = undefined;
     }
 
-    const errors = errorResponse?.errors ?? [];
+    const rawErrors = errorResponse?.errors;
+
+    let errors: ApiErrorItem[] = [];
+
+    if (Array.isArray(rawErrors)) {
+      errors = rawErrors;
+    } else if (rawErrors && typeof rawErrors === "object") {
+      errors = Object.entries(rawErrors).flatMap(([field, messages]) =>
+        messages.map((message) => ({
+          code: field,
+          message,
+        })),
+      );
+    }
+
     const message =
       errors.map((error) => error.message).join(" ") ||
+      errorResponse?.title ||
       `La solicitud falló con estado ${response.status}.`;
 
     throw new ApiError(message, response.status, errors);
