@@ -10,7 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCasos } from "@/features/casos/hooks/useCasos";
 
 import { useExpedientes } from "../hooks/useExpedientes";
-import type { CrearExpedienteRequest, TipoExpediente } from "../types/types";
+import type {
+  ActualizarExpedienteRequest,
+  CrearExpedienteRequest,
+  ExpedienteDetalleResponse,
+  TipoExpediente,
+} from "../types/types";
 
 export type ExpedienteFormState = {
   casoId: number | null;
@@ -34,8 +39,25 @@ export const FORM_EXPEDIENTE_INICIAL: ExpedienteFormState = {
   estadoLegal: "",
 };
 
+export function crearFormDesdeExpediente(
+  expediente: ExpedienteDetalleResponse,
+): ExpedienteFormState {
+  return {
+    casoId: expediente.casoId,
+    expedientePadreId: expediente.expedientePadreId,
+    tipoExpediente: expediente.tipoExpediente,
+    numeroExpediente: expediente.numeroExpediente ?? "",
+    caratula: expediente.caratula,
+    juzgado: expediente.juzgado ?? "",
+    fechaInicio: expediente.fechaInicio ?? "",
+    estadoLegal: expediente.estadoLegal ?? "",
+  };
+}
+
 type ExpedienteFormFieldsProps = {
   form: ExpedienteFormState;
+  modo?: "crear" | "editar";
+  expedienteActualId?: number;
   disabled?: boolean;
   onChange: (form: ExpedienteFormState) => void;
 };
@@ -87,8 +109,24 @@ export function crearRequestDesdeForm(
   };
 }
 
+export function crearActualizarRequestDesdeForm(
+  form: ExpedienteFormState,
+): ActualizarExpedienteRequest {
+  return {
+    expedientePadreId: form.expedientePadreId,
+    tipoExpediente: form.tipoExpediente,
+    numeroExpediente: normalizarOpcional(form.numeroExpediente),
+    caratula: form.caratula.trim(),
+    juzgado: normalizarOpcional(form.juzgado),
+    fechaInicio: normalizarOpcional(form.fechaInicio),
+    estadoLegal: normalizarOpcional(form.estadoLegal),
+  };
+}
+
 export default function ExpedienteFormFields({
   form,
+  modo = "crear",
+  expedienteActualId,
   disabled = false,
   onChange,
 }: ExpedienteFormFieldsProps) {
@@ -103,13 +141,15 @@ export default function ExpedienteFormFields({
       page: 1,
       pageSize: 100,
       casoId: form.casoId ?? undefined,
-      soloActivos: true,
+      soloActivos: modo === "crear",
     },
     form.casoId !== null,
     false,
   );
 
-  const expedientesDelCaso = expedientesQuery.data?.items ?? [];
+  const expedientesDelCaso = (expedientesQuery.data?.items ?? []).filter(
+    (expediente) => expediente.expedienteId !== expedienteActualId,
+  );
 
   const expedientePrincipal =
     expedientesDelCaso.find(
@@ -118,6 +158,7 @@ export default function ExpedienteFormFields({
 
   useEffect(() => {
     if (
+      modo === "crear" &&
       form.casoId !== null &&
       expedientePrincipal &&
       form.tipoExpediente === "Principal"
@@ -128,7 +169,7 @@ export default function ExpedienteFormFields({
         expedientePadreId: expedientePrincipal.expedienteId,
       });
     }
-  }, [expedientePrincipal, form, onChange]);
+  }, [expedientePrincipal, form, modo, onChange]);
 
   const actualizarCampo = <K extends keyof ExpedienteFormState>(
     campo: K,
@@ -180,7 +221,7 @@ export default function ExpedienteFormFields({
             <select
               id="expediente-caso"
               value={form.casoId ?? ""}
-              disabled={disabled}
+              disabled={disabled || modo === "editar"}
               required
               className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               onChange={(event) => cambiarCaso(event.target.value)}
@@ -260,8 +301,10 @@ export default function ExpedienteFormFields({
                 <option
                   key={expediente.expedienteId}
                   value={expediente.expedienteId}
+                  disabled={!expediente.activo}
                 >
                   {expediente.numeroExpediente || expediente.caratula}
+                  {!expediente.activo ? " (inactivo)" : ""}
                 </option>
               ))}
           </select>
