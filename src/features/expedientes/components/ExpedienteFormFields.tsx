@@ -58,6 +58,7 @@ type ExpedienteFormFieldsProps = {
   form: ExpedienteFormState;
   modo?: "crear" | "editar";
   expedienteActualId?: number;
+  bloquearCaso?: boolean;
   disabled?: boolean;
   onChange: (form: ExpedienteFormState) => void;
 };
@@ -127,6 +128,7 @@ export default function ExpedienteFormFields({
   form,
   modo = "crear",
   expedienteActualId,
+  bloquearCaso = false,
   disabled = false,
   onChange,
 }: ExpedienteFormFieldsProps) {
@@ -221,7 +223,7 @@ export default function ExpedienteFormFields({
             <select
               id="expediente-caso"
               value={form.casoId ?? ""}
-              disabled={disabled || modo === "editar"}
+              disabled={disabled || modo === "editar" || bloquearCaso}
               required
               className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               onChange={(event) => cambiarCaso(event.target.value)}

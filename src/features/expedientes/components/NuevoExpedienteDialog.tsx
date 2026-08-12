@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -23,19 +23,38 @@ import ExpedienteFormFields, {
 type NuevoExpedienteDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  casoIdInicial?: number | null;
+  bloquearCaso?: boolean;
   onExpedienteCreado?: () => void;
 };
+
+function crearFormInicial(casoIdInicial?: number | null): ExpedienteFormState {
+  return {
+    ...FORM_EXPEDIENTE_INICIAL,
+    casoId: casoIdInicial ?? null,
+  };
+}
 
 export default function NuevoExpedienteDialog({
   open,
   onOpenChange,
+  casoIdInicial,
+  bloquearCaso = false,
   onExpedienteCreado,
 }: NuevoExpedienteDialogProps) {
-  const [form, setForm] = useState<ExpedienteFormState>(
-    FORM_EXPEDIENTE_INICIAL,
+  const [form, setForm] = useState<ExpedienteFormState>(() =>
+    crearFormInicial(casoIdInicial),
   );
 
   const crearExpedienteMutation = useCrearExpediente();
+
+  useEffect(() => {
+    if (open) {
+      setForm(crearFormInicial(casoIdInicial));
+      crearExpedienteMutation.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, casoIdInicial]);
 
   const requierePadre = form.tipoExpediente !== "Principal";
 
@@ -53,7 +72,7 @@ export default function NuevoExpedienteDialog({
   };
 
   const limpiarFormulario = () => {
-    setForm(FORM_EXPEDIENTE_INICIAL);
+    setForm(crearFormInicial(casoIdInicial));
     crearExpedienteMutation.reset();
   };
 
@@ -102,6 +121,7 @@ export default function NuevoExpedienteDialog({
         <form className="space-y-6" onSubmit={guardar}>
           <ExpedienteFormFields
             form={form}
+            bloquearCaso={bloquearCaso}
             disabled={crearExpedienteMutation.isPending}
             onChange={actualizarForm}
           />

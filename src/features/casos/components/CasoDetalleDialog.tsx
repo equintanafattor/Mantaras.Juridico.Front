@@ -6,6 +6,7 @@ import {
   BriefcaseBusiness,
   FileText,
   Loader2,
+  Plus,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,9 @@ import CasoFormFields, {
   FORM_CASO_INICIAL,
   type CasoFormState,
 } from "./CasoFormFields";
+
+import ExpedienteDetalleDialog from "@/features/expedientes/components/ExpedienteDetalleDialog";
+import NuevoExpedienteDialog from "@/features/expedientes/components/NuevoExpedienteDialog";
 
 type CasoDetalleDialogProps = {
   casoId: number | null;
@@ -71,6 +75,11 @@ export default function CasoDetalleDialog({
 }: CasoDetalleDialogProps) {
   const [form, setForm] = useState<CasoFormState>(FORM_CASO_INICIAL);
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
+  const [expedienteSeleccionadoId, setExpedienteSeleccionadoId] = useState<
+    number | null
+  >(null);
+
+  const [nuevoExpedienteOpen, setNuevoExpedienteOpen] = useState(false);
 
   const casoQuery = useCaso(casoId, open);
   const actualizarMutation = useActualizarCaso();
@@ -114,6 +123,8 @@ export default function CasoDetalleDialog({
       setAccionEstado(null);
       actualizarMutation.reset();
       cambiarEstadoMutation.reset();
+      setExpedienteSeleccionadoId(null);
+      setNuevoExpedienteOpen(false);
     }
   };
 
@@ -229,18 +240,33 @@ export default function CasoDetalleDialog({
             />
 
             <section className="space-y-3 border-t pt-5">
-              <div className="flex items-center gap-2">
-                <BriefcaseBusiness className="size-4 text-primary" />
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                <div className="flex items-center gap-2">
+                  <BriefcaseBusiness className="size-4 text-primary" />
 
-                <div>
-                  <h3 className="text-sm font-medium">Expedientes</h3>
+                  <div>
+                    <h3 className="text-sm font-medium">Expedientes</h3>
 
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {casoQuery.data.expedientes.length === 1
-                      ? "1 expediente asociado"
-                      : `${casoQuery.data.expedientes.length} expedientes asociados`}
-                  </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {casoQuery.data.expedientes.length === 1
+                        ? "1 expediente asociado"
+                        : `${casoQuery.data.expedientes.length} expedientes asociados`}
+                    </p>
+                  </div>
                 </div>
+
+                {casoQuery.data.activo && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={operacionPendiente}
+                    onClick={() => setNuevoExpedienteOpen(true)}
+                  >
+                    <Plus />
+                    Nuevo expediente
+                  </Button>
+                )}
               </div>
 
               {casoQuery.data.expedientes.length === 0 ? (
@@ -288,11 +314,29 @@ export default function CasoDetalleDialog({
                           </div>
                         </div>
 
-                        <Badge
-                          variant={expediente.activo ? "secondary" : "outline"}
-                        >
-                          {expediente.activo ? "Activo" : "Inactivo"}
-                        </Badge>
+                        <div className="flex shrink-0 flex-col items-end gap-2">
+                          <Badge
+                            variant={
+                              expediente.activo ? "secondary" : "outline"
+                            }
+                          >
+                            {expediente.activo ? "Activo" : "Inactivo"}
+                          </Badge>
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={operacionPendiente}
+                            onClick={() =>
+                              setExpedienteSeleccionadoId(
+                                expediente.expedienteId,
+                              )
+                            }
+                          >
+                            Abrir
+                          </Button>
+                        </div>
                       </div>
                     </article>
                   ))}
@@ -450,6 +494,26 @@ export default function CasoDetalleDialog({
             </footer>
           </form>
         ) : null}
+        <NuevoExpedienteDialog
+          open={nuevoExpedienteOpen}
+          onOpenChange={setNuevoExpedienteOpen}
+          casoIdInicial={casoId}
+          bloquearCaso
+          onExpedienteCreado={() => {
+            casoQuery.refetch();
+          }}
+        />
+
+        <ExpedienteDetalleDialog
+          expedienteId={expedienteSeleccionadoId}
+          open={expedienteSeleccionadoId !== null}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) {
+              setExpedienteSeleccionadoId(null);
+              casoQuery.refetch();
+            }
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
