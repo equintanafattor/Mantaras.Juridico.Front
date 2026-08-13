@@ -1,3 +1,8 @@
+import {
+  notificarSesionNoAutorizada,
+  obtenerAccessToken,
+} from "@/features/autenticacion/lib/authSession";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export type ApiErrorItem = {
@@ -38,6 +43,12 @@ export async function apiRequest<T>(
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
 
+  const accessToken = obtenerAccessToken();
+
+  if (accessToken) {
+    headers.set("Authorization", `Bearer ${accessToken}`);
+  }
+
   if (options.body !== undefined) {
     headers.set("Content-Type", "application/json");
   }
@@ -49,6 +60,10 @@ export async function apiRequest<T>(
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      notificarSesionNoAutorizada();
+    }
+    
     let errorResponse: ApiErrorResponse | undefined;
 
     try {

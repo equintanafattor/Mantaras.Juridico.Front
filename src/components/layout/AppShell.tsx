@@ -1,14 +1,17 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
   Files,
   Home,
   Landmark,
+  Loader2,
+  LogOut,
   Menu,
+  UserRound,
   UsersRound,
 } from "lucide-react";
 
@@ -23,6 +26,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/AuthProvider";
 
 type AppShellProps = {
   children: ReactNode;
@@ -58,6 +62,7 @@ function Navigation() {
     <nav className="flex flex-col gap-1">
       {navigationItems.map((item) => {
         const Icon = item.icon;
+
         const isActive =
           item.href === "/"
             ? pathname === "/"
@@ -92,6 +97,7 @@ function Brand() {
 
       <span className="flex flex-col">
         <span className="font-semibold leading-tight">Mántaras Jurídico</span>
+
         <span className="text-xs text-muted-foreground">
           Gestión del estudio
         </span>
@@ -100,7 +106,57 @@ function Brand() {
   );
 }
 
+function LoadingScreen() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-muted/30">
+      <div className="flex flex-col items-center gap-3 text-muted-foreground">
+        <Loader2 className="size-6 animate-spin" />
+        <p className="text-sm">Cargando sesión...</p>
+      </div>
+    </div>
+  );
+}
+
 export default function AppShell({ children }: AppShellProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const { session, isReady, cerrarSesion } = useAuth();
+
+  const isLoginPage = pathname === "/login";
+
+  useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
+    if (!session && !isLoginPage) {
+      router.replace("/login");
+      return;
+    }
+
+    if (session && isLoginPage) {
+      router.replace("/");
+    }
+  }, [isLoginPage, isReady, router, session]);
+
+  const salir = () => {
+    cerrarSesion();
+    router.replace("/login");
+  };
+
+  if (!isReady) {
+    return <LoadingScreen />;
+  }
+
+  if (isLoginPage) {
+    return session ? <LoadingScreen /> : children;
+  }
+
+  if (!session) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-muted/30">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-background lg:flex lg:flex-col">
@@ -114,8 +170,33 @@ export default function AppShell({ children }: AppShellProps) {
           <Navigation />
         </div>
 
-        <div className="border-t p-4 text-xs text-muted-foreground">
-          Sistema de gestión jurídica
+        <div className="border-t p-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <UserRound className="size-4" />
+            </span>
+
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">
+                {session.usuario.nombre}
+              </p>
+
+              <p className="truncate text-xs text-muted-foreground">
+                {session.usuario.email}
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Cerrar sesión"
+              title="Cerrar sesión"
+              onClick={salir}
+            >
+              <LogOut />
+            </Button>
+          </div>
         </div>
       </aside>
 
@@ -140,6 +221,7 @@ export default function AppShell({ children }: AppShellProps) {
                   <SheetTitle>
                     <Brand />
                   </SheetTitle>
+
                   <SheetDescription>
                     Navegación principal del sistema
                   </SheetDescription>
@@ -150,14 +232,48 @@ export default function AppShell({ children }: AppShellProps) {
                 <div className="px-4">
                   <Navigation />
                 </div>
+
+                <div className="mt-auto border-t p-4">
+                  <p className="truncate text-sm font-medium">
+                    {session.usuario.nombre}
+                  </p>
+
+                  <p className="mt-1 truncate text-xs text-muted-foreground">
+                    {session.usuario.email}
+                  </p>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mt-4 w-full"
+                    onClick={salir}
+                  >
+                    <LogOut />
+                    Cerrar sesión
+                  </Button>
+                </div>
               </SheetContent>
             </Sheet>
 
             <span className="font-semibold sm:hidden">Mántaras Jurídico</span>
           </div>
 
-          <div className="ml-auto text-sm text-muted-foreground">
-            Estudio Jurídico Mántaras
+          <div className="ml-auto flex items-center gap-3">
+            <span className="hidden text-sm text-muted-foreground sm:inline">
+              {session.usuario.nombre}
+            </span>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              aria-label="Cerrar sesión"
+              title="Cerrar sesión"
+              onClick={salir}
+            >
+              <LogOut />
+            </Button>
           </div>
         </header>
 

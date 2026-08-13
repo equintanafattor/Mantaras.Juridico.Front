@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 
 import AppShell from "@/components/layout/AppShell";
 import QueryProvider from "@/providers/QueryProvider";
+import AuthProvider from "@/providers/AuthProvider";
 
 import "./globals.css";
 
@@ -34,7 +35,9 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <QueryProvider>
-          <AppShell>{children}</AppShell>
+          <AuthProvider>
+            <AppShell>{children}</AppShell>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>
