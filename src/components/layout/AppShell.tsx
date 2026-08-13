@@ -13,6 +13,7 @@ import {
   Menu,
   UserRound,
   UsersRound,
+  UserCog,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,30 +38,44 @@ const navigationItems = [
     href: "/",
     label: "Inicio",
     icon: Home,
+    adminOnly: false,
   },
   {
     href: "/clientes",
     label: "Clientes",
     icon: UsersRound,
+    adminOnly: false,
   },
   {
     href: "/casos",
     label: "Casos",
     icon: BriefcaseBusiness,
+    adminOnly: false,
   },
   {
     href: "/expedientes",
     label: "Expedientes",
     icon: Files,
+    adminOnly: false,
+  },
+  {
+    href: "/usuarios",
+    label: "Usuarios",
+    icon: UserCog,
+    adminOnly: true,
   },
 ];
 
-function Navigation() {
+function Navigation({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+
+  const itemsVisibles = navigationItems.filter(
+    (item) => !item.adminOnly || isAdmin,
+  );
 
   return (
     <nav className="flex flex-col gap-1">
-      {navigationItems.map((item) => {
+      {itemsVisibles.map((item) => {
         const Icon = item.icon;
 
         const isActive =
@@ -125,6 +140,10 @@ export default function AppShell({ children }: AppShellProps) {
 
   const isLoginPage = pathname === "/login";
 
+  const isAdmin = session?.usuario.roles.includes("Administrador") ?? false;
+
+  const isUnauthorizedAdminPage = pathname.startsWith("/usuarios") && !isAdmin;
+
   useEffect(() => {
     if (!isReady) {
       return;
@@ -137,8 +156,13 @@ export default function AppShell({ children }: AppShellProps) {
 
     if (session && isLoginPage) {
       router.replace("/");
+      return;
     }
-  }, [isLoginPage, isReady, router, session]);
+
+    if (session && isUnauthorizedAdminPage) {
+      router.replace("/");
+    }
+  }, [isLoginPage, isReady, isUnauthorizedAdminPage, router, session]);
 
   const salir = () => {
     cerrarSesion();
@@ -157,6 +181,10 @@ export default function AppShell({ children }: AppShellProps) {
     return <LoadingScreen />;
   }
 
+  if (isUnauthorizedAdminPage) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-muted/30">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-background lg:flex lg:flex-col">
@@ -167,7 +195,7 @@ export default function AppShell({ children }: AppShellProps) {
         <Separator />
 
         <div className="flex-1 p-4">
-          <Navigation />
+          <Navigation isAdmin={isAdmin} />
         </div>
 
         <div className="border-t p-4">
@@ -230,7 +258,7 @@ export default function AppShell({ children }: AppShellProps) {
                 <Separator />
 
                 <div className="px-4">
-                  <Navigation />
+                  <Navigation isAdmin={isAdmin} />
                 </div>
 
                 <div className="mt-auto border-t p-4">
