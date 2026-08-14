@@ -7,6 +7,8 @@ import type {
   ExpedienteDetalleResponse,
   ExpedienteResponse,
   PagedResponse,
+  CrearCasoConExpedientePrincipalRequest,
+  CrearCasoConExpedientePrincipalResponse,
 } from "../types/types";
 
 export async function buscarExpedientes(
@@ -80,4 +82,16 @@ export async function restaurarExpediente(expedienteId: number): Promise<void> {
   await apiRequest<void>(`/api/expedientes/${expedienteId}/restaurar`, {
     method: "PATCH",
   });
+}
+
+export async function crearCasoConExpedientePrincipal(
+  request: CrearCasoConExpedientePrincipalRequest,
+): Promise<CrearCasoConExpedientePrincipalResponse> {
+  return apiRequest<CrearCasoConExpedientePrincipalResponse>(
+    "/api/casos/con-expediente-principal",
+    {
+      method: "POST",
+      body: request,
+    },
+  );
 }

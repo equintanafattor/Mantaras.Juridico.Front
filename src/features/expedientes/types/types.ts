@@ -1,3 +1,5 @@
+import type { CrearCasoRequest } from "@/features/casos/types/types";
+
 export type TipoExpediente =
   | "Principal"
   | "Incidente"
@@ -60,6 +62,25 @@ export type CrearExpedienteRequest = {
   juzgado: string | null;
   fechaInicio: string | null;
   estadoLegal: string | null;
+};
+
+export type CrearExpedientePrincipalRequest = Omit<
+  CrearExpedienteRequest,
+  "casoId" | "expedientePadreId" | "tipoExpediente"
+>;
+
+export type CrearCasoConExpedientePrincipalRequest = {
+  caso: CrearCasoRequest;
+  expediente: CrearExpedientePrincipalRequest;
+};
+
+export type CrearCasoConExpedientePrincipalResponse = {
+  casoId: number;
+  expedienteId: number;
+  tituloCaso: string;
+  numeroExpediente: string | null;
+  caratula: string;
+  fechaCreacion: string;
 };
 
 export type ActualizarExpedienteRequest = Omit<

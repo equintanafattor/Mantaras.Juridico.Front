@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { FileText, FolderTree } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -16,6 +15,8 @@ import type {
   ExpedienteDetalleResponse,
   TipoExpediente,
 } from "../types/types";
+
+import ExpedienteDatosFormFields from "./ExpedienteDatosFormFields";
 
 export type ExpedienteFormState = {
   casoId: number | null;
@@ -341,82 +342,13 @@ export default function ExpedienteFormFields({
               </p>
             </div>
           )}
-
-        <div className="space-y-2">
-          <Label htmlFor="expediente-numero">Número de expediente</Label>
-
-          <Input
-            id="expediente-numero"
-            value={form.numeroExpediente}
-            disabled={disabled}
-            maxLength={100}
-            placeholder="Ej.: FRO 012345/2026"
-            onChange={(event) =>
-              actualizarCampo("numeroExpediente", event.target.value)
-            }
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="expediente-fecha-inicio">Fecha de inicio</Label>
-
-          <Input
-            id="expediente-fecha-inicio"
-            type="date"
-            value={form.fechaInicio}
-            disabled={disabled}
-            onChange={(event) =>
-              actualizarCampo("fechaInicio", event.target.value)
-            }
-          />
-        </div>
-
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="expediente-caratula">
-            Carátula <span className="text-destructive">*</span>
-          </Label>
-
-          <Input
-            id="expediente-caratula"
-            value={form.caratula}
-            disabled={disabled}
-            maxLength={1000}
-            required
-            placeholder="Carátula completa del expediente"
-            onChange={(event) =>
-              actualizarCampo("caratula", event.target.value)
-            }
-          />
-        </div>
-
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="expediente-juzgado">Juzgado</Label>
-
-          <Input
-            id="expediente-juzgado"
-            value={form.juzgado}
-            disabled={disabled}
-            maxLength={500}
-            placeholder="Juzgado o tribunal interviniente"
-            onChange={(event) => actualizarCampo("juzgado", event.target.value)}
-          />
-        </div>
-
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="expediente-estado-legal">Estado legal</Label>
-
-          <Input
-            id="expediente-estado-legal"
-            value={form.estadoLegal}
-            disabled={disabled}
-            maxLength={200}
-            placeholder="Ej.: Iniciado, en trámite, elevado a Cámara..."
-            onChange={(event) =>
-              actualizarCampo("estadoLegal", event.target.value)
-            }
-          />
-        </div>
       </section>
+
+      <ExpedienteDatosFormFields
+        form={form}
+        disabled={disabled}
+        onChange={onChange}
+      />
     </div>
   );
 }

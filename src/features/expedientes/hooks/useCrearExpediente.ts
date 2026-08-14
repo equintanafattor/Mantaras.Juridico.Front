@@ -22,6 +22,9 @@ export function useCrearExpediente() {
         queryClient.invalidateQueries({
           queryKey: ["clientes"],
         }),
+        queryClient.invalidateQueries({
+          queryKey: ["panel"],
+        }),
       ]);
     },
   });
