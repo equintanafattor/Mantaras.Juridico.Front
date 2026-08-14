@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   AlertCircle,
   ArrowRight,
-  ArrowUpRight,
   BellRing,
   BriefcaseBusiness,
   Clock3,
@@ -28,7 +27,7 @@ const modulos = [
   {
     href: "/clientes",
     titulo: "Clientes",
-    descripcion: "Personas registradas y activas en el estudio.",
+    descripcion: "Personas activas",
     icon: UsersRound,
     obtenerCantidad: (data: PanelResumenResponse) =>
       data.metricas.clientesActivos,
@@ -36,14 +35,14 @@ const modulos = [
   {
     href: "/casos",
     titulo: "Casos",
-    descripcion: "Asuntos jurídicos que se encuentran activos.",
+    descripcion: "Asuntos activos",
     icon: BriefcaseBusiness,
     obtenerCantidad: (data: PanelResumenResponse) => data.metricas.casosActivos,
   },
   {
     href: "/expedientes",
     titulo: "Expedientes",
-    descripcion: "Expedientes procesales actualmente activos.",
+    descripcion: "Expedientes activos",
     icon: Files,
     obtenerCantidad: (data: PanelResumenResponse) =>
       data.metricas.expedientesActivos,
@@ -66,43 +65,46 @@ function formatearFechaHora(value: string) {
 
 function PanelSkeleton() {
   return (
-    <div className="space-y-8">
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="space-y-6">
+      <section className="grid gap-3 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div
-            key={index}
-            className="rounded-xl border bg-background p-5 shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <Skeleton className="size-11 rounded-lg" />
-              <Skeleton className="h-8 w-16" />
-            </div>
+          <div key={index} className="rounded-lg border bg-card p-5">
+            <div className="flex items-center gap-4">
+              <Skeleton className="size-10 rounded-md" />
 
-            <Skeleton className="mt-5 h-5 w-28" />
-            <Skeleton className="mt-3 h-4 w-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-32" />
+              </div>
+
+              <Skeleton className="h-8 w-12" />
+            </div>
           </div>
         ))}
       </section>
 
-      <section className="rounded-xl border bg-background p-5 shadow-sm">
-        <Skeleton className="h-5 w-40" />
-        <Skeleton className="mt-2 h-4 w-64" />
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+        <div className="rounded-lg border bg-card">
+          <div className="border-b p-5">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="mt-2 h-4 w-64" />
+          </div>
 
-        <div className="mt-5 space-y-3">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-3 rounded-lg border p-4"
-            >
-              <Skeleton className="size-10 shrink-0 rounded-lg" />
+          <div className="divide-y px-5">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="flex items-center gap-3 py-4">
+                <Skeleton className="size-9 shrink-0 rounded-md" />
 
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-40" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-40" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
+        <Skeleton className="min-h-52 rounded-lg" />
       </section>
     </div>
   );
@@ -111,8 +113,8 @@ function PanelSkeleton() {
 function ModulosResumen({ data }: { data: PanelResumenResponse }) {
   return (
     <section
-      aria-label="Resumen de módulos"
-      className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+      aria-label="Resumen del estudio"
+      className="grid gap-3 md:grid-cols-3"
     >
       {modulos.map((modulo) => {
         const Icon = modulo.icon;
@@ -122,28 +124,29 @@ function ModulosResumen({ data }: { data: PanelResumenResponse }) {
           <Link
             key={modulo.href}
             href={modulo.href}
-            className="group rounded-xl border bg-background p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group rounded-lg border bg-card p-5 transition-colors hover:border-primary/35 hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <div className="flex items-start justify-between gap-4">
-              <span className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Icon className="size-5" />
+            <div className="flex items-center gap-4">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+                <Icon className="size-[18px]" />
               </span>
 
-              <span className="text-3xl font-semibold tracking-tight">
-                {cantidad}
-              </span>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-sm font-semibold">{modulo.titulo}</h2>
+
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {modulo.descripcion}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="text-3xl font-semibold tracking-tight text-primary">
+                  {cantidad}
+                </span>
+
+                <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+              </div>
             </div>
-
-            <h2 className="mt-5 font-semibold">{modulo.titulo}</h2>
-
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              {modulo.descripcion}
-            </p>
-
-            <span className="mt-4 flex items-center gap-2 text-sm font-medium text-primary">
-              Ingresar
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </span>
           </Link>
         );
       })}
@@ -161,42 +164,43 @@ function ActividadItem({
   const href = esCaso ? "/casos" : "/expedientes";
 
   return (
-    <article className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
-      <div className="flex min-w-0 flex-1 items-start gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+    <article>
+      <Link
+        href={href}
+        className="group flex items-start gap-3 py-4 focus-visible:outline-none"
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-secondary group-hover:text-secondary-foreground">
           <Icon className="size-4" />
         </span>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-medium">{actividad.titulo}</h3>
+            <h3 className="line-clamp-2 text-sm font-medium leading-5 group-hover:text-primary">
+              {actividad.titulo}
+            </h3>
 
-            <Badge variant="outline">{actividad.tipo}</Badge>
+            <Badge
+              variant="outline"
+              className="h-5 rounded-sm bg-background px-1.5 text-[10px] font-medium text-muted-foreground"
+            >
+              {actividad.tipo}
+            </Badge>
           </div>
 
           {actividad.referencia && (
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 truncate text-sm text-muted-foreground">
               {actividad.referencia}
             </p>
           )}
 
-          <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock3 className="size-3.5" />
             {formatearFechaHora(actividad.fechaActividad)}
           </p>
         </div>
-      </div>
 
-      <Button
-        nativeButton={false}
-        variant="outline"
-        size="sm"
-        className="w-full shrink-0 sm:w-auto"
-        render={<Link href={href} />}
-      >
-        Abrir módulo
-        <ArrowUpRight />
-      </Button>
+        <ArrowRight className="mt-2 size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+      </Link>
     </article>
   );
 }
@@ -207,29 +211,31 @@ function ActividadReciente({
   actividades: ActividadRecienteResponse[];
 }) {
   return (
-    <section className="rounded-xl border bg-background p-5 shadow-sm sm:p-6">
-      <div>
-        <p className="text-sm font-medium">Actividad reciente</p>
+    <section className="overflow-hidden rounded-lg border bg-card">
+      <header className="border-b px-5 py-4 sm:px-6">
+        <h2 className="font-semibold">Actividad reciente</h2>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          Últimos cambios registrados en casos y expedientes activos.
+          Últimos cambios registrados en casos y expedientes.
         </p>
-      </div>
+      </header>
 
       {actividades.length === 0 ? (
-        <div className="mt-5 rounded-lg border border-dashed px-5 py-10 text-center">
-          <Clock3 className="mx-auto size-5 text-muted-foreground" />
+        <div className="px-6 py-14 text-center">
+          <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <Clock3 className="size-4" />
+          </span>
 
           <p className="mt-3 text-sm font-medium">
             Todavía no hay actividad para mostrar
           </p>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Los casos y expedientes creados o modificados aparecerán acá.
+            Los cambios realizados aparecerán en este espacio.
           </p>
         </div>
       ) : (
-        <div className="mt-5 space-y-3">
+        <div className="divide-y px-5 sm:px-6">
           {actividades.map((actividad) => (
             <ActividadItem
               key={`${actividad.tipo}-${actividad.expedienteId ?? actividad.casoId}`}
@@ -243,33 +249,42 @@ function ActividadReciente({
 }
 
 function AlertasPanel({ alertas }: { alertas: PanelAlertasResponse }) {
+  const alertasDisponibles = alertas.disponible;
+
   return (
-    <section className="rounded-xl border border-dashed bg-background p-5 sm:p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <BellRing className="size-5" />
+    <section className="relative overflow-hidden rounded-lg border bg-card p-5 sm:p-6">
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-sidebar-primary" />
+
+      <div className="flex items-start justify-between gap-4">
+        <span className="flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+          <BellRing className="size-[18px]" />
         </span>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-semibold">Agenda y alertas</h2>
-
-            <Badge variant="outline">
-              {alertas.disponible
-                ? `${alertas.totalPendientes} pendientes`
-                : "Próximamente"}
-            </Badge>
-          </div>
-
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {alertas.disponible
-              ? alertas.totalPendientes === 0
-                ? "No hay alertas pendientes."
-                : "Tenés recordatorios o vencimientos pendientes."
-              : "Este espacio queda reservado para futuros vencimientos, recordatorios y tareas de agenda."}
-          </p>
-        </div>
+        <Badge
+          variant="outline"
+          className="rounded-sm bg-background text-muted-foreground"
+        >
+          {alertasDisponibles
+            ? `${alertas.totalPendientes} pendientes`
+            : "Próximamente"}
+        </Badge>
       </div>
+
+      <h2 className="mt-5 font-semibold">Agenda y alertas</h2>
+
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        {alertasDisponibles
+          ? alertas.totalPendientes === 0
+            ? "No hay alertas ni vencimientos pendientes."
+            : "Tenés recordatorios o vencimientos que requieren atención."
+          : "Este espacio reunirá vencimientos, recordatorios y tareas importantes del estudio."}
+      </p>
+
+      {!alertasDisponibles && (
+        <div className="mt-5 rounded-md bg-muted/60 px-3 py-2.5 text-xs leading-5 text-muted-foreground">
+          La agenda será incorporada en un próximo entregable.
+        </div>
+      )}
     </section>
   );
 }
@@ -278,25 +293,27 @@ export default function PanelScreen() {
   const panelQuery = usePanelResumen();
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <section>
-        <p className="text-sm font-medium text-primary">Panel principal</p>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+      <section className="border-b pb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
+          Panel principal
+        </p>
 
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
           Gestión del estudio jurídico
         </h1>
 
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          Consultá el estado general del estudio y accedé rápidamente a las
-          tareas frecuentes.
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+          Consultá el estado general del estudio y accedé a la actividad más
+          reciente.
         </p>
       </section>
 
       {panelQuery.isLoading ? (
         <PanelSkeleton />
       ) : panelQuery.isError ? (
-        <section className="flex flex-col items-center rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-12 text-center">
-          <span className="flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <section className="flex flex-col items-center rounded-lg border border-destructive/30 bg-card px-6 py-12 text-center">
+          <span className="flex size-10 items-center justify-center rounded-full bg-destructive/10 text-destructive">
             <AlertCircle className="size-5" />
           </span>
 
@@ -320,15 +337,19 @@ export default function PanelScreen() {
         <div
           className={
             panelQuery.isFetching
-              ? "space-y-8 opacity-70 transition-opacity"
-              : "space-y-8 transition-opacity"
+              ? "space-y-6 opacity-70 transition-opacity"
+              : "space-y-6 transition-opacity"
           }
         >
           <ModulosResumen data={panelQuery.data} />
 
-          <ActividadReciente actividades={panelQuery.data.actividadReciente} />
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+            <ActividadReciente
+              actividades={panelQuery.data.actividadReciente}
+            />
 
-          <AlertasPanel alertas={panelQuery.data.alertas} />
+            <AlertasPanel alertas={panelQuery.data.alertas} />
+          </div>
         </div>
       ) : null}
     </div>
