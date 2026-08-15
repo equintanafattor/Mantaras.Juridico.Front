@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, BriefcaseBusiness, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -85,44 +85,54 @@ export default function NuevoCasoDialog({
 
   return (
     <Dialog open={open} onOpenChange={cambiarApertura}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>Nuevo caso</DialogTitle>
+      <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-4xl sm:rounded-lg">
+        <DialogHeader className="shrink-0 border-b bg-card px-5 py-4 pr-12 text-left sm:px-6 sm:py-5">
+          <div className="flex items-start gap-3">
+            <span className="hidden size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary sm:flex">
+              <BriefcaseBusiness className="size-4" />
+            </span>
 
-          <DialogDescription>
-            Registrá el asunto jurídico y asociá sus participantes.
-          </DialogDescription>
+            <div>
+              <DialogTitle>Nuevo caso</DialogTitle>
+
+              <DialogDescription className="mt-1">
+                Registrá el asunto jurídico y asociá sus participantes.
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <form className="space-y-6" onSubmit={guardar}>
-          <CasoFormFields
-            form={form}
-            disabled={crearCasoMutation.isPending}
-            onChange={actualizarForm}
-          />
+        <form className="flex min-h-0 flex-1 flex-col" onSubmit={guardar}>
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-6">
+            <CasoFormFields
+              form={form}
+              disabled={crearCasoMutation.isPending}
+              onChange={actualizarForm}
+            />
 
-          {crearCasoMutation.isError && (
-            <div
-              role="alert"
-              className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
-            >
-              <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+            {crearCasoMutation.isError && (
+              <div
+                role="alert"
+                className="mt-6 flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
+              >
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
 
-              <div>
-                <p className="font-medium text-destructive">
-                  No pudimos crear el caso
-                </p>
+                <div>
+                  <p className="font-medium text-destructive">
+                    No pudimos crear el caso
+                  </p>
 
-                <p className="mt-1 text-muted-foreground">
-                  {crearCasoMutation.error instanceof Error
-                    ? crearCasoMutation.error.message
-                    : "Revisá los datos ingresados e intentá nuevamente."}
-                </p>
+                  <p className="mt-1 text-muted-foreground">
+                    {crearCasoMutation.error instanceof Error
+                      ? crearCasoMutation.error.message
+                      : "Revisá los datos ingresados e intentá nuevamente."}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          <footer className="flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:justify-end">
+          <footer className="flex shrink-0 flex-col-reverse gap-2 border-t bg-card px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
             <Button
               type="button"
               variant="outline"
