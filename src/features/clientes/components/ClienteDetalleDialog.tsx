@@ -1,7 +1,13 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AlertCircle, Loader2 } from "lucide-react";
+import {
+  AlertCircle,
+  BriefcaseBusiness,
+  FileText,
+  Loader2,
+  UserRound,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,6 +39,21 @@ type ClienteDetalleDialogProps = {
 
 type AccionEstado = "darDeBaja" | "reactivar";
 
+function EstadoBadge({ activo }: { activo: boolean }) {
+  return (
+    <Badge
+      variant="outline"
+      className={
+        activo
+          ? "rounded-sm border-emerald-700/15 bg-emerald-600/10 text-emerald-800 dark:text-emerald-300"
+          : "rounded-sm bg-muted text-muted-foreground"
+      }
+    >
+      {activo ? "Activo" : "Inactivo"}
+    </Badge>
+  );
+}
+
 export default function ClienteDetalleDialog({
   clienteId,
   open,
@@ -47,6 +68,9 @@ export default function ClienteDetalleDialog({
 
   const operacionPendiente =
     actualizarMutation.isPending || cambiarEstadoMutation.isPending;
+
+  const formularioValido =
+    form.nombre.trim().length > 0 && form.apellido.trim().length > 0;
 
   useEffect(() => {
     if (clienteQuery.data) {
@@ -79,6 +103,7 @@ export default function ClienteDetalleDialog({
     if (!nextOpen) {
       setForm(FORM_CLIENTE_INICIAL);
       setAccionEstado(null);
+
       actualizarMutation.reset();
       cambiarEstadoMutation.reset();
     }
@@ -87,7 +112,7 @@ export default function ClienteDetalleDialog({
   const guardar = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (clienteId === null || !form.nombre.trim() || !form.apellido.trim()) {
+    if (clienteId === null || !formularioValido) {
       return;
     }
 
@@ -130,223 +155,257 @@ export default function ClienteDetalleDialog({
 
   return (
     <Dialog open={open} onOpenChange={cambiarApertura}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
-        <DialogHeader>
-          <div className="flex items-start justify-between gap-4 pr-6">
-            <div>
-              <DialogTitle>
-                {clienteQuery.data?.nombreCompleto ?? "Cliente"}
-              </DialogTitle>
+      <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-4xl sm:rounded-lg">
+        <DialogHeader className="shrink-0 border-b bg-card px-5 py-4 pr-12 text-left sm:px-6 sm:py-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="hidden size-9 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground sm:flex">
+                <UserRound className="size-4" />
+              </span>
 
-              <DialogDescription className="mt-1">
-                Consultá o modificá los datos registrados.
-              </DialogDescription>
+              <div className="min-w-0">
+                <DialogTitle className="truncate text-lg">
+                  {clienteQuery.data?.nombreCompleto ?? "Cliente"}
+                </DialogTitle>
+
+                <DialogDescription className="mt-1">
+                  Consultá o modificá los datos registrados.
+                </DialogDescription>
+              </div>
             </div>
 
             {clienteQuery.data && (
-              <Badge
-                variant={clienteQuery.data.activo ? "secondary" : "outline"}
-              >
-                {clienteQuery.data.activo ? "Activo" : "Inactivo"}
-              </Badge>
+              <EstadoBadge activo={clienteQuery.data.activo} />
             )}
           </div>
         </DialogHeader>
 
         {clienteQuery.isLoading ? (
-          <div className="space-y-6 py-2">
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, index) => (
+              {Array.from({ length: 8 }).map((_, index) => (
                 <div key={index} className="space-y-2">
                   <Skeleton className="h-4 w-28" />
                   <Skeleton className="h-10 w-full" />
                 </div>
               ))}
             </div>
+
+            <Skeleton className="mt-6 h-32 w-full" />
           </div>
         ) : clienteQuery.isError ? (
-          <div
-            role="alert"
-            className="flex flex-col items-center rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center"
-          >
-            <AlertCircle className="size-6 text-destructive" />
-
-            <p className="mt-4 font-medium">No pudimos cargar el cliente</p>
-
-            <p className="mt-2 text-sm text-muted-foreground">
-              {clienteQuery.error instanceof Error
-                ? clienteQuery.error.message
-                : "Ocurrió un error al consultar la información."}
-            </p>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="mt-5"
-              onClick={() => clienteQuery.refetch()}
+          <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-5 py-10 sm:px-6">
+            <div
+              role="alert"
+              className="flex w-full max-w-lg flex-col items-center rounded-lg border border-destructive/30 bg-destructive/5 px-6 py-10 text-center"
             >
-              Reintentar
-            </Button>
+              <AlertCircle className="size-6 text-destructive" />
+
+              <p className="mt-4 font-medium">No pudimos cargar el cliente</p>
+
+              <p className="mt-2 text-sm text-muted-foreground">
+                {clienteQuery.error instanceof Error
+                  ? clienteQuery.error.message
+                  : "Ocurrió un error al consultar la información."}
+              </p>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-5"
+                onClick={() => clienteQuery.refetch()}
+              >
+                Reintentar
+              </Button>
+            </div>
           </div>
         ) : clienteQuery.data ? (
-          <form className="space-y-6" onSubmit={guardar}>
-            <ClienteFormFields
-              form={form}
-              modo="editar"
-              disabled={operacionPendiente}
-              onChange={actualizarCampo}
-            />
+          <form className="flex min-h-0 flex-1 flex-col" onSubmit={guardar}>
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-6">
+              <div className="space-y-7">
+                <ClienteFormFields
+                  form={form}
+                  modo="editar"
+                  disabled={operacionPendiente}
+                  onChange={actualizarCampo}
+                />
 
-            <section className="space-y-3 border-t pt-5">
-              <div>
-                <h3 className="text-sm font-medium">Casos asociados</h3>
+                <section className="overflow-hidden rounded-lg border bg-card">
+                  <header className="flex items-center gap-3 border-b bg-muted/30 px-4 py-4 sm:px-5">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+                      <BriefcaseBusiness className="size-4" />
+                    </span>
 
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {clienteQuery.data.casos.length === 1
-                    ? "1 caso registrado"
-                    : `${clienteQuery.data.casos.length} casos registrados`}
-                </p>
-              </div>
+                    <div>
+                      <h3 className="text-sm font-semibold">Casos asociados</h3>
 
-              {clienteQuery.data.casos.length === 0 ? (
-                <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-                  Este cliente todavía no tiene casos asociados.
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {clienteQuery.data.casos.map((caso) => (
-                    <article
-                      key={caso.casoId}
-                      className="rounded-lg border p-4"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="font-medium">{caso.titulo}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {clienteQuery.data.casos.length === 1
+                          ? "1 caso registrado"
+                          : `${clienteQuery.data.casos.length} casos registrados`}
+                      </p>
+                    </div>
+                  </header>
 
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {caso.expedientes.length === 1
-                              ? "1 expediente"
-                              : `${caso.expedientes.length} expedientes`}
-                          </p>
-                        </div>
+                  {clienteQuery.data.casos.length === 0 ? (
+                    <div className="px-5 py-10 text-center">
+                      <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                        <BriefcaseBusiness className="size-4" />
+                      </span>
 
-                        <Badge variant={caso.activo ? "secondary" : "outline"}>
-                          {caso.activo ? "Activo" : "Inactivo"}
-                        </Badge>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </section>
+                      <p className="mt-3 text-sm font-medium">
+                        Sin casos asociados
+                      </p>
 
-            {accionEstado && (
-              <section className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
-                <h3 className="font-medium">
-                  {accionEstado === "darDeBaja"
-                    ? "¿Dar de baja al cliente?"
-                    : "¿Reactivar al cliente?"}
-                </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Este cliente todavía no participa en ningún caso.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="divide-y">
+                      {clienteQuery.data.casos.map((caso) => (
+                        <article
+                          key={caso.casoId}
+                          className="flex items-start gap-3 px-4 py-4 sm:px-5"
+                        >
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                            <BriefcaseBusiness className="size-4" />
+                          </span>
 
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {accionEstado === "darDeBaja"
-                    ? "El cliente dejará de aparecer en el listado de activos, pero conservará todos sus datos, casos y expedientes."
-                    : "El cliente volverá a aparecer normalmente en el listado de clientes activos."}
-                </p>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="line-clamp-2 text-sm font-medium leading-5">
+                                {caso.titulo}
+                              </p>
 
-                <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={cambiarEstadoMutation.isPending}
-                    onClick={() => setAccionEstado(null)}
+                              <EstadoBadge activo={caso.activo} />
+                            </div>
+
+                            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <FileText className="size-3.5" />
+
+                              {caso.expedientes.length === 1
+                                ? "1 expediente asociado"
+                                : `${caso.expedientes.length} expedientes asociados`}
+                            </p>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                {accionEstado && (
+                  <section className="rounded-lg border border-sidebar-primary/30 bg-accent/45 p-4">
+                    <h3 className="font-medium">
+                      {accionEstado === "darDeBaja"
+                        ? "¿Dar de baja al cliente?"
+                        : "¿Reactivar al cliente?"}
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {accionEstado === "darDeBaja"
+                        ? "El cliente dejará de aparecer en el listado de activos, pero conservará todos sus datos, casos y expedientes."
+                        : "El cliente volverá a aparecer normalmente en el listado de clientes activos."}
+                    </p>
+
+                    <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={cambiarEstadoMutation.isPending}
+                        onClick={() => setAccionEstado(null)}
+                      >
+                        Cancelar
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant={
+                          accionEstado === "darDeBaja"
+                            ? "destructive"
+                            : "default"
+                        }
+                        disabled={cambiarEstadoMutation.isPending}
+                        onClick={confirmarCambioEstado}
+                      >
+                        {cambiarEstadoMutation.isPending && (
+                          <Loader2 className="animate-spin" />
+                        )}
+
+                        {cambiarEstadoMutation.isPending
+                          ? "Procesando..."
+                          : accionEstado === "darDeBaja"
+                            ? "Confirmar baja"
+                            : "Confirmar reactivación"}
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {actualizarMutation.isSuccess && (
+                  <div
+                    role="status"
+                    className="rounded-lg border border-emerald-700/20 bg-emerald-600/5 p-4 text-sm text-emerald-800 dark:text-emerald-300"
                   >
-                    Cancelar
-                  </Button>
+                    Los cambios se guardaron correctamente.
+                  </div>
+                )}
 
-                  <Button
-                    type="button"
-                    variant={
-                      accionEstado === "darDeBaja" ? "destructive" : "default"
-                    }
-                    disabled={cambiarEstadoMutation.isPending}
-                    onClick={confirmarCambioEstado}
+                {actualizarMutation.isError && (
+                  <div
+                    role="alert"
+                    className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
                   >
-                    {cambiarEstadoMutation.isPending && (
-                      <Loader2 className="animate-spin" />
-                    )}
+                    <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
 
-                    {cambiarEstadoMutation.isPending
-                      ? "Procesando..."
-                      : accionEstado === "darDeBaja"
-                        ? "Confirmar baja"
-                        : "Confirmar reactivación"}
-                  </Button>
-                </div>
-              </section>
-            )}
+                    <div>
+                      <p className="font-medium text-destructive">
+                        No pudimos actualizar el cliente
+                      </p>
 
-            {actualizarMutation.isSuccess && (
-              <div
-                role="status"
-                className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-emerald-700"
-              >
-                Los cambios se guardaron correctamente.
+                      <p className="mt-1 text-muted-foreground">
+                        {actualizarMutation.error instanceof Error
+                          ? actualizarMutation.error.message
+                          : "Revisá los datos ingresados e intentá nuevamente."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {cambiarEstadoMutation.isSuccess && (
+                  <div
+                    role="status"
+                    className="rounded-lg border border-emerald-700/20 bg-emerald-600/5 p-4 text-sm text-emerald-800 dark:text-emerald-300"
+                  >
+                    El estado del cliente se actualizó correctamente.
+                  </div>
+                )}
+
+                {cambiarEstadoMutation.isError && (
+                  <div
+                    role="alert"
+                    className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
+                  >
+                    <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+
+                    <div>
+                      <p className="font-medium text-destructive">
+                        No pudimos cambiar el estado del cliente
+                      </p>
+
+                      <p className="mt-1 text-muted-foreground">
+                        {cambiarEstadoMutation.error instanceof Error
+                          ? cambiarEstadoMutation.error.message
+                          : "Ocurrió un error al procesar la operación."}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
-            {actualizarMutation.isError && (
-              <div
-                role="alert"
-                className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
-              >
-                <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
-
-                <div>
-                  <p className="font-medium text-destructive">
-                    No pudimos actualizar el cliente
-                  </p>
-
-                  <p className="mt-1 text-muted-foreground">
-                    {actualizarMutation.error instanceof Error
-                      ? actualizarMutation.error.message
-                      : "Revisá los datos ingresados e intentá nuevamente."}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {cambiarEstadoMutation.isSuccess && (
-              <div
-                role="status"
-                className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-emerald-700"
-              >
-                El estado del cliente se actualizó correctamente.
-              </div>
-            )}
-
-            {cambiarEstadoMutation.isError && (
-              <div
-                role="alert"
-                className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
-              >
-                <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
-
-                <div>
-                  <p className="font-medium text-destructive">
-                    No pudimos cambiar el estado del cliente
-                  </p>
-
-                  <p className="mt-1 text-muted-foreground">
-                    {cambiarEstadoMutation.error instanceof Error
-                      ? cambiarEstadoMutation.error.message
-                      : "Ocurrió un error al procesar la operación."}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <footer className="flex flex-col gap-3 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <footer className="flex shrink-0 flex-col gap-3 border-t bg-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
               <Button
                 type="button"
                 variant={clienteQuery.data.activo ? "destructive" : "outline"}
@@ -372,7 +431,11 @@ export default function ClienteDetalleDialog({
 
                 <Button
                   type="submit"
-                  disabled={operacionPendiente || accionEstado !== null}
+                  disabled={
+                    operacionPendiente ||
+                    accionEstado !== null ||
+                    !formularioValido
+                  }
                 >
                   {actualizarMutation.isPending && (
                     <Loader2 className="animate-spin" />
