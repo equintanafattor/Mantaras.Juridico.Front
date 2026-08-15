@@ -329,7 +329,10 @@ export default function UsuariosScreen() {
                           )}
                         </div>
 
-                        <p className="mt-1 break-all text-sm text-muted-foreground">
+                        <p
+                          className="mt-1 truncate text-sm text-muted-foreground"
+                          title={usuario.email}
+                        >
                           {usuario.email}
                         </p>
                       </div>

@@ -375,7 +375,7 @@ export default function ExpedientesScreen() {
                 : "transition-opacity"
             }
           >
-            <div className="grid gap-3 md:hidden">
+            <div className="grid gap-3 lg:hidden">
               {data.items.map((expediente) => (
                 <ExpedienteMobileCard
                   key={expediente.expedienteId}
@@ -387,7 +387,7 @@ export default function ExpedientesScreen() {
               ))}
             </div>
 
-            <div className="hidden overflow-hidden rounded-lg border bg-card md:block">
+            <div className="hidden overflow-hidden rounded-lg border bg-card lg:block">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="border-b bg-muted/40 text-left text-xs text-muted-foreground">

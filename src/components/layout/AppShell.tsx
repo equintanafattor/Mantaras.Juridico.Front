@@ -263,7 +263,7 @@ export default function AppShell({ children }: AppShellProps) {
                     <Brand />
                   </SheetTitle>
 
-                  <SheetDescription className="text-sidebar-foreground/50">
+                  <SheetDescription className="sr-only">
                     Navegación principal del sistema
                   </SheetDescription>
                 </SheetHeader>

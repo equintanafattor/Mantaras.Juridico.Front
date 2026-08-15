@@ -332,7 +332,7 @@ export default function CasosScreen() {
                 : "transition-opacity"
             }
           >
-            <div className="grid gap-3 md:hidden">
+            <div className="grid gap-3 lg:hidden">
               {data.items.map((caso) => (
                 <CasoMobileCard
                   key={caso.casoId}
@@ -342,7 +342,7 @@ export default function CasosScreen() {
               ))}
             </div>
 
-            <div className="hidden overflow-hidden rounded-lg border bg-card md:block">
+            <div className="hidden overflow-hidden rounded-lg border bg-card lg:block">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="border-b bg-muted/40 text-left text-xs text-muted-foreground">

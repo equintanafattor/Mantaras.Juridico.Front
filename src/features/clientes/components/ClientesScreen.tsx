@@ -222,7 +222,7 @@ export default function ClientesScreen() {
             <Input
               value={busqueda}
               onChange={(event) => cambiarBusqueda(event.target.value)}
-              placeholder="Buscar por nombre, apellido, DNI o CUIL..."
+              placeholder="Nombre, apellido, DNI o CUIL..."
               className="h-10 bg-background pl-9"
               aria-label="Buscar clientes"
             />
