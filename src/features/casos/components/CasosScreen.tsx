@@ -11,6 +11,7 @@ import {
   Search,
   UserRound,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useCasos } from "../hooks/useCasos";
 import type { CasoResponse, FaseCaso } from "../types/types";
 
-import CasoDetalleDialog from "./CasoDetalleDialog";
 import NuevoCasoDialog from "./NuevoCasoDialog";
 
 const PAGE_SIZE = 10;
@@ -152,14 +152,11 @@ function CasoMobileCard({
 }
 
 export default function CasosScreen() {
+  const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
   const [faseInterna, setFaseInterna] = useState<FaseCaso | "">("");
   const [soloActivos, setSoloActivos] = useState(true);
   const [page, setPage] = useState(1);
-
-  const [casoSeleccionadoId, setCasoSeleccionadoId] = useState<number | null>(
-    null,
-  );
 
   const [nuevoCasoOpen, setNuevoCasoOpen] = useState(false);
 
@@ -337,7 +334,7 @@ export default function CasosScreen() {
                 <CasoMobileCard
                   key={caso.casoId}
                   caso={caso}
-                  onSelect={() => setCasoSeleccionadoId(caso.casoId)}
+                  onSelect={() => router.push(`/casos/${caso.casoId}`)}
                 />
               ))}
             </div>
@@ -371,11 +368,11 @@ export default function CasosScreen() {
                           key={caso.casoId}
                           tabIndex={0}
                           role="button"
-                          onClick={() => setCasoSeleccionadoId(caso.casoId)}
+                          onClick={() => router.push(`/casos/${caso.casoId}`)}
                           onKeyDown={(event) => {
                             if (event.key === "Enter" || event.key === " ") {
                               event.preventDefault();
-                              setCasoSeleccionadoId(caso.casoId);
+                              router.push(`/casos/${caso.casoId}`);
                             }
                           }}
                           className="group cursor-pointer transition-colors hover:bg-secondary/25 focus-visible:bg-secondary/25 focus-visible:outline-none"
@@ -471,16 +468,6 @@ export default function CasosScreen() {
           setFaseInterna("");
           setSoloActivos(true);
           setPage(1);
-        }}
-      />
-
-      <CasoDetalleDialog
-        casoId={casoSeleccionadoId}
-        open={casoSeleccionadoId !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setCasoSeleccionadoId(null);
-          }
         }}
       />
     </div>

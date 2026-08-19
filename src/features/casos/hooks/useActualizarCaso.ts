@@ -26,6 +26,9 @@ export function useActualizarCaso() {
           queryKey: ["casos", "detalle", variables.casoId],
         }),
         queryClient.invalidateQueries({
+          queryKey: ["expedientes"],
+        }),
+        queryClient.invalidateQueries({
           queryKey: ["clientes"],
         }),
       ]);

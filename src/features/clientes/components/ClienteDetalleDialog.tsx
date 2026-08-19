@@ -390,6 +390,7 @@ export default function ClienteDetalleDialog({
                     <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
 
                     <div>
+
                       <p className="font-medium text-destructive">
                         No pudimos cambiar el estado del cliente
                       </p>
