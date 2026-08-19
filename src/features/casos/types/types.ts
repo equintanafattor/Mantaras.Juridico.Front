@@ -33,6 +33,7 @@ export type ExpedienteCasoDetalleResponse = {
   juzgado: string | null;
   fechaInicio: string | null;
   estadoLegal: string | null;
+  observaciones: string | null;
   activo: boolean;
 };
 
@@ -85,3 +86,5 @@ export type CrearCasoRequest = {
 };
 
 export type ActualizarCasoRequest = CrearCasoRequest;
+
+

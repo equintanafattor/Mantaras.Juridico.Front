@@ -27,6 +27,7 @@ export type ExpedienteFormState = {
   juzgado: string;
   fechaInicio: string;
   estadoLegal: string;
+  observaciones: string;
 };
 
 export const FORM_EXPEDIENTE_INICIAL: ExpedienteFormState = {
@@ -38,6 +39,7 @@ export const FORM_EXPEDIENTE_INICIAL: ExpedienteFormState = {
   juzgado: "",
   fechaInicio: "",
   estadoLegal: "",
+  observaciones: "",
 };
 
 export function crearFormDesdeExpediente(
@@ -52,6 +54,7 @@ export function crearFormDesdeExpediente(
     juzgado: expediente.juzgado ?? "",
     fechaInicio: expediente.fechaInicio ?? "",
     estadoLegal: expediente.estadoLegal ?? "",
+    observaciones: expediente.observaciones ?? "",
   };
 }
 
@@ -108,6 +111,7 @@ export function crearRequestDesdeForm(
     juzgado: normalizarOpcional(form.juzgado),
     fechaInicio: normalizarOpcional(form.fechaInicio),
     estadoLegal: normalizarOpcional(form.estadoLegal),
+    observaciones: normalizarOpcional(form.observaciones),
   };
 }
 
@@ -122,6 +126,7 @@ export function crearActualizarRequestDesdeForm(
     juzgado: normalizarOpcional(form.juzgado),
     fechaInicio: normalizarOpcional(form.fechaInicio),
     estadoLegal: normalizarOpcional(form.estadoLegal),
+    observaciones: normalizarOpcional(form.observaciones),
   };
 }
 
