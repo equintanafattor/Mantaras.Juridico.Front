@@ -9,6 +9,7 @@ import {
   Loader2,
   Plus,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import ExpedienteDetalleDialog from "@/features/expedientes/components/ExpedienteDetalleDialog";
 import NuevoExpedienteDialog from "@/features/expedientes/components/NuevoExpedienteDialog";
 
 import { useActualizarCaso } from "../hooks/useActualizarCaso";
@@ -89,12 +89,9 @@ export default function CasoDetalleDialog({
   open,
   onOpenChange,
 }: CasoDetalleDialogProps) {
+  const router = useRouter();
   const [form, setForm] = useState<CasoFormState>(FORM_CASO_INICIAL);
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
-
-  const [expedienteSeleccionadoId, setExpedienteSeleccionadoId] = useState<
-    number | null
-  >(null);
 
   const [nuevoExpedienteOpen, setNuevoExpedienteOpen] = useState(false);
 
@@ -138,12 +135,16 @@ export default function CasoDetalleDialog({
     if (!nextOpen) {
       setForm(FORM_CASO_INICIAL);
       setAccionEstado(null);
-      setExpedienteSeleccionadoId(null);
       setNuevoExpedienteOpen(false);
 
       actualizarMutation.reset();
       cambiarEstadoMutation.reset();
     }
+  };
+
+  const abrirExpediente = (expedienteId: number) => {
+    cambiarApertura(false);
+    router.push(`/expedientes/${expedienteId}`);
   };
 
   const guardar = async (event: FormEvent<HTMLFormElement>) => {
@@ -313,7 +314,7 @@ export default function CasoDetalleDialog({
                           type="button"
                           disabled={operacionPendiente}
                           onClick={() =>
-                            setExpedienteSeleccionadoId(expediente.expedienteId)
+                            abrirExpediente(expediente.expedienteId)
                           }
                           className="group flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-secondary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60 sm:px-5"
                         >
@@ -534,17 +535,6 @@ export default function CasoDetalleDialog({
           bloquearCaso
           onExpedienteCreado={() => {
             casoQuery.refetch();
-          }}
-        />
-
-        <ExpedienteDetalleDialog
-          expedienteId={expedienteSeleccionadoId}
-          open={expedienteSeleccionadoId !== null}
-          onOpenChange={(nextOpen) => {
-            if (!nextOpen) {
-              setExpedienteSeleccionadoId(null);
-              casoQuery.refetch();
-            }
           }}
         />
       </DialogContent>

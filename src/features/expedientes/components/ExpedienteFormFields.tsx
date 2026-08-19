@@ -210,6 +210,10 @@ export default function ExpedienteFormFields({
   };
 
   const esPrincipal = form.tipoExpediente === "Principal";
+  const expedienteActualEsPrincipal =
+    modo === "editar" &&
+    form.tipoExpediente === "Principal" &&
+    expedientePrincipal === null;
 
   return (
     <div className="space-y-6">
@@ -334,16 +338,18 @@ export default function ExpedienteFormFields({
           !expedientesQuery.isLoading &&
           !expedientesQuery.isError && (
             <div className="flex items-start gap-3 rounded-lg border bg-muted/30 p-4 text-sm sm:col-span-2">
-              {expedientePrincipal ? (
+              {expedientePrincipal || expedienteActualEsPrincipal ? (
                 <FolderTree className="mt-0.5 size-4 shrink-0 text-primary" />
               ) : (
                 <FileText className="mt-0.5 size-4 shrink-0 text-primary" />
               )}
 
               <p className="text-muted-foreground">
-                {expedientePrincipal
-                  ? "Este caso ya tiene un expediente principal. El nuevo expediente deberá relacionarse como incidente, apelación o ejecución."
-                  : "Este caso todavía no tiene expediente principal. Debés crear el principal antes de registrar expedientes derivados."}
+                {expedienteActualEsPrincipal
+                  ? "Este es el expediente principal del caso y no requiere un expediente padre."
+                  : expedientePrincipal
+                    ? "Este caso ya tiene un expediente principal. El expediente deberá relacionarse como incidente, apelación o ejecución."
+                    : "Este caso todavía no tiene expediente principal. Debés crear el principal antes de registrar expedientes derivados."}
               </p>
             </div>
           )}

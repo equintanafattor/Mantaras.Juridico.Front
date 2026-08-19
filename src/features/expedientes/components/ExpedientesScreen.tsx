@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Search,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,6 @@ import { useCasos } from "@/features/casos/hooks/useCasos";
 import { useExpedientes } from "../hooks/useExpedientes";
 import type { ExpedienteResponse, TipoExpediente } from "../types/types";
 
-import ExpedienteDetalleDialog from "./ExpedienteDetalleDialog";
 import NuevoExpedienteDialog from "./NuevoExpedienteDialog";
 
 const PAGE_SIZE = 10;
@@ -174,14 +174,11 @@ function ExpedienteMobileCard({
 }
 
 export default function ExpedientesScreen() {
+  const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
   const [casoId, setCasoId] = useState<number | "">("");
   const [soloActivos, setSoloActivos] = useState(true);
   const [page, setPage] = useState(1);
-
-  const [expedienteSeleccionadoId, setExpedienteSeleccionadoId] = useState<
-    number | null
-  >(null);
 
   const [nuevoExpedienteOpen, setNuevoExpedienteOpen] = useState(false);
 
@@ -381,7 +378,7 @@ export default function ExpedientesScreen() {
                   key={expediente.expedienteId}
                   expediente={expediente}
                   onSelect={() =>
-                    setExpedienteSeleccionadoId(expediente.expedienteId)
+                    router.push(`/expedientes/${expediente.expedienteId}`)
                   }
                 />
               ))}
@@ -418,14 +415,16 @@ export default function ExpedientesScreen() {
                           tabIndex={0}
                           role="button"
                           onClick={() =>
-                            setExpedienteSeleccionadoId(expediente.expedienteId)
+                            router.push(
+                              `/expedientes/${expediente.expedienteId}`,
+                            )
                           }
                           onKeyDown={(event) => {
                             if (event.key === "Enter" || event.key === " ") {
                               event.preventDefault();
 
-                              setExpedienteSeleccionadoId(
-                                expediente.expedienteId,
+                              router.push(
+                                `/expedientes/${expediente.expedienteId}`,
                               );
                             }
                           }}
@@ -532,16 +531,6 @@ export default function ExpedientesScreen() {
           setCasoId("");
           setSoloActivos(true);
           setPage(1);
-        }}
-      />
-
-      <ExpedienteDetalleDialog
-        expedienteId={expedienteSeleccionadoId}
-        open={expedienteSeleccionadoId !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setExpedienteSeleccionadoId(null);
-          }
         }}
       />
     </div>
