@@ -19,12 +19,20 @@ export function useActualizarCliente() {
       mutationFn: ({ clienteId, request }) =>
         actualizarCliente(clienteId, request),
 
-      onSuccess: (cliente, variables) => {
+      onSuccess: async (cliente, variables) => {
         queryClient.setQueryData(["cliente", variables.clienteId], cliente);
 
-        void queryClient.invalidateQueries({
-          queryKey: ["clientes"],
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["clientes"],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["casos"],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["expedientes"],
+          }),
+        ]);
       },
     },
   );

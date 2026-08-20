@@ -11,6 +11,7 @@ import {
   UserRound,
   UsersRound,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useClientes } from "../hooks/useClientes";
 import type { ClienteResponse } from "../types/types";
 
-import ClienteDetalleDialog from "./ClienteDetalleDialog";
 import NuevoClienteDialog from "./NuevoClienteDialog";
 
 const PAGE_SIZE = 10;
@@ -152,14 +152,11 @@ function ClienteMobileCard({
 }
 
 export default function ClientesScreen() {
+  const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
   const [soloActivos, setSoloActivos] = useState(true);
   const [page, setPage] = useState(1);
   const [nuevoClienteOpen, setNuevoClienteOpen] = useState(false);
-
-  const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState<
-    number | null
-  >(null);
 
   const busquedaDebounced = useDebouncedValue(busqueda.trim(), 400);
 
@@ -315,7 +312,7 @@ export default function ClientesScreen() {
                 <ClienteMobileCard
                   key={cliente.clienteId}
                   cliente={cliente}
-                  onSelect={() => setClienteSeleccionadoId(cliente.clienteId)}
+                  onSelect={() => router.push(`/clientes/${cliente.clienteId}`)}
                 />
               ))}
             </div>
@@ -345,12 +342,12 @@ export default function ClientesScreen() {
                         tabIndex={0}
                         role="button"
                         onClick={() =>
-                          setClienteSeleccionadoId(cliente.clienteId)
+                          router.push(`/clientes/${cliente.clienteId}`)
                         }
                         onKeyDown={(event) => {
                           if (event.key === "Enter" || event.key === " ") {
                             event.preventDefault();
-                            setClienteSeleccionadoId(cliente.clienteId);
+                            router.push(`/clientes/${cliente.clienteId}`);
                           }
                         }}
                         className="group cursor-pointer transition-colors hover:bg-secondary/25 focus-visible:bg-secondary/25 focus-visible:outline-none"
@@ -441,16 +438,6 @@ export default function ClientesScreen() {
           setBusqueda("");
           setSoloActivos(true);
           setPage(1);
-        }}
-      />
-
-      <ClienteDetalleDialog
-        clienteId={clienteSeleccionadoId}
-        open={clienteSeleccionadoId !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setClienteSeleccionadoId(null);
-          }
         }}
       />
     </div>
