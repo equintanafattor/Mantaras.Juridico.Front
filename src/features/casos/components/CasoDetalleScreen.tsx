@@ -744,7 +744,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
             </div>
 
             <aside className="space-y-6">
-              <section className="overflow-hidden rounded-lg border bg-card">
+              <section className="hidden overflow-hidden rounded-lg border bg-card lg:block">
                 <header className="border-b bg-muted/30 px-5 py-4">
                   <h2 className="text-sm font-semibold">Cliente principal</h2>
                 </header>
