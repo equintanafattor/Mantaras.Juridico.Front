@@ -32,6 +32,8 @@ import ExpedienteFormFields, {
   type ExpedienteFormState,
 } from "./ExpedienteFormFields";
 
+import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
+
 type ExpedienteDetalleScreenProps = {
   expedienteId: number;
 };
@@ -414,7 +416,7 @@ export default function ExpedienteDetalleScreen({
               <h2 className="font-semibold">Editar expediente</h2>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                Modificá los datos procesales y las observaciones internas.
+                Modificá los datos procesales y sus relaciones.
               </p>
             </div>
 
@@ -599,27 +601,10 @@ export default function ExpedienteDetalleScreen({
                 </dl>
               </section>
 
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="border-b bg-muted/30 px-5 py-4">
-                  <h2 className="text-sm font-semibold">Observaciones</h2>
-
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Información interna relevante sobre el expediente.
-                  </p>
-                </header>
-
-                <div className="p-5">
-                  {expediente.observaciones?.trim() ? (
-                    <p className="whitespace-pre-wrap text-sm leading-7">
-                      {expediente.observaciones}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      No hay observaciones registradas.
-                    </p>
-                  )}
-                </div>
-              </section>
+              <HistorialObservaciones
+                entidad="expedientes"
+                propietarioId={expedienteId}
+              />
 
               <section className="overflow-hidden rounded-lg border bg-card">
                 <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">

@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 import type {
   ActualizarClienteRequest,
@@ -19,7 +18,6 @@ export type ClienteFormState = {
   domicilio: string;
   localidad: string;
   provincia: string;
-  observaciones: string;
 };
 
 export const FORM_CLIENTE_INICIAL: ClienteFormState = {
@@ -34,7 +32,6 @@ export const FORM_CLIENTE_INICIAL: ClienteFormState = {
   domicilio: "",
   localidad: "",
   provincia: "",
-  observaciones: "",
 };
 
 function nullable(value: string): string | null {
@@ -57,7 +54,6 @@ export function crearFormDesdeCliente(
     domicilio: cliente.domicilio ?? "",
     localidad: cliente.localidad ?? "",
     provincia: cliente.provincia ?? "",
-    observaciones: cliente.observaciones ?? "",
   };
 }
 
@@ -76,7 +72,6 @@ export function crearRequestDesdeForm(
     domicilio: nullable(form.domicilio),
     localidad: nullable(form.localidad),
     provincia: nullable(form.provincia),
-    observaciones: nullable(form.observaciones),
   };
 }
 
@@ -256,19 +251,6 @@ export default function ClienteFormFields({
             />
           </div>
         </div>
-      </section>
-
-      <section className="space-y-2 border-t pt-5">
-        <Label htmlFor={`${prefijo}-observaciones`}>Observaciones</Label>
-        <Textarea
-          id={`${prefijo}-observaciones`}
-          value={form.observaciones}
-          onChange={(event) => onChange("observaciones", event.target.value)}
-          maxLength={2000}
-          rows={4}
-          placeholder="Información adicional del cliente..."
-          disabled={disabled}
-        />
       </section>
     </>
   );

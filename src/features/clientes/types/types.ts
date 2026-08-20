@@ -11,7 +11,6 @@ export type ClienteResponse = {
   domicilio: string | null;
   localidad: string | null;
   provincia: string | null;
-  observaciones: string | null;
   fechaCreacion: string;
   activo: boolean;
 };
@@ -32,7 +31,6 @@ export type CasoClienteDetalleResponse = {
   titulo: string;
   faseInterna: string | number;
   tipoTramite: string | null;
-  observaciones: string | null;
   tipoParticipacion: string | number;
   esPrincipal: boolean;
   activo: boolean;
@@ -73,7 +71,6 @@ export type CrearClienteRequest = {
   domicilio: string | null;
   localidad: string | null;
   provincia: string | null;
-  observaciones: string | null;
 };
 
 export type ActualizarClienteRequest = CrearClienteRequest;

@@ -2,7 +2,6 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 import type { ExpedienteFormState } from "./ExpedienteFormFields";
 
@@ -100,23 +99,6 @@ export default function ExpedienteDatosFormFields({
           placeholder="Ej.: Iniciado, en trámite, elevado a Cámara..."
           onChange={(event) =>
             actualizarCampo("estadoLegal", event.target.value)
-          }
-        />
-      </div>
-
-      <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor={`${idPrefix}-observaciones`}>Observaciones</Label>
-
-        <Textarea
-          id={`${idPrefix}-observaciones`}
-          value={form.observaciones}
-          disabled={disabled}
-          maxLength={2000}
-          rows={4}
-          placeholder="Notas internas relevantes sobre el expediente..."
-          className="resize-y"
-          onChange={(event) =>
-            actualizarCampo("observaciones", event.target.value)
           }
         />
       </div>

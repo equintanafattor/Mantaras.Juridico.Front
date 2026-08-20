@@ -36,6 +36,8 @@ import ClienteFormFields, {
   type ClienteFormState,
 } from "./ClienteFormFields";
 
+import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
+
 type ClienteDetalleScreenProps = {
   clienteId: number;
 };
@@ -489,7 +491,7 @@ export default function ClienteDetalleScreen({
               <h2 className="font-semibold">Editar cliente</h2>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                Modificá sus datos personales, de contacto y observaciones.
+                Modificá sus datos personales y de contacto.
               </p>
             </div>
 
@@ -720,27 +722,10 @@ export default function ClienteDetalleScreen({
                 </dl>
               </section>
 
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="border-b bg-muted/30 px-5 py-4">
-                  <h2 className="text-sm font-semibold">Observaciones</h2>
-
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Información interna relevante sobre el cliente.
-                  </p>
-                </header>
-
-                <div className="p-5">
-                  {cliente.observaciones?.trim() ? (
-                    <p className="whitespace-pre-wrap text-sm leading-7">
-                      {cliente.observaciones}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      No hay observaciones registradas.
-                    </p>
-                  )}
-                </div>
-              </section>
+              <HistorialObservaciones
+                entidad="clientes"
+                propietarioId={clienteId}
+              />
 
               <section className="overflow-hidden rounded-lg border bg-card">
                 <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">

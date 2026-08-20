@@ -122,7 +122,6 @@ function crearExpedientePrincipalRequestDesdeForm(
     juzgado: normalizarOpcional(form.juzgado),
     fechaInicio: normalizarOpcional(form.fechaInicio),
     estadoLegal: normalizarOpcional(form.estadoLegal),
-    observaciones: normalizarOpcional(form.observaciones),
   };
 }
 
@@ -240,15 +239,6 @@ function ResumenCreacion({
             <dt className="text-xs text-muted-foreground">Tipo de trámite</dt>
             <dd className="mt-1">{mostrarResumen(caso.tipoTramite)}</dd>
           </div>
-
-          {caso.observaciones.trim() && (
-            <div className="sm:col-span-2">
-              <dt className="text-xs text-muted-foreground">Observaciones</dt>
-              <dd className="mt-1 whitespace-pre-wrap leading-6">
-                {caso.observaciones.trim()}
-              </dd>
-            </div>
-          )}
         </dl>
 
         <div className="border-t px-4 py-4 sm:px-5">
@@ -346,16 +336,6 @@ function ResumenCreacion({
             <dt className="text-xs text-muted-foreground">Estado legal</dt>
             <dd className="mt-1">{mostrarResumen(expediente.estadoLegal)}</dd>
           </div>
-
-          {expediente.observaciones.trim() && (
-            <div className="sm:col-span-2">
-              <dt className="text-xs text-muted-foreground">Observaciones</dt>
-
-              <dd className="mt-1 whitespace-pre-wrap leading-6">
-                {expediente.observaciones.trim()}
-              </dd>
-            </div>
-          )}
         </dl>
       </section>
 

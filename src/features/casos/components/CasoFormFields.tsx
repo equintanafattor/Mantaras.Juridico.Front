@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 import { useClientes } from "@/features/clientes/hooks/useClientes";
@@ -34,7 +33,6 @@ export type CasoFormState = {
   titulo: string;
   faseInterna: FaseCaso;
   tipoTramite: string;
-  observaciones: string;
   clientes: CasoParticipanteForm[];
 };
 
@@ -42,7 +40,6 @@ export const FORM_CASO_INICIAL: CasoFormState = {
   titulo: "",
   faseInterna: "Preadministrativa",
   tipoTramite: "",
-  observaciones: "",
   clientes: [],
 };
 
@@ -51,7 +48,6 @@ export function crearFormDesdeCaso(caso: CasoDetalleResponse): CasoFormState {
     titulo: caso.titulo,
     faseInterna: caso.faseInterna,
     tipoTramite: caso.tipoTramite ?? "",
-    observaciones: caso.observaciones ?? "",
     clientes: caso.clientes.map((cliente) => ({
       clienteId: cliente.clienteId,
       nombreCompleto: cliente.nombreCompleto,
@@ -91,7 +87,6 @@ export function crearRequestDesdeForm(form: CasoFormState): CrearCasoRequest {
     titulo: form.titulo.trim(),
     faseInterna: form.faseInterna,
     tipoTramite: normalizarOpcional(form.tipoTramite),
-    observaciones: normalizarOpcional(form.observaciones),
     clientes: form.clientes.map((cliente) => ({
       clienteId: cliente.clienteId,
       tipoParticipacion: cliente.tipoParticipacion,
@@ -287,22 +282,6 @@ export default function CasoFormFields({
             placeholder="Ej.: Reajuste previsional"
             onChange={(event) =>
               actualizarCampo("tipoTramite", event.target.value)
-            }
-          />
-        </div>
-
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="caso-observaciones">Observaciones</Label>
-
-          <Textarea
-            id="caso-observaciones"
-            value={form.observaciones}
-            disabled={disabled}
-            maxLength={2000}
-            rows={4}
-            placeholder="Información interna relevante para el caso..."
-            onChange={(event) =>
-              actualizarCampo("observaciones", event.target.value)
             }
           />
         </div>

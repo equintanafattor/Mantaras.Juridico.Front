@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import NuevoExpedienteDialog from "@/features/expedientes/components/NuevoExpedienteDialog";
+import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
 
 import { useActualizarCaso } from "../hooks/useActualizarCaso";
 import { useCambiarEstadoCaso } from "../hooks/useCambiarEstadoCaso";
@@ -659,27 +660,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                 </dl>
               </section>
 
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="border-b bg-muted/30 px-5 py-4">
-                  <h2 className="text-sm font-semibold">Observaciones</h2>
-
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Información interna relevante para el seguimiento.
-                  </p>
-                </header>
-
-                <div className="p-5">
-                  {caso.observaciones?.trim() ? (
-                    <p className="whitespace-pre-wrap text-sm leading-7">
-                      {caso.observaciones}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      No hay observaciones registradas.
-                    </p>
-                  )}
-                </div>
-              </section>
+              <HistorialObservaciones entidad="casos" propietarioId={casoId} />
 
               <section className="overflow-hidden rounded-lg border bg-card">
                 <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
