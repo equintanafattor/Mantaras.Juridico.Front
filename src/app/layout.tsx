@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mántaras Jurídico",
-  description: "Sistema de gestión para el estudio jurídico Mántaras",
+  title: "Mántaras Quintana Jurídico",
+  description: "Sistema de gestión para el estudio jurídico Mántaras Quintana",
 };
 
 export default function RootLayout({

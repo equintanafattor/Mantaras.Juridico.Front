@@ -108,18 +108,18 @@ function Navigation({ isAdmin }: { isAdmin: boolean }) {
 
 function Brand() {
   return (
-    <Link href="/" className="flex items-center gap-3">
+    <Link href="/" className="flex min-w-0 items-center gap-3">
       <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
         <Landmark className="size-5" />
       </span>
 
-      <span className="flex min-w-0 flex-col">
+      <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-[15px] font-semibold tracking-tight text-sidebar-foreground">
-          Mántaras Jurídico
+          Mántaras Quintana
         </span>
 
         <span className="truncate text-xs text-sidebar-foreground/55">
-          Gestión del estudio
+          Estudio jurídico
         </span>
       </span>
     </Link>
@@ -294,8 +294,8 @@ export default function AppShell({ children }: AppShellProps) {
               </SheetContent>
             </Sheet>
 
-            <span className="font-semibold tracking-tight sm:hidden">
-              Mántaras Jurídico
+            <span className="max-w-[10rem] truncate font-semibold tracking-tight sm:hidden">
+              Mántaras Quintana
             </span>
           </div>
 
@@ -305,7 +305,7 @@ export default function AppShell({ children }: AppShellProps) {
             </p>
 
             <p className="mt-0.5 text-sm font-semibold text-foreground">
-              {currentNavigationItem?.label ?? "Mántaras Jurídico"}
+              {currentNavigationItem?.label ?? "Mántaras Quintana"}
             </p>
           </div>
 

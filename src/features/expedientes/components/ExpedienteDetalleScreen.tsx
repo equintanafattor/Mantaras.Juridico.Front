@@ -416,7 +416,7 @@ export default function ExpedienteDetalleScreen({
               <h2 className="font-semibold">Editar expediente</h2>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                Modificá los datos procesales y sus relaciones.
+                Modificá los datos procesales y sus relaciones.|
               </p>
             </div>
 
