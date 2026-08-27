@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import {
   AlertCircle,
   Clock3,
@@ -22,23 +23,30 @@ import type { EntidadObservacion } from "../types/types";
 type HistorialObservacionesProps = {
   entidad: EntidadObservacion;
   propietarioId: number;
+  mostrarTodos?: boolean;
 };
 
 function formatearFechaHora(value: string) {
+  const fecha = new Date(value);
+
+  if (Number.isNaN(fecha.getTime())) {
+    return "Fecha no disponible";
+  }
+
   return new Intl.DateTimeFormat("es-AR", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(fecha);
 }
 
 export default function HistorialObservaciones({
   entidad,
   propietarioId,
+  mostrarTodos = false,
 }: HistorialObservacionesProps) {
   const [texto, setTexto] = useState("");
 
   const observacionesQuery = useObservaciones(entidad, propietarioId);
-
   const crearObservacionMutation = useCrearObservacion(entidad, propietarioId);
 
   const textoNormalizado = texto.trim();
@@ -62,20 +70,32 @@ export default function HistorialObservaciones({
   const guardar = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!puedeGuardar) {
-      return;
-    }
+    if (!puedeGuardar) return;
 
     try {
       await crearObservacionMutation.mutateAsync(textoNormalizado);
-
       setTexto("");
     } catch {
       // El error se muestra mediante la mutation.
     }
   };
 
-  const observaciones = observacionesQuery.data ?? [];
+  const esMovimiento = entidad !== "clientes";
+  const esResumen = esMovimiento && !mostrarTodos;
+  const plural = esMovimiento ? "movimientos" : "observaciones";
+
+  const datos = observacionesQuery.data ?? [];
+
+  const observaciones = esMovimiento
+    ? [...datos].sort(
+        (a, b) =>
+          (Date.parse(b.fechaCreacion) || 0) -
+            (Date.parse(a.fechaCreacion) || 0) ||
+          b.observacionId - a.observacionId,
+      )
+    : datos;
+
+  const visibles = esResumen ? observaciones.slice(0, 3) : observaciones;
 
   return (
     <section className="overflow-hidden rounded-lg border bg-card">
@@ -85,16 +105,24 @@ export default function HistorialObservaciones({
 
           <div>
             <h2 className="text-sm font-semibold">
-              Historial de observaciones
+              {esMovimiento
+                ? mostrarTodos
+                  ? "Historial de movimientos"
+                  : "Movimientos"
+                : "Historial de observaciones"}
             </h2>
 
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Notas internas registradas en orden cronológico.
+              {esResumen
+                ? "Los últimos tres movimientos, del más reciente al más antiguo."
+                : esMovimiento
+                  ? "Historial completo, del más reciente al más antiguo."
+                  : "Notas internas registradas en orden cronológico."}
             </p>
           </div>
         </div>
 
-        {!observacionesQuery.isLoading && (
+        {observacionesQuery.isSuccess && (
           <Badge variant="outline">{observaciones.length}</Badge>
         )}
       </header>
@@ -104,7 +132,7 @@ export default function HistorialObservaciones({
           htmlFor={`observacion-${entidad}-${propietarioId}`}
           className="text-sm font-medium"
         >
-          Nueva observación
+          {esMovimiento ? "Nuevo movimiento" : "Nueva observación"}
         </label>
 
         <Textarea
@@ -114,7 +142,11 @@ export default function HistorialObservaciones({
           maxLength={2000}
           rows={3}
           className="mt-2 resize-y bg-background"
-          placeholder="Escribí una nota interna relevante..."
+          placeholder={
+            esMovimiento
+              ? "Escribí el movimiento del expediente..."
+              : "Escribí una nota interna relevante..."
+          }
           aria-describedby={`observacion-ayuda-${entidad}-${propietarioId}`}
           onChange={(event) => cambiarTexto(event.target.value)}
         />
@@ -124,8 +156,9 @@ export default function HistorialObservaciones({
             id={`observacion-ayuda-${entidad}-${propietarioId}`}
             className="text-xs text-muted-foreground"
           >
-            La observación quedará registrada con tu usuario y no podrá
-            modificarse.
+            {esMovimiento
+              ? "El movimiento quedará registrado con tu usuario y no podrá modificarse."
+              : "La observación quedará registrada con tu usuario y no podrá modificarse."}
           </p>
 
           <div className="flex items-center justify-between gap-3 sm:justify-end">
@@ -142,7 +175,9 @@ export default function HistorialObservaciones({
 
               {crearObservacionMutation.isPending
                 ? "Agregando..."
-                : "Agregar observación"}
+                : esMovimiento
+                  ? "Agregar movimiento"
+                  : "Agregar observación"}
             </Button>
           </div>
         </div>
@@ -152,7 +187,9 @@ export default function HistorialObservaciones({
             role="status"
             className="mt-4 rounded-md border border-emerald-700/20 bg-emerald-600/5 p-3 text-sm text-emerald-800 dark:text-emerald-300"
           >
-            La observación se agregó correctamente.
+            {esMovimiento
+              ? "El movimiento se agregó correctamente."
+              : "La observación se agregó correctamente."}
           </div>
         )}
 
@@ -166,7 +203,9 @@ export default function HistorialObservaciones({
             <p className="text-muted-foreground">
               {crearObservacionMutation.error instanceof Error
                 ? crearObservacionMutation.error.message
-                : "No pudimos agregar la observación."}
+                : esMovimiento
+                  ? "No pudimos agregar el movimiento."
+                  : "No pudimos agregar la observación."}
             </p>
           </div>
         )}
@@ -194,7 +233,8 @@ export default function HistorialObservaciones({
           <AlertCircle className="size-5 text-destructive" />
 
           <p className="mt-3 text-sm font-medium">
-            No pudimos cargar las observaciones
+            No pudimos cargar{" "}
+            {esMovimiento ? "los movimientos" : "las observaciones"}
           </p>
 
           <Button
@@ -213,15 +253,17 @@ export default function HistorialObservaciones({
             <MessageSquareText className="size-4" />
           </span>
 
-          <p className="mt-3 text-sm font-medium">Sin observaciones</p>
+          <p className="mt-3 text-sm font-medium">Sin {plural}</p>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Todavía no se registraron notas en este historial.
+            {esMovimiento
+              ? "Todavía no se registraron movimientos en este expediente."
+              : "Todavía no se registraron notas en este historial."}
           </p>
         </div>
       ) : (
         <ol className="divide-y">
-          {observaciones.map((observacion) => (
+          {visibles.map((observacion) => (
             <li
               key={observacion.observacionId}
               className="flex items-start gap-3 p-5"
@@ -233,7 +275,7 @@ export default function HistorialObservaciones({
               <article className="min-w-0 flex-1">
                 <header className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <p className="truncate text-sm font-medium">
-                    {observacion.usuarioCreacion}
+                    {observacion.usuarioCreacion || "Usuario no informado"}
                   </p>
 
                   <p className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
@@ -249,6 +291,21 @@ export default function HistorialObservaciones({
             </li>
           ))}
         </ol>
+      )}
+
+      {esResumen && observacionesQuery.isSuccess && (
+        <footer className="flex flex-wrap items-center justify-between gap-3 border-t bg-muted/10 px-5 py-4">
+          <p className="text-xs text-muted-foreground">
+            Mostrando {visibles.length} de {observaciones.length} movimientos.
+          </p>
+
+          <Link
+            href={`/${entidad}/${propietarioId}/movimientos`}
+            className="rounded-md text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Ver historial completo
+          </Link>
+        </footer>
       )}
     </section>
   );
