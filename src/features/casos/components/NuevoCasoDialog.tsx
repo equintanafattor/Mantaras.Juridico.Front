@@ -1,5 +1,7 @@
 "use client";
 
+import { esCasoFormValido } from "@/features/casos/lib/casoForm";
+
 import { FormEvent, useState } from "react";
 import { AlertCircle, BriefcaseBusiness, Loader2 } from "lucide-react";
 
@@ -35,10 +37,7 @@ export default function NuevoCasoDialog({
 
   const crearCasoMutation = useCrearCaso();
 
-  const formularioValido =
-    form.titulo.trim().length > 0 &&
-    form.clientes.length > 0 &&
-    form.clientes.filter((cliente) => cliente.esPrincipal).length === 1;
+  const formularioValido = esCasoFormValido(form);
 
   const actualizarForm = (nextForm: CasoFormState) => {
     setForm(nextForm);
@@ -93,7 +92,7 @@ export default function NuevoCasoDialog({
             </span>
 
             <div>
-              <DialogTitle>Nuevo caso</DialogTitle>
+              <DialogTitle>Nuevo expediente administrativo</DialogTitle>
 
               <DialogDescription className="mt-1">
                 Registrá el asunto jurídico y asociá sus participantes.
@@ -119,7 +118,7 @@ export default function NuevoCasoDialog({
 
                 <div>
                   <p className="font-medium text-destructive">
-                    No pudimos crear el caso
+                    No pudimos crear el expediente administrativo
                   </p>
 
                   <p className="mt-1 text-muted-foreground">
@@ -150,7 +149,7 @@ export default function NuevoCasoDialog({
                 <Loader2 className="animate-spin" />
               )}
 
-              {crearCasoMutation.isPending ? "Guardando..." : "Guardar caso"}
+              {crearCasoMutation.isPending ? "Guardando..." : "Guardar expediente administrativo"}
             </Button>
           </footer>
         </form>

@@ -1,6 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
+
+import { esCasoFormValido } from "@/features/casos/lib/casoForm";
+
+import { FormEvent, useState } from "react";
 import {
   AlertCircle,
   ArrowLeft,
@@ -275,16 +279,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
   const operacionPendiente =
     actualizarMutation.isPending || cambiarEstadoMutation.isPending;
 
-  const formularioValido =
-    form.titulo.trim().length > 0 &&
-    form.clientes.length > 0 &&
-    form.clientes.filter((cliente) => cliente.esPrincipal).length === 1;
-
-  useEffect(() => {
-    if (casoQuery.data && !modoEdicion) {
-      setForm(crearFormDesdeCaso(casoQuery.data));
-    }
-  }, [casoQuery.data, modoEdicion]);
+  const formularioValido = esCasoFormValido(form);
 
   const resetearMensajes = () => {
     if (actualizarMutation.isError || actualizarMutation.isSuccess) {
@@ -382,18 +377,18 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
           className="inline-flex h-9 w-fit items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <ArrowLeft className="size-4" />
-          Volver a casos
+          Volver a expedientes administrativos
         </Link>
 
         <section className="flex flex-col items-center rounded-lg border border-destructive/30 bg-card px-6 py-12 text-center">
           <AlertCircle className="size-6 text-destructive" />
 
-          <h1 className="mt-4 font-semibold">No pudimos cargar el caso</h1>
+          <h1 className="mt-4 font-semibold">No pudimos cargar el expediente administrativo</h1>
 
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
             {casoQuery.error instanceof Error
               ? casoQuery.error.message
-              : "El caso solicitado no existe o no está disponible."}
+              : "El expediente administrativo solicitado no existe o no está disponible."}
           </p>
 
           <Button
@@ -419,7 +414,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
         className="inline-flex h-9 w-fit items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <ArrowLeft className="size-4" />
-        Volver a casos
+        Volver a expedientes administrativos
       </Link>
 
       <header className="flex flex-col gap-5 border-b pb-6 lg:flex-row lg:items-start lg:justify-between">
@@ -430,7 +425,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
 
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-              Caso
+              Expediente administrativo
             </p>
 
             <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -458,7 +453,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                 onClick={() => setNuevoExpedienteOpen(true)}
               >
                 <Plus />
-                Nuevo expediente
+                Nuevo expediente judicial
               </Button>
             )}
 
@@ -469,7 +464,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
               onClick={iniciarEdicion}
             >
               <Pencil />
-              Editar caso
+              Editar expediente administrativo
             </Button>
 
             <Button
@@ -490,7 +485,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
         <form className="space-y-6" onSubmit={guardar}>
           <section className="rounded-lg border bg-card p-5 sm:p-6">
             <div className="mb-6">
-              <h2 className="font-semibold">Editar caso</h2>
+              <h2 className="font-semibold">Editar expediente administrativo</h2>
 
               <p className="mt-1 text-sm text-muted-foreground">
                 Modificá los datos internos y sus participantes.
@@ -513,7 +508,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
 
               <div>
                 <p className="font-medium text-destructive">
-                  No pudimos actualizar el caso
+                  No pudimos actualizar el expediente administrativo
                 </p>
 
                 <p className="mt-1 text-muted-foreground">
@@ -555,14 +550,14 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
             <section className="rounded-lg border border-sidebar-primary/30 bg-accent/45 p-5">
               <h2 className="font-medium">
                 {accionEstado === "darDeBaja"
-                  ? "¿Dar de baja el caso?"
-                  : "¿Restaurar el caso?"}
+                  ? "¿Dar de baja el expediente administrativo?"
+                  : "¿Restaurar el expediente administrativo?"}
               </h2>
 
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 {accionEstado === "darDeBaja"
-                  ? "No podrá darse de baja mientras tenga expedientes activos."
-                  : "El caso volverá a aparecer entre los activos. Sus expedientes deberán restaurarse individualmente."}
+                  ? "No podrá darse de baja mientras tenga expedientes judiciales activos."
+                  : "El expediente administrativo volverá a aparecer entre los activos. Sus expedientes judiciales deberán restaurarse individualmente."}
               </p>
 
               <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -611,7 +606,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
               role="status"
               className="rounded-lg border border-emerald-700/20 bg-emerald-600/5 p-4 text-sm text-emerald-800 dark:text-emerald-300"
             >
-              El estado del caso se actualizó correctamente.
+              El estado del expediente administrativo se actualizó correctamente.
             </div>
           )}
 
@@ -625,7 +620,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
               <p className="text-muted-foreground">
                 {cambiarEstadoMutation.error instanceof Error
                   ? cambiarEstadoMutation.error.message
-                  : "No pudimos cambiar el estado del caso."}
+                  : "No pudimos cambiar el estado del expediente administrativo."}
               </p>
             </div>
           )}
@@ -638,7 +633,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
 
                   <div>
                     <h2 className="text-sm font-semibold">
-                      Información del caso
+                      Información del expediente administrativo
                     </h2>
 
                     <p className="mt-0.5 text-xs text-muted-foreground">
@@ -660,6 +655,8 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                 </dl>
               </section>
 
+              <section className="rounded-lg border bg-card p-5"><h2 className="mb-4 text-sm font-semibold">Datos administrativos</h2><DatosAdministrativosResumen datos={caso} /></section>
+
               <HistorialObservaciones entidad="casos" propietarioId={casoId} />
 
               <section className="overflow-hidden rounded-lg border bg-card">
@@ -671,7 +668,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                       <h2 className="text-sm font-semibold">Participantes</h2>
 
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        Clientes relacionados con el caso.
+                        Clientes relacionados con el expediente administrativo.
                       </p>
                     </div>
                   </div>
@@ -695,10 +692,10 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                     <FileText className="size-4 text-primary" />
 
                     <div>
-                      <h2 className="text-sm font-semibold">Expedientes</h2>
+                      <h2 className="text-sm font-semibold">Expedientes judiciales</h2>
 
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        Piezas judiciales relacionadas con el caso.
+                        Piezas judiciales relacionadas con el expediente administrativo.
                       </p>
                     </div>
                   </div>
@@ -709,11 +706,11 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                 {caso.expedientes.length === 0 ? (
                   <div className="p-8 text-center">
                     <p className="text-sm font-medium">
-                      Sin expedientes asociados
+                      Sin expedientes judiciales asociados
                     </p>
 
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Este caso todavía no tiene expedientes registrados.
+                      Este expediente administrativo todavía no tiene expedientes judiciales registrados.
                     </p>
                   </div>
                 ) : (

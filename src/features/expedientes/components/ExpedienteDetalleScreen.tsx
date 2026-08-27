@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   AlertCircle,
   ArrowLeft,
@@ -213,12 +213,6 @@ export default function ExpedienteDetalleScreen({
     form.caratula.trim().length > 0 &&
     (!requierePadre || form.expedientePadreId !== null);
 
-  useEffect(() => {
-    if (expedienteQuery.data && !modoEdicion) {
-      setForm(crearFormDesdeExpediente(expedienteQuery.data));
-    }
-  }, [expedienteQuery.data, modoEdicion]);
-
   const resetearMensajes = () => {
     if (actualizarMutation.isError || actualizarMutation.isSuccess) {
       actualizarMutation.reset();
@@ -315,20 +309,20 @@ export default function ExpedienteDetalleScreen({
           className="inline-flex h-9 w-fit items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <ArrowLeft className="size-4" />
-          Volver a expedientes
+          Volver a expedientes judiciales
         </Link>
 
         <section className="flex flex-col items-center rounded-lg border border-destructive/30 bg-card px-6 py-12 text-center">
           <AlertCircle className="size-6 text-destructive" />
 
           <h1 className="mt-4 font-semibold">
-            No pudimos cargar el expediente
+            No pudimos cargar el expediente judicial
           </h1>
 
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
             {expedienteQuery.error instanceof Error
               ? expedienteQuery.error.message
-              : "El expediente solicitado no existe o no está disponible."}
+              : "El expediente judicial solicitado no existe o no está disponible."}
           </p>
 
           <Button
@@ -352,7 +346,7 @@ export default function ExpedienteDetalleScreen({
         className="inline-flex h-9 w-fit items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <ArrowLeft className="size-4" />
-        Volver a expedientes
+        Volver a expedientes judiciales
       </Link>
 
       <header className="flex flex-col gap-5 border-b pb-6 lg:flex-row lg:items-start lg:justify-between">
@@ -363,7 +357,7 @@ export default function ExpedienteDetalleScreen({
 
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-              Expediente
+              Expediente judicial
             </p>
 
             <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -371,7 +365,7 @@ export default function ExpedienteDetalleScreen({
             </h1>
 
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              {expediente.numeroExpediente || "Sin número de expediente"}
+              {expediente.numeroExpediente || "Sin número de expediente judicial"}
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -390,7 +384,7 @@ export default function ExpedienteDetalleScreen({
               onClick={iniciarEdicion}
             >
               <Pencil />
-              Editar expediente
+              Editar expediente judicial
             </Button>
 
             <Button
@@ -413,7 +407,7 @@ export default function ExpedienteDetalleScreen({
         <form className="space-y-6" onSubmit={guardar}>
           <section className="rounded-lg border bg-card p-5 sm:p-6">
             <div className="mb-6">
-              <h2 className="font-semibold">Editar expediente</h2>
+              <h2 className="font-semibold">Editar expediente judicial</h2>
 
               <p className="mt-1 text-sm text-muted-foreground">
                 Modificá los datos procesales y sus relaciones.|
@@ -438,7 +432,7 @@ export default function ExpedienteDetalleScreen({
 
               <div>
                 <p className="font-medium text-destructive">
-                  No pudimos actualizar el expediente
+                  No pudimos actualizar el expediente judicial
                 </p>
 
                 <p className="mt-1 text-muted-foreground">
@@ -480,14 +474,14 @@ export default function ExpedienteDetalleScreen({
             <section className="rounded-lg border border-sidebar-primary/30 bg-accent/45 p-5">
               <h2 className="font-medium">
                 {accionEstado === "darDeBaja"
-                  ? "¿Dar de baja el expediente?"
-                  : "¿Restaurar el expediente?"}
+                  ? "¿Dar de baja el expediente judicial?"
+                  : "¿Restaurar el expediente judicial?"}
               </h2>
 
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 {accionEstado === "darDeBaja"
-                  ? "No podrá darse de baja mientras tenga expedientes derivados activos."
-                  : "Solo podrá restaurarse si el caso y su expediente padre se encuentran activos."}
+                  ? "No podrá darse de baja mientras tenga expedientes judiciales relacionados activos."
+                  : "Solo podrá restaurarse si el expediente administrativo y su expediente judicial de origen se encuentran activos."}
               </p>
 
               <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -536,7 +530,7 @@ export default function ExpedienteDetalleScreen({
               role="status"
               className="rounded-lg border border-emerald-700/20 bg-emerald-600/5 p-4 text-sm text-emerald-800 dark:text-emerald-300"
             >
-              El estado del expediente se actualizó correctamente.
+              El estado del expediente judicial se actualizó correctamente.
             </div>
           )}
 
@@ -574,7 +568,7 @@ export default function ExpedienteDetalleScreen({
 
                 <dl className="grid gap-5 p-5 sm:grid-cols-2">
                   <Dato
-                    label="Número de expediente"
+                    label="Número de expediente judicial"
                     value={mostrarValor(expediente.numeroExpediente)}
                   />
 
@@ -616,7 +610,7 @@ export default function ExpedienteDetalleScreen({
                     </h2>
 
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      Expediente padre y derivados directos.
+                      Expediente judicial de origen y derivados directos.
                     </p>
                   </div>
                 </header>
@@ -624,7 +618,7 @@ export default function ExpedienteDetalleScreen({
                 <div className="space-y-5 p-5">
                   <div>
                     <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                      Expediente padre
+                      Expediente judicial de origen
                     </h3>
 
                     <div className="mt-3">
@@ -634,7 +628,7 @@ export default function ExpedienteDetalleScreen({
                         />
                       ) : (
                         <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-                          Este expediente no depende de otro expediente.
+                          Este expediente judicial no depende de otro expediente.
                         </div>
                       )}
                     </div>
@@ -643,7 +637,7 @@ export default function ExpedienteDetalleScreen({
                   <div>
                     <div className="flex items-center justify-between gap-3">
                       <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                        Expedientes derivados
+                        Expedientes judiciales relacionados
                       </h3>
 
                       <Badge variant="outline">
@@ -653,7 +647,7 @@ export default function ExpedienteDetalleScreen({
 
                     {expediente.expedientesDerivados.length === 0 ? (
                       <div className="mt-3 rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-                        No hay expedientes derivados directos.
+                        No hay expedientes judiciales relacionados directos.
                       </div>
                     ) : (
                       <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -675,7 +669,7 @@ export default function ExpedienteDetalleScreen({
                 <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                   <BriefcaseBusiness className="size-4 text-primary" />
 
-                  <h2 className="text-sm font-semibold">Caso relacionado</h2>
+                  <h2 className="text-sm font-semibold">Expediente administrativo relacionado</h2>
                 </header>
 
                 <div className="p-5">
@@ -684,7 +678,7 @@ export default function ExpedienteDetalleScreen({
                   </p>
 
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Caso #{expediente.casoId}
+                    Expediente administrativo #{expediente.casoId}
                   </p>
                 </div>
               </section>

@@ -48,16 +48,17 @@ const navigationItems = [
   },
   {
     href: "/casos",
-    label: "Casos",
+    label: "Expedientes administrativos",
     icon: BriefcaseBusiness,
     adminOnly: false,
   },
   {
     href: "/expedientes",
-    label: "Expedientes",
+    label: "Expedientes judiciales",
     icon: Files,
     adminOnly: false,
   },
+  { href: "/catalogos", label: "Catálogos", icon: Files, adminOnly: false },
   {
     href: "/usuarios",
     label: "Usuarios",
@@ -91,7 +92,7 @@ function Navigation({ isAdmin }: { isAdmin: boolean }) {
             href={item.href}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
+              "relative flex min-h-10 items-center gap-3 py-2 rounded-md px-3 text-sm font-medium transition-colors",
               isActive
                 ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm before:absolute before:left-0 before:h-5 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
                 : "text-sidebar-foreground/65 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",

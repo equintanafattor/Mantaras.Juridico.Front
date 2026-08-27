@@ -1,6 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState, type ReactNode } from "react";
+import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
+
+import { FormEvent, useState, type ReactNode } from "react";
 import {
   AlertCircle,
   ArrowLeft,
@@ -9,8 +11,6 @@ import {
   ChevronRight,
   FileText,
   Loader2,
-  Mail,
-  MapPin,
   Pencil,
   Phone,
   UserRound,
@@ -214,10 +214,12 @@ function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
         </div>
       </div>
 
+      <div className="border-t p-4"><DatosAdministrativosResumen datos={caso} /></div>
+
       <div className="border-t bg-muted/15 px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Expedientes
+            Expedientes judiciales
           </p>
 
           <Badge variant="outline">{caso.expedientes.length}</Badge>
@@ -225,7 +227,7 @@ function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
 
         {caso.expedientes.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
-            Este caso no tiene expedientes registrados.
+            Este expediente administrativo no tiene expedientes judiciales registrados.
           </p>
         ) : (
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -284,12 +286,6 @@ export default function ClienteDetalleScreen({
 
   const formularioValido =
     form.nombre.trim().length > 0 && form.apellido.trim().length > 0;
-
-  useEffect(() => {
-    if (clienteQuery.data && !modoEdicion) {
-      setForm(crearFormDesdeCliente(clienteQuery.data));
-    }
-  }, [clienteQuery.data, modoEdicion]);
 
   const resetearMensajes = () => {
     if (actualizarMutation.isError || actualizarMutation.isSuccess) {
@@ -560,7 +556,7 @@ export default function ClienteDetalleScreen({
 
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 {accionEstado === "darDeBaja"
-                  ? "El cliente dejará de aparecer entre los activos, pero conservará sus datos, casos y expedientes."
+                  ? "El cliente dejará de aparecer entre los activos, pero conservará sus datos, expedientes administrativos y expedientes judiciales."
                   : "El cliente volverá a aparecer normalmente en el listado de activos."}
               </p>
 
@@ -734,11 +730,11 @@ export default function ClienteDetalleScreen({
 
                     <div>
                       <h2 className="text-sm font-semibold">
-                        Casos relacionados
+                        Expedientes administrativos relacionados
                       </h2>
 
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        Participación y expedientes asociados.
+                        Participación y expedientes judiciales asociados.
                       </p>
                     </div>
                   </div>
@@ -749,11 +745,11 @@ export default function ClienteDetalleScreen({
                 {cliente.casos.length === 0 ? (
                   <div className="p-8 text-center">
                     <p className="text-sm font-medium">
-                      Sin casos relacionados
+                      Sin expedientes administrativos relacionados
                     </p>
 
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Este cliente todavía no participa en ningún caso.
+                      Este cliente todavía no participa en ningún expediente administrativo.
                     </p>
                   </div>
                 ) : (
@@ -774,12 +770,12 @@ export default function ClienteDetalleScreen({
 
                 <dl className="space-y-5 p-5">
                   <Dato
-                    label="Casos relacionados"
+                    label="Expedientes administrativos relacionados"
                     value={cliente.casos.length}
                   />
 
                   <Dato
-                    label="Expedientes relacionados"
+                    label="Expedientes judiciales relacionados"
                     value={totalExpedientes}
                   />
 

@@ -1,3 +1,5 @@
+import type { DatosAdministrativos } from "@/features/catalogos/types/types";
+
 export type ClienteResponse = {
   clienteId: number;
   nombre: string;
@@ -26,7 +28,7 @@ export type ExpedienteClienteDetalleResponse = {
   activo: boolean;
 };
 
-export type CasoClienteDetalleResponse = {
+export type CasoClienteDetalleResponse = DatosAdministrativos & {
   casoId: number;
   titulo: string;
   faseInterna: string | number;

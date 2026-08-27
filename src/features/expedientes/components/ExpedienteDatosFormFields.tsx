@@ -31,7 +31,7 @@ export default function ExpedienteDatosFormFields({
   return (
     <section className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2">
-        <Label htmlFor={`${idPrefix}-numero`}>Número de expediente</Label>
+        <Label htmlFor={`${idPrefix}-numero`}>Número de expediente judicial</Label>
 
         <Input
           id={`${idPrefix}-numero`}
@@ -70,7 +70,7 @@ export default function ExpedienteDatosFormFields({
           disabled={disabled}
           maxLength={1000}
           required
-          placeholder="Carátula completa del expediente"
+          placeholder="Carátula completa del expediente judicial"
           onChange={(event) => actualizarCampo("caratula", event.target.value)}
         />
       </div>

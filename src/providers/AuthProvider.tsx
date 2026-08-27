@@ -2,10 +2,11 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,7 +16,9 @@ import {
   AUTH_UNAUTHORIZED_EVENT,
   eliminarSesion,
   guardarSesion,
-  obtenerSesion,
+  obtenerSnapshotSesion,
+  obtenerSnapshotSesionServidor,
+  suscribirSesion,
 } from "@/features/autenticacion/lib/authSession";
 import type {
   AuthSession,
@@ -37,54 +40,38 @@ type AuthProviderProps = {
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const queryClient = useQueryClient();
+  const serializedSession = useSyncExternalStore(
+    suscribirSesion,
+    obtenerSnapshotSesion,
+    obtenerSnapshotSesionServidor,
+  );
+  const isReady = serializedSession !== undefined;
+  const session = useMemo<AuthSession | null>(
+    () => serializedSession ? JSON.parse(serializedSession) as AuthSession : null,
+    [serializedSession],
+  );
 
-  const [session, setSession] = useState<AuthSession | null>(null);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    setSession(obtenerSesion());
-    setIsReady(true);
-  }, []);
-
-  useEffect(() => {
-    const manejarSesionNoAutorizada = () => {
-      eliminarSesion();
-      setSession(null);
-      queryClient.clear();
-    };
-
-    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, manejarSesionNoAutorizada);
-
-    return () => {
-      window.removeEventListener(
-        AUTH_UNAUTHORIZED_EVENT,
-        manejarSesionNoAutorizada,
-      );
-    };
+  const cerrarSesion = useCallback(() => {
+    queryClient.clear();
+    eliminarSesion();
   }, [queryClient]);
 
-  const iniciarSesion = async (request: IniciarSesionRequest) => {
+  useEffect(() => {
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, cerrarSesion);
+    return () => {
+      window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, cerrarSesion);
+    };
+  }, [cerrarSesion]);
+
+  const iniciarSesion = useCallback(async (request: IniciarSesionRequest) => {
     const response = await solicitarInicioSesion(request);
-
+    queryClient.clear();
     guardarSesion(response);
-    setSession(response);
-    queryClient.clear();
-  };
-
-  const cerrarSesion = () => {
-    eliminarSesion();
-    setSession(null);
-    queryClient.clear();
-  };
+  }, [queryClient]);
 
   const value = useMemo<AuthContextValue>(
-    () => ({
-      session,
-      isReady,
-      iniciarSesion,
-      cerrarSesion,
-    }),
-    [session, isReady],
+    () => ({ session, isReady, iniciarSesion, cerrarSesion }),
+    [session, isReady, iniciarSesion, cerrarSesion],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -92,10 +79,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth debe utilizarse dentro de AuthProvider.");
   }
-
   return context;
 }

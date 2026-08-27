@@ -22,6 +22,8 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useCasos } from "../hooks/useCasos";
 import type { CasoResponse, FaseCaso } from "../types/types";
 
+import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
+
 import NuevoCasoDialog from "./NuevoCasoDialog";
 
 const PAGE_SIZE = 10;
@@ -147,6 +149,7 @@ function CasoMobileCard({
           <dd className="mt-1">{mostrarValor(caso.tipoTramite)}</dd>
         </div>
       </dl>
+      <div className="mt-4 border-t pt-3"><DatosAdministrativosResumen datos={caso} /></div>
     </button>
   );
 }
@@ -204,7 +207,7 @@ export default function CasosScreen() {
           </p>
 
           <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            Casos
+            Expedientes administrativos
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
@@ -214,12 +217,12 @@ export default function CasosScreen() {
 
         <Button onClick={() => setNuevoCasoOpen(true)}>
           <Plus />
-          Nuevo caso
+          Nuevo expediente administrativo
         </Button>
       </section>
 
       <section
-        aria-label="Filtros de casos"
+        aria-label="Filtros de expedientes administrativos"
         className="rounded-lg border bg-card p-4"
       >
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -229,9 +232,9 @@ export default function CasosScreen() {
             <Input
               value={busqueda}
               onChange={(event) => cambiarBusqueda(event.target.value)}
-              placeholder="Buscar por caso, trámite, cliente, DNI o CUIL..."
+              placeholder="Buscar por título, ANSES, trámite, cliente, DNI o CUIL..."
               className="h-10 bg-background pl-9"
-              aria-label="Buscar casos"
+              aria-label="Buscar expedientes administrativos"
             />
           </div>
 
@@ -278,7 +281,7 @@ export default function CasosScreen() {
             <AlertCircle className="size-5" />
           </span>
 
-          <h2 className="mt-4 font-semibold">No pudimos cargar los casos</h2>
+          <h2 className="mt-4 font-semibold">No pudimos cargar los expedientes administrativos</h2>
 
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
             {error instanceof Error
@@ -298,12 +301,12 @@ export default function CasosScreen() {
             <BriefcaseBusiness className="size-5" />
           </span>
 
-          <h2 className="mt-4 font-semibold">No se encontraron casos</h2>
+          <h2 className="mt-4 font-semibold">No se encontraron expedientes administrativos</h2>
 
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
             {hayFiltros
               ? "Probá modificando o limpiando los filtros aplicados."
-              : "Todavía no hay casos activos registrados."}
+              : "Todavía no hay expedientes administrativos activos registrados."}
           </p>
 
           {hayFiltros && (
@@ -322,7 +325,7 @@ export default function CasosScreen() {
       ) : data ? (
         <>
           <section
-            aria-label="Resultados de casos"
+            aria-label="Resultados de expedientes administrativos"
             className={
               isFetching
                 ? "opacity-60 transition-opacity"
@@ -344,7 +347,7 @@ export default function CasosScreen() {
                 <table className="w-full text-sm">
                   <thead className="border-b bg-muted/40 text-left text-xs text-muted-foreground">
                     <tr>
-                      <th className="px-5 py-3 font-medium">Caso</th>
+                      <th className="px-5 py-3 font-medium">Expediente administrativo</th>
                       <th className="px-5 py-3 font-medium">
                         Cliente principal
                       </th>
@@ -381,6 +384,9 @@ export default function CasosScreen() {
                             <div className="max-w-72 font-medium leading-5 group-hover:text-primary">
                               {caso.titulo}
                             </div>
+                            <p className="mt-1 break-words text-xs text-muted-foreground">ANSES: {caso.numeroExpedienteAnses || "Sin número"}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{caso.tipoBeneficioNombre || "Sin beneficio"}{caso.tipoBeneficioActivo === false ? " (inactivo)" : ""}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{caso.tipoExpedienteAdministrativoNombre || "Sin tipo administrativo"}{caso.tipoExpedienteAdministrativoActivo === false ? " (inactivo)" : ""}</p>
 
                             <div className="mt-1 text-xs text-muted-foreground">
                               {caso.clientes.length === 1
@@ -427,7 +433,7 @@ export default function CasosScreen() {
 
           <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
-              {data.totalItems === 1 ? "1 caso" : `${data.totalItems} casos`}
+              {data.totalItems === 1 ? "1 expediente administrativo" : `${data.totalItems} expedientes administrativos`}
 
               {data.totalPages > 0 &&
                 ` · Página ${data.page} de ${data.totalPages}`}

@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import CatalogoSelect from "@/features/catalogos/components/CatalogoSelect";
+import type { CasoFormState } from "../lib/casoForm";
+export { crearFormDesdeCaso, crearRequestDesdeForm, FORM_CASO_INICIAL } from "../lib/casoForm";
+export type { CasoFormState, CasoParticipanteForm } from "../lib/casoForm";
 import { Plus, Search, Star, UserRound, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,50 +19,9 @@ import { useClientes } from "@/features/clientes/hooks/useClientes";
 import type { ClienteResponse } from "@/features/clientes/types/types";
 
 import type {
-  CasoDetalleResponse,
-  CrearCasoRequest,
   FaseCaso,
   TipoParticipacionCliente,
 } from "../types/types";
-
-export type CasoParticipanteForm = {
-  clienteId: number;
-  nombreCompleto: string;
-  dni: string | null;
-  cuil: string | null;
-  tipoParticipacion: TipoParticipacionCliente;
-  esPrincipal: boolean;
-};
-
-export type CasoFormState = {
-  titulo: string;
-  faseInterna: FaseCaso;
-  tipoTramite: string;
-  clientes: CasoParticipanteForm[];
-};
-
-export const FORM_CASO_INICIAL: CasoFormState = {
-  titulo: "",
-  faseInterna: "Preadministrativa",
-  tipoTramite: "",
-  clientes: [],
-};
-
-export function crearFormDesdeCaso(caso: CasoDetalleResponse): CasoFormState {
-  return {
-    titulo: caso.titulo,
-    faseInterna: caso.faseInterna,
-    tipoTramite: caso.tipoTramite ?? "",
-    clientes: caso.clientes.map((cliente) => ({
-      clienteId: cliente.clienteId,
-      nombreCompleto: cliente.nombreCompleto,
-      dni: cliente.dni,
-      cuil: cliente.cuil,
-      tipoParticipacion: cliente.tipoParticipacion,
-      esPrincipal: cliente.esPrincipal,
-    })),
-  };
-}
 
 type CasoFormFieldsProps = {
   form: CasoFormState;
@@ -75,25 +39,6 @@ const PARTICIPACIONES: Array<{
   { value: "Heredero", label: "Heredero" },
   { value: "Otro", label: "Otro" },
 ];
-
-function normalizarOpcional(value: string) {
-  const normalizedValue = value.trim();
-
-  return normalizedValue || null;
-}
-
-export function crearRequestDesdeForm(form: CasoFormState): CrearCasoRequest {
-  return {
-    titulo: form.titulo.trim(),
-    faseInterna: form.faseInterna,
-    tipoTramite: normalizarOpcional(form.tipoTramite),
-    clientes: form.clientes.map((cliente) => ({
-      clienteId: cliente.clienteId,
-      tipoParticipacion: cliente.tipoParticipacion,
-      esPrincipal: cliente.esPrincipal,
-    })),
-  };
-}
 
 function ClienteResultado({
   cliente,
@@ -285,6 +230,22 @@ export default function CasoFormFields({
             }
           />
         </div>
+      </section>
+
+      <section className="space-y-4 border-t pt-5" aria-label="Datos administrativos">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-medium">Datos administrativos</h3>
+          <Link href="/catalogos" target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">Administrar catálogos (otra pestaña)</Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="caso-anses">Número de expediente ANSES</Label>
+            <Input id="caso-anses" value={form.numeroExpedienteAnses} maxLength={100} disabled={disabled} placeholder="Opcional; conservá los ceros y separadores" onChange={(event) => actualizarCampo("numeroExpedienteAnses", event.target.value)} />
+          </div>
+          <CatalogoSelect tipo="beneficios" label="Tipo de beneficio" value={form.tipoBeneficio?.id ?? null} original={form.tipoBeneficioOriginal} seleccionado={form.tipoBeneficio} disabled={disabled} onChange={(item) => actualizarCampo("tipoBeneficio", item)} />
+          <CatalogoSelect tipo="administrativos" label="Tipo de expediente administrativo" value={form.tipoAdministrativo?.id ?? null} original={form.tipoAdministrativoOriginal} seleccionado={form.tipoAdministrativo} disabled={disabled} onChange={(item) => actualizarCampo("tipoAdministrativo", item)} />
+        </div>
+        <p className="text-xs text-muted-foreground">Estos campos son opcionales. “Sin asignar” quita la relación al guardar; no elimina el catálogo.</p>
       </section>
 
       <section className="space-y-4 border-t pt-5">

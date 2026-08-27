@@ -18,6 +18,7 @@ export function useCrearCaso() {
         queryClient.invalidateQueries({
           queryKey: ["clientes"],
         }),
+        queryClient.invalidateQueries({ queryKey: ["cliente"] }),
         queryClient.invalidateQueries({
           queryKey: ["panel"],
         }),

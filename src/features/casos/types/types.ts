@@ -1,3 +1,5 @@
+import type { DatosAdministrativos } from "@/features/catalogos/types/types";
+
 export type FaseCaso = "Preadministrativa" | "Juicio" | "Postjuicio";
 
 export type TipoParticipacionCliente =
@@ -36,7 +38,7 @@ export type ExpedienteCasoDetalleResponse = {
   activo: boolean;
 };
 
-export type CasoResponse = {
+export type CasoResponse = DatosAdministrativos & {
   casoId: number;
   titulo: string;
   faseInterna: FaseCaso;
@@ -76,6 +78,9 @@ export type CasoClienteRequest = {
 };
 
 export type CrearCasoRequest = {
+  numeroExpedienteAnses: string | null;
+  tipoBeneficioId: number | null;
+  tipoExpedienteAdministrativoId: number | null;
   titulo: string;
   faseInterna: FaseCaso;
   tipoTramite: string | null;

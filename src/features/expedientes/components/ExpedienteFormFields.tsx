@@ -96,7 +96,7 @@ export function crearRequestDesdeForm(
   form: ExpedienteFormState,
 ): CrearExpedienteRequest {
   if (form.casoId === null) {
-    throw new Error("Debe seleccionarse un caso para crear el expediente.");
+    throw new Error("Debe seleccionarse un expediente administrativo para crear el expediente.");
   }
 
   return {
@@ -215,14 +215,14 @@ export default function ExpedienteFormFields({
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="expediente-caso">
-            Caso <span className="text-destructive">*</span>
+            Expediente administrativo <span className="text-destructive">*</span>
           </Label>
 
           {casosQuery.isLoading ? (
             <Skeleton className="h-10 w-full" />
           ) : casosQuery.isError ? (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-              No pudimos cargar los casos activos.
+              No pudimos cargar los expedientes administrativos activos.
             </div>
           ) : (
             <select
@@ -233,7 +233,7 @@ export default function ExpedienteFormFields({
               className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               onChange={(event) => cambiarCaso(event.target.value)}
             >
-              <option value="">Seleccioná un caso...</option>
+              <option value="">Seleccioná un expediente administrativo...</option>
 
               {casosQuery.data?.items.map((caso) => (
                 <option key={caso.casoId} value={caso.casoId}>
@@ -246,7 +246,7 @@ export default function ExpedienteFormFields({
 
         <div className="space-y-2">
           <Label htmlFor="expediente-tipo">
-            Tipo de expediente <span className="text-destructive">*</span>
+            Tipo de expediente judicial <span className="text-destructive">*</span>
           </Label>
 
           <select
@@ -277,7 +277,7 @@ export default function ExpedienteFormFields({
 
         <div className="space-y-2">
           <Label htmlFor="expediente-padre">
-            Expediente padre
+            Expediente judicial de origen
             {!esPrincipal && <span className="text-destructive"> *</span>}
           </Label>
 
@@ -325,7 +325,7 @@ export default function ExpedienteFormFields({
 
         {form.casoId !== null && expedientesQuery.isError && (
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive sm:col-span-2">
-            No pudimos consultar los expedientes del caso.
+            No pudimos consultar los expedientes judiciales del expediente administrativo.
           </div>
         )}
 
@@ -341,10 +341,10 @@ export default function ExpedienteFormFields({
 
               <p className="text-muted-foreground">
                 {expedienteActualEsPrincipal
-                  ? "Este es el expediente principal del caso y no requiere un expediente padre."
+                  ? "Este es el expediente judicial principal del expediente administrativo y no requiere un expediente judicial de origen."
                   : expedientePrincipal
-                    ? "Este caso ya tiene un expediente principal. El expediente deberá relacionarse como incidente, apelación o ejecución."
-                    : "Este caso todavía no tiene expediente principal. Debés crear el principal antes de registrar expedientes derivados."}
+                    ? "Este expediente administrativo ya tiene un expediente judicial principal. El expediente judicial deberá relacionarse como incidente, apelación o ejecución."
+                    : "Este expediente administrativo todavía no tiene expediente judicial principal. Debés crear el principal antes de registrar expedientes judiciales relacionados."}
               </p>
             </div>
           )}

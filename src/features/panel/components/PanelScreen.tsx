@@ -34,15 +34,15 @@ const modulos = [
   },
   {
     href: "/casos",
-    titulo: "Casos",
+    titulo: "Expedientes administrativos",
     descripcion: "Asuntos activos",
     icon: BriefcaseBusiness,
     obtenerCantidad: (data: PanelResumenResponse) => data.metricas.casosActivos,
   },
   {
     href: "/expedientes",
-    titulo: "Expedientes",
-    descripcion: "Expedientes activos",
+    titulo: "Expedientes judiciales",
+    descripcion: "Expedientes judiciales activos",
     icon: Files,
     obtenerCantidad: (data: PanelResumenResponse) =>
       data.metricas.expedientesActivos,
@@ -183,7 +183,7 @@ function ActividadItem({
               variant="outline"
               className="h-5 rounded-sm bg-background px-1.5 text-[10px] font-medium text-muted-foreground"
             >
-              {actividad.tipo}
+              {esCaso ? "Expediente administrativo" : "Expediente judicial"}
             </Badge>
           </div>
 
@@ -216,7 +216,7 @@ function ActividadReciente({
         <h2 className="font-semibold">Actividad reciente</h2>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          Últimos cambios registrados en casos y expedientes.
+          Últimos cambios registrados en expedientes administrativos y expedientes judiciales.
         </p>
       </header>
 

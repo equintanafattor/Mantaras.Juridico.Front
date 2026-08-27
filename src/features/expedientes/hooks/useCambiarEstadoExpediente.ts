@@ -38,6 +38,7 @@ export function useCambiarEstadoExpediente() {
         queryClient.invalidateQueries({
           queryKey: ["clientes"],
         }),
+        queryClient.invalidateQueries({ queryKey: ["cliente"] }),
       ]);
     },
   });

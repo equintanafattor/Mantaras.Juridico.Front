@@ -1,6 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
+
+import { esCasoFormValido, datosAdministrativosDesdeForm } from "@/features/casos/lib/casoForm";
+
+import { FormEvent, useState } from "react";
 import {
   AlertCircle,
   BriefcaseBusiness,
@@ -56,13 +60,13 @@ type PasoNuevoCaso = 1 | 2 | 3;
 const PASOS_NUEVO_CASO = [
   {
     numero: 1 as const,
-    label: "Caso",
+    label: "Expediente administrativo",
     descripcion: "Datos y participantes",
     icon: BriefcaseBusiness,
   },
   {
     numero: 2 as const,
-    label: "Expediente",
+    label: "Expediente judicial",
     descripcion: "Datos procesales",
     icon: FileText,
   },
@@ -135,7 +139,7 @@ function IndicadorPasos({
   onSelect: (paso: PasoNuevoCaso) => void;
 }) {
   return (
-    <nav aria-label="Pasos para crear el caso y expediente">
+    <nav aria-label="Pasos para crear el expediente administrativo y expediente judicial">
       <ol className="grid grid-cols-3">
         {PASOS_NUEVO_CASO.map((paso, index) => {
           const Icon = paso.icon;
@@ -216,7 +220,7 @@ function ResumenCreacion({
           </span>
 
           <div>
-            <h3 className="text-sm font-semibold">Nuevo caso</h3>
+            <h3 className="text-sm font-semibold">Nuevo expediente administrativo</h3>
 
             <p className="mt-0.5 text-xs text-muted-foreground">
               Información interna y participantes.
@@ -240,6 +244,8 @@ function ResumenCreacion({
             <dd className="mt-1">{mostrarResumen(caso.tipoTramite)}</dd>
           </div>
         </dl>
+
+        <div className="border-t px-4 py-4 sm:px-5"><DatosAdministrativosResumen datos={datosAdministrativosDesdeForm(caso)} /></div>
 
         <div className="border-t px-4 py-4 sm:px-5">
           <div className="flex items-center gap-2">
@@ -289,7 +295,7 @@ function ResumenCreacion({
 
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-semibold">Expediente principal</h3>
+              <h3 className="text-sm font-semibold">Expediente judicial principal</h3>
 
               <Badge
                 variant="outline"
@@ -300,7 +306,7 @@ function ResumenCreacion({
             </div>
 
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Se creará junto con el caso.
+              Se creará junto con el expediente administrativo.
             </p>
           </div>
         </header>
@@ -315,7 +321,7 @@ function ResumenCreacion({
 
           <div>
             <dt className="text-xs text-muted-foreground">
-              Número de expediente
+              Número de expediente judicial
             </dt>
             <dd className="mt-1">
               {mostrarResumen(expediente.numeroExpediente)}
@@ -343,15 +349,15 @@ function ResumenCreacion({
         <Check className="mt-0.5 size-4 shrink-0 text-accent-foreground" />
 
         <p className="leading-6 text-muted-foreground">
-          El caso y su expediente principal se guardarán en una única operación.
-          Si ocurre un error, no quedará un caso incompleto.
+          El expediente administrativo y su expediente judicial principal se guardarán en una única operación.
+          Si ocurre un error, no quedará un expediente administrativo incompleto.
         </p>
       </div>
     </div>
   );
 }
 
-export default function NuevoExpedienteDialog({
+function NuevoExpedienteDialogContenido({
   open,
   onOpenChange,
   casoIdInicial,
@@ -379,21 +385,6 @@ export default function NuevoExpedienteDialog({
     crearExpedienteMutation.isPending ||
     crearCasoConExpedienteMutation.isPending;
 
-  useEffect(() => {
-    if (open) {
-      setModoCaso("existente");
-      setPasoNuevoCaso(1);
-      setExpedienteExistenteForm(crearFormInicial(casoIdInicial));
-      setCasoNuevoForm(crearCasoFormInicial());
-      setExpedienteNuevoForm(crearFormInicial());
-
-      crearExpedienteMutation.reset();
-      crearCasoConExpedienteMutation.reset();
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, casoIdInicial]);
-
   const requierePadre = expedienteExistenteForm.tipoExpediente !== "Principal";
 
   const formularioExistenteValido =
@@ -401,11 +392,7 @@ export default function NuevoExpedienteDialog({
     expedienteExistenteForm.caratula.trim().length > 0 &&
     (!requierePadre || expedienteExistenteForm.expedientePadreId !== null);
 
-  const pasoCasoValido =
-    casoNuevoForm.titulo.trim().length > 0 &&
-    casoNuevoForm.clientes.length > 0 &&
-    casoNuevoForm.clientes.filter((cliente) => cliente.esPrincipal).length ===
-      1;
+  const pasoCasoValido = esCasoFormValido(casoNuevoForm);
 
   const pasoExpedienteValido = expedienteNuevoForm.caratula.trim().length > 0;
 
@@ -541,21 +528,21 @@ export default function NuevoExpedienteDialog({
   const etiquetaBotonPrincipal = operacionPendiente
     ? "Guardando..."
     : modoCaso === "existente"
-      ? "Guardar expediente"
+      ? "Guardar expediente judicial"
       : pasoNuevoCaso < 3
         ? "Continuar"
-        : "Crear caso y expediente";
+        : "Crear ambos expedientes";
 
   return (
     <Dialog open={open} onOpenChange={cambiarApertura}>
       <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-4xl sm:rounded-lg">
         <DialogHeader className="shrink-0 border-b bg-card px-5 py-4 pr-12 text-left sm:px-6 sm:py-5">
-          <DialogTitle>Nuevo expediente</DialogTitle>
+          <DialogTitle>Nuevo expediente judicial</DialogTitle>
 
           <DialogDescription className="mt-1">
             {modoCaso === "nuevo"
-              ? "Creá el caso y su expediente principal en una sola operación."
-              : "Registrá los datos procesales y vinculá el expediente con un caso existente."}
+              ? "Creá el expediente administrativo y su expediente judicial principal en una sola operación."
+              : "Registrá los datos procesales y vinculá el expediente judicial con un expediente administrativo existente."}
           </DialogDescription>
         </DialogHeader>
 
@@ -574,7 +561,7 @@ export default function NuevoExpedienteDialog({
                   }
                 >
                   <FolderOpen className="size-4" />
-                  Usar un caso existente
+                  Usar un expediente administrativo existente
                 </button>
 
                 <button
@@ -588,7 +575,7 @@ export default function NuevoExpedienteDialog({
                   }
                 >
                   <FilePlus2 className="size-4" />
-                  Crear un caso nuevo
+                  Crear un expediente administrativo nuevo
                 </button>
               </div>
             </section>
@@ -615,7 +602,7 @@ export default function NuevoExpedienteDialog({
                       </p>
 
                       <h2 className="mt-2 text-lg font-semibold">
-                        Datos del caso y participantes
+                        Datos del expediente administrativo y participantes
                       </h2>
 
                       <p className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -640,12 +627,12 @@ export default function NuevoExpedienteDialog({
                       </p>
 
                       <h2 className="mt-2 text-lg font-semibold">
-                        Expediente principal
+                        Expediente judicial principal
                       </h2>
 
                       <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                        Se registrará como expediente principal y no tendrá un
-                        expediente padre.
+                        Se registrará como expediente judicial principal y no tendrá un
+                        expediente judicial de origen.
                       </p>
                     </div>
 
@@ -700,8 +687,8 @@ export default function NuevoExpedienteDialog({
                 <div>
                   <p className="font-medium text-destructive">
                     {modoCaso === "nuevo"
-                      ? "No pudimos crear el caso y el expediente"
-                      : "No pudimos crear el expediente"}
+                      ? "No pudimos crear el expediente administrativo y el expediente judicial"
+                      : "No pudimos crear el expediente judicial"}
                   </p>
 
                   <p className="mt-1 text-muted-foreground">
@@ -753,5 +740,18 @@ export default function NuevoExpedienteDialog({
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// Cada apertura obtiene estado y mutaciones nuevos. También se reinicia al
+// cambiar el administrativo de origen mientras el diálogo está abierto.
+export default function NuevoExpedienteDialog(props: NuevoExpedienteDialogProps) {
+  if (!props.open) return null;
+
+  return (
+    <NuevoExpedienteDialogContenido
+      key={props.casoIdInicial ?? "sin-caso"}
+      {...props}
+    />
   );
 }

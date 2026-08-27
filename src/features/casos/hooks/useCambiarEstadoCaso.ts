@@ -27,6 +27,7 @@ export function useCambiarEstadoCaso() {
         queryClient.invalidateQueries({
           queryKey: ["clientes"],
         }),
+        queryClient.invalidateQueries({ queryKey: ["cliente"] }),
       ]);
     },
   });

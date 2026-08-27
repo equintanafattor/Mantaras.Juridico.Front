@@ -153,7 +153,7 @@ function ExpedienteMobileCard({
 
       <dl className="mt-4 grid gap-3 text-sm">
         <div>
-          <dt className="text-xs text-muted-foreground">Caso</dt>
+          <dt className="text-xs text-muted-foreground">Expediente administrativo</dt>
           <dd className="mt-1 font-medium">{expediente.tituloCaso}</dd>
         </div>
 
@@ -233,7 +233,7 @@ export default function ExpedientesScreen() {
           </p>
 
           <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            Expedientes
+            Expedientes judiciales
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
@@ -243,12 +243,12 @@ export default function ExpedientesScreen() {
 
         <Button onClick={() => setNuevoExpedienteOpen(true)}>
           <Plus />
-          Nuevo expediente
+          Nuevo expediente judicial
         </Button>
       </section>
 
       <section
-        aria-label="Filtros de expedientes"
+        aria-label="Filtros de expedientes judiciales"
         className="rounded-lg border bg-card p-4"
       >
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -258,9 +258,9 @@ export default function ExpedientesScreen() {
             <Input
               value={busqueda}
               onChange={(event) => cambiarBusqueda(event.target.value)}
-              placeholder="Buscar por número, carátula, juzgado, estado, caso o cliente..."
+              placeholder="Buscar por número, carátula, juzgado, estado, expediente administrativo o cliente..."
               className="h-10 bg-background pl-9"
-              aria-label="Buscar expedientes"
+              aria-label="Buscar expedientes judiciales"
             />
           </div>
 
@@ -269,9 +269,9 @@ export default function ExpedientesScreen() {
             disabled={casosQuery.isLoading}
             onChange={(event) => cambiarCaso(event.target.value)}
             className="h-10 min-w-56 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 lg:max-w-64"
-            aria-label="Filtrar por caso"
+            aria-label="Filtrar por expediente administrativo"
           >
-            <option value="">Todos los casos</option>
+            <option value="">Todos los expedientes administrativos</option>
 
             {casosQuery.data?.items.map((caso) => (
               <option key={caso.casoId} value={caso.casoId}>
@@ -308,7 +308,7 @@ export default function ExpedientesScreen() {
         {casosQuery.isError && (
           <div className="mt-3 flex items-center gap-2 text-sm text-destructive">
             <AlertCircle className="size-4 shrink-0" />
-            No pudimos cargar los casos para el filtro.
+            No pudimos cargar los expedientes administrativos para el filtro.
           </div>
         )}
       </section>
@@ -320,7 +320,7 @@ export default function ExpedientesScreen() {
           </span>
 
           <h2 className="mt-4 font-semibold">
-            No pudimos cargar los expedientes
+            No pudimos cargar los expedientes judiciales
           </h2>
 
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
@@ -341,12 +341,12 @@ export default function ExpedientesScreen() {
             <Files className="size-5" />
           </span>
 
-          <h2 className="mt-4 font-semibold">No se encontraron expedientes</h2>
+          <h2 className="mt-4 font-semibold">No se encontraron expedientes judiciales</h2>
 
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
             {hayFiltros
               ? "Probá modificando o limpiando los filtros aplicados."
-              : "Todavía no hay expedientes activos registrados."}
+              : "Todavía no hay expedientes judiciales activos registrados."}
           </p>
 
           {hayFiltros && (
@@ -365,7 +365,7 @@ export default function ExpedientesScreen() {
       ) : data ? (
         <>
           <section
-            aria-label="Resultados de expedientes"
+            aria-label="Resultados de expedientes judiciales"
             className={
               isFetching
                 ? "opacity-60 transition-opacity"
@@ -389,8 +389,8 @@ export default function ExpedientesScreen() {
                 <table className="w-full text-sm">
                   <thead className="border-b bg-muted/40 text-left text-xs text-muted-foreground">
                     <tr>
-                      <th className="px-5 py-3 font-medium">Expediente</th>
-                      <th className="px-5 py-3 font-medium">Caso</th>
+                      <th className="px-5 py-3 font-medium">Expediente judicial</th>
+                      <th className="px-5 py-3 font-medium">Expediente administrativo</th>
                       <th className="px-5 py-3 font-medium">Tipo</th>
                       <th className="px-5 py-3 font-medium">Estado legal</th>
                       <th className="px-5 py-3 font-medium">Inicio</th>
@@ -489,8 +489,8 @@ export default function ExpedientesScreen() {
           <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
               {data.totalItems === 1
-                ? "1 expediente"
-                : `${data.totalItems} expedientes`}
+                ? "1 expediente judicial"
+                : `${data.totalItems} expedientes judiciales`}
 
               {data.totalPages > 0 &&
                 ` · Página ${data.page} de ${data.totalPages}`}

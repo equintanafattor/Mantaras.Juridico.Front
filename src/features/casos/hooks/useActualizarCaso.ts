@@ -31,6 +31,7 @@ export function useActualizarCaso() {
         queryClient.invalidateQueries({
           queryKey: ["clientes"],
         }),
+        queryClient.invalidateQueries({ queryKey: ["cliente"] }),
       ]);
     },
   });

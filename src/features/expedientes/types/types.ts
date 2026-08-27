@@ -1,3 +1,5 @@
+import type { DatosAdministrativos } from "@/features/catalogos/types/types";
+
 import type { CrearCasoRequest } from "@/features/casos/types/types";
 
 export type TipoExpediente =
@@ -74,7 +76,7 @@ export type CrearCasoConExpedientePrincipalRequest = {
   expediente: CrearExpedientePrincipalRequest;
 };
 
-export type CrearCasoConExpedientePrincipalResponse = {
+export type CrearCasoConExpedientePrincipalResponse = DatosAdministrativos & {
   casoId: number;
   expedienteId: number;
   tituloCaso: string;
