@@ -81,19 +81,16 @@ export default function HistorialObservaciones({
   };
 
   const esMovimiento = entidad !== "clientes";
-  const esResumen = esMovimiento && !mostrarTodos;
+  const esResumen = !mostrarTodos;
   const plural = esMovimiento ? "movimientos" : "observaciones";
 
   const datos = observacionesQuery.data ?? [];
 
-  const observaciones = esMovimiento
-    ? [...datos].sort(
-        (a, b) =>
-          (Date.parse(b.fechaCreacion) || 0) -
-            (Date.parse(a.fechaCreacion) || 0) ||
-          b.observacionId - a.observacionId,
-      )
-    : datos;
+  const observaciones = [...datos].sort(
+    (a, b) =>
+      (Date.parse(b.fechaCreacion) || 0) - (Date.parse(a.fechaCreacion) || 0) ||
+      b.observacionId - a.observacionId,
+  );
 
   const visibles = esResumen ? observaciones.slice(0, 3) : observaciones;
 
@@ -114,10 +111,10 @@ export default function HistorialObservaciones({
 
             <p className="mt-0.5 text-xs text-muted-foreground">
               {esResumen
-                ? "Los últimos tres movimientos, del más reciente al más antiguo."
-                : esMovimiento
-                  ? "Historial completo, del más reciente al más antiguo."
-                  : "Notas internas registradas en orden cronológico."}
+                ? esMovimiento
+                  ? "Los últimos tres movimientos, del más reciente al más antiguo."
+                  : "Las últimas tres observaciones, de la más reciente a la más antigua."
+                : "Historial completo, ordenado por fecha de más reciente a más antigua."}
             </p>
           </div>
         </div>
@@ -296,11 +293,11 @@ export default function HistorialObservaciones({
       {esResumen && observacionesQuery.isSuccess && (
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t bg-muted/10 px-5 py-4">
           <p className="text-xs text-muted-foreground">
-            Mostrando {visibles.length} de {observaciones.length} movimientos.
+            Mostrando {visibles.length} de {observaciones.length} {plural}.
           </p>
 
           <Link
-            href={`/${entidad}/${propietarioId}/movimientos`}
+            href={`/${entidad}/${propietarioId}/${plural}`}
             className="rounded-md text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Ver historial completo

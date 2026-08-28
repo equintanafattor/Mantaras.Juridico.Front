@@ -7,12 +7,10 @@ import {
   AlertCircle,
   ArrowLeft,
   BriefcaseBusiness,
-  CalendarDays,
   ChevronRight,
   FileText,
   Loader2,
   Pencil,
-  Phone,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -37,6 +35,8 @@ import ClienteFormFields, {
 } from "./ClienteFormFields";
 
 import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
+import HojaResumenCaso from "@/features/casos/components/HojaResumenCaso";
+import FamiliaresCliente from "@/features/familiares/components/FamiliaresCliente";
 
 type ClienteDetalleScreenProps = {
   clienteId: number;
@@ -214,7 +214,13 @@ function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
         </div>
       </div>
 
-      <div className="border-t p-4"><DatosAdministrativosResumen datos={caso} /></div>
+      <div className="border-t p-4">
+        <DatosAdministrativosResumen datos={caso} />
+      </div>
+
+      <div className="border-t p-4">
+        <HojaResumenCaso casoId={caso.casoId} />
+      </div>
 
       <div className="border-t bg-muted/15 px-4 py-4">
         <div className="flex items-center justify-between gap-3">
@@ -227,7 +233,8 @@ function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
 
         {caso.expedientes.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
-            Este expediente administrativo no tiene expedientes judiciales registrados.
+            Este expediente administrativo no tiene expedientes judiciales
+            registrados.
           </p>
         ) : (
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -625,190 +632,149 @@ export default function ClienteDetalleScreen({
             </div>
           )}
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-            <div className="space-y-6">
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
-                  <CalendarDays className="size-4 text-primary" />
+          <div className="space-y-6">
+            <section
+              className="rounded-lg border bg-card p-5"
+              aria-label="Identificación y expedientes"
+            >
+              <dl className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <Dato label="DNI" value={formatearDni(cliente.dni)} />
 
-                  <div>
-                    <h2 className="text-sm font-semibold">Datos personales</h2>
+                <Dato label="CUIL" value={formatearCuil(cliente.cuil)} />
 
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      Identificación y fecha de nacimiento.
-                    </p>
-                  </div>
-                </header>
+                <Dato
+                  label="Teléfono"
+                  value={
+                    cliente.telefono?.trim() ? (
+                      <a
+                        href={`tel:${cliente.telefono}`}
+                        className="break-words hover:text-primary hover:underline"
+                      >
+                        {cliente.telefono}
+                      </a>
+                    ) : (
+                      "No informado"
+                    )
+                  }
+                />
 
-                <dl className="grid gap-5 p-5 sm:grid-cols-3">
-                  <Dato label="DNI" value={formatearDni(cliente.dni)} />
+                <Dato
+                  label="Expedientes relacionados"
+                  value={`${cliente.casos.length} administrativos · ${totalExpedientes} judiciales`}
+                />
+              </dl>
+            </section>
 
-                  <Dato label="CUIL" value={formatearCuil(cliente.cuil)} />
+            <details className="rounded-lg border bg-card">
+              <summary className="cursor-pointer rounded-lg p-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                Datos personales, contacto y registro
+              </summary>
 
-                  <Dato
-                    label="Fecha de nacimiento"
-                    value={formatearFecha(cliente.fechaNacimiento)}
-                  />
-                </dl>
-              </section>
+              <dl className="grid gap-5 border-t p-5 sm:grid-cols-2 lg:grid-cols-3">
+                <Dato
+                  label="Fecha de nacimiento"
+                  value={formatearFecha(cliente.fechaNacimiento)}
+                />
 
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
-                  <Phone className="size-4 text-primary" />
+                <Dato
+                  label="Email"
+                  value={
+                    cliente.email?.trim() ? (
+                      <a
+                        href={`mailto:${cliente.email}`}
+                        className="break-words hover:text-primary hover:underline"
+                      >
+                        {cliente.email}
+                      </a>
+                    ) : (
+                      "No informado"
+                    )
+                  }
+                />
+
+                <Dato
+                  label="Domicilio"
+                  value={mostrarValor(cliente.domicilio)}
+                />
+
+                <Dato
+                  label="Localidad"
+                  value={mostrarValor(cliente.localidad)}
+                />
+
+                <Dato
+                  label="Provincia"
+                  value={mostrarValor(cliente.provincia)}
+                />
+
+                <Dato
+                  label="Identificador interno"
+                  value={`#${cliente.clienteId}`}
+                />
+
+                <Dato
+                  label="Fecha de creación"
+                  value={formatearFechaHora(cliente.fechaCreacion)}
+                />
+
+                <Dato
+                  label="Última modificación"
+                  value={formatearFechaHora(cliente.fechaModificacion)}
+                />
+              </dl>
+            </details>
+
+            <FamiliaresCliente
+              clienteId={cliente.clienteId}
+              nombreCliente={cliente.nombreCompleto}
+              activo={cliente.activo}
+              disabled={operacionPendiente || accionEstado !== null}
+            />
+
+            <section className="overflow-hidden rounded-lg border bg-card">
+              <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <BriefcaseBusiness className="size-4 text-primary" />
 
                   <div>
                     <h2 className="text-sm font-semibold">
-                      Contacto y domicilio
+                      Expedientes administrativos relacionados
                     </h2>
 
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      Canales de contacto y ubicación registrada.
+                      Participación y expedientes judiciales asociados.
                     </p>
                   </div>
-                </header>
+                </div>
 
-                <dl className="grid gap-5 p-5 sm:grid-cols-2">
-                  <Dato
-                    label="Teléfono"
-                    value={
-                      cliente.telefono?.trim() ? (
-                        <a
-                          href={`tel:${cliente.telefono}`}
-                          className="hover:text-primary hover:underline"
-                        >
-                          {cliente.telefono}
-                        </a>
-                      ) : (
-                        "No informado"
-                      )
-                    }
-                  />
+                <Badge variant="outline">{cliente.casos.length}</Badge>
+              </header>
 
-                  <Dato
-                    label="Email"
-                    value={
-                      cliente.email?.trim() ? (
-                        <a
-                          href={`mailto:${cliente.email}`}
-                          className="break-words hover:text-primary hover:underline"
-                        >
-                          {cliente.email}
-                        </a>
-                      ) : (
-                        "No informado"
-                      )
-                    }
-                  />
+              {cliente.casos.length === 0 ? (
+                <div className="p-8 text-center">
+                  <p className="text-sm font-medium">
+                    Sin expedientes administrativos relacionados
+                  </p>
 
-                  <Dato
-                    label="Domicilio"
-                    value={mostrarValor(cliente.domicilio)}
-                    className="sm:col-span-2"
-                  />
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Este cliente todavía no participa en ningún expediente
+                    administrativo.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 p-5">
+                  {cliente.casos.map((caso) => (
+                    <CasoRelacionado key={caso.casoId} caso={caso} />
+                  ))}
+                </div>
+              )}
+            </section>
 
-                  <Dato
-                    label="Localidad"
-                    value={mostrarValor(cliente.localidad)}
-                  />
-
-                  <Dato
-                    label="Provincia"
-                    value={mostrarValor(cliente.provincia)}
-                  />
-                </dl>
-              </section>
-
-              <HistorialObservaciones
-                entidad="clientes"
-                propietarioId={clienteId}
-              />
-
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    <BriefcaseBusiness className="size-4 text-primary" />
-
-                    <div>
-                      <h2 className="text-sm font-semibold">
-                        Expedientes administrativos relacionados
-                      </h2>
-
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        Participación y expedientes judiciales asociados.
-                      </p>
-                    </div>
-                  </div>
-
-                  <Badge variant="outline">{cliente.casos.length}</Badge>
-                </header>
-
-                {cliente.casos.length === 0 ? (
-                  <div className="p-8 text-center">
-                    <p className="text-sm font-medium">
-                      Sin expedientes administrativos relacionados
-                    </p>
-
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Este cliente todavía no participa en ningún expediente administrativo.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 p-5">
-                    {cliente.casos.map((caso) => (
-                      <CasoRelacionado key={caso.casoId} caso={caso} />
-                    ))}
-                  </div>
-                )}
-              </section>
-            </div>
-
-            <aside className="space-y-6">
-              <section className="hidden overflow-hidden rounded-lg border bg-card lg:block">
-                <header className="border-b bg-muted/30 px-5 py-4">
-                  <h2 className="text-sm font-semibold">Resumen</h2>
-                </header>
-
-                <dl className="space-y-5 p-5">
-                  <Dato
-                    label="Expedientes administrativos relacionados"
-                    value={cliente.casos.length}
-                  />
-
-                  <Dato
-                    label="Expedientes judiciales relacionados"
-                    value={totalExpedientes}
-                  />
-
-                  <Dato
-                    label="Estado"
-                    value={cliente.activo ? "Activo" : "Inactivo"}
-                  />
-                </dl>
-              </section>
-
-              <section className="overflow-hidden rounded-lg border bg-card">
-                <header className="border-b bg-muted/30 px-5 py-4">
-                  <h2 className="text-sm font-semibold">Registro</h2>
-                </header>
-
-                <dl className="space-y-5 p-5">
-                  <Dato
-                    label="Fecha de creación"
-                    value={formatearFechaHora(cliente.fechaCreacion)}
-                  />
-
-                  <Dato
-                    label="Última modificación"
-                    value={formatearFechaHora(cliente.fechaModificacion)}
-                  />
-
-                  <Dato
-                    label="Identificador interno"
-                    value={`#${cliente.clienteId}`}
-                  />
-                </dl>
-              </section>
-            </aside>
+            <HistorialObservaciones
+              key={clienteId}
+              entidad="clientes"
+              propietarioId={clienteId}
+            />
           </div>
         </>
       )}
