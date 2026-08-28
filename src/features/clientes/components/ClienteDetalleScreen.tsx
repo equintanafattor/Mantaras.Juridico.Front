@@ -37,6 +37,7 @@ import ClienteFormFields, {
 import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
 import HojaResumenCaso from "@/features/casos/components/HojaResumenCaso";
 import FamiliaresCliente from "@/features/familiares/components/FamiliaresCliente";
+import ClaveSeguridadSocial from "./ClaveSeguridadSocial";
 
 type ClienteDetalleScreenProps = {
   clienteId: number;
@@ -663,6 +664,12 @@ export default function ClienteDetalleScreen({
                   value={`${cliente.casos.length} administrativos · ${totalExpedientes} judiciales`}
                 />
               </dl>
+              <div className="mt-5 border-t pt-4 print:hidden">
+                <ClaveSeguridadSocial
+                  clienteId={cliente.clienteId}
+                  disabled={operacionPendiente || accionEstado !== null}
+                />
+              </div>
             </section>
 
             <details className="rounded-lg border bg-card">
