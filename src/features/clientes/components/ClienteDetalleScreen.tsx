@@ -9,8 +9,12 @@ import {
   BriefcaseBusiness,
   ChevronRight,
   FileText,
+  Mail,
   Loader2,
   Pencil,
+  Plus,
+  Phone,
+  Scale,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -35,6 +39,7 @@ import ClienteFormFields, {
 } from "./ClienteFormFields";
 
 import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
+import NuevoCasoDialog from "@/features/casos/components/NuevoCasoDialog";
 import HojaResumenCaso from "@/features/casos/components/HojaResumenCaso";
 import FamiliaresCliente from "@/features/familiares/components/FamiliaresCliente";
 import ClaveSeguridadSocial from "./ClaveSeguridadSocial";
@@ -284,6 +289,7 @@ export default function ClienteDetalleScreen({
   const [form, setForm] = useState<ClienteFormState>(FORM_CLIENTE_INICIAL);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
+  const [nuevoCasoOpen, setNuevoCasoOpen] = useState(false);
 
   const clienteQuery = useCliente(clienteId);
   const actualizarMutation = useActualizarCliente();
@@ -425,6 +431,11 @@ export default function ClienteDetalleScreen({
   const totalExpedientes = cliente.casos.reduce(
     (total, caso) => total + caso.expedientes.length,
     0,
+  );
+  const tieneAbogadoDerivante = Boolean(
+    cliente.derivadoPor?.trim() ||
+      cliente.derivadoPorTelefono?.trim() ||
+      cliente.derivadoPorEmail?.trim(),
   );
 
   return (
@@ -672,7 +683,7 @@ export default function ClienteDetalleScreen({
               </div>
             </section>
 
-            <details className="rounded-lg border bg-card">
+                        <details className="rounded-lg border bg-card">
               <summary className="cursor-pointer rounded-lg p-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 Datos personales, contacto y registro
               </summary>
@@ -714,10 +725,10 @@ export default function ClienteDetalleScreen({
                   value={mostrarValor(cliente.provincia)}
                 />
 
-                <Dato
+{/*                 <Dato
                   label="Identificador interno"
                   value={`#${cliente.clienteId}`}
-                />
+                /> */}
 
                 <Dato
                   label="Fecha de creación"
@@ -731,6 +742,67 @@ export default function ClienteDetalleScreen({
               </dl>
             </details>
 
+            <section className="overflow-hidden rounded-lg border bg-card">
+              <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
+                <Scale className="size-4 text-primary" />
+
+                <div>
+                  <h2 className="text-sm font-semibold">Abogado derivante</h2>
+                </div>
+              </header>
+
+              {tieneAbogadoDerivante ? (
+                <dl className="grid gap-5 p-5 sm:grid-cols-3">
+                  <Dato
+                    label="Nombre"
+                    value={mostrarValor(cliente.derivadoPor)}
+                  />
+
+                  <Dato
+                    label="Teléfono"
+                    value={
+                      cliente.derivadoPorTelefono?.trim() ? (
+                        <a
+                          href={`tel:${cliente.derivadoPorTelefono}`}
+                          className="inline-flex items-center gap-1.5 break-words hover:text-primary hover:underline"
+                        >
+                          <Phone className="size-3.5 shrink-0" />
+                          {cliente.derivadoPorTelefono}
+                        </a>
+                      ) : (
+                        "No informado"
+                      )
+                    }
+                  />
+
+                  <Dato
+                    label="Email"
+                    value={
+                      cliente.derivadoPorEmail?.trim() ? (
+                        <a
+                          href={`mailto:${cliente.derivadoPorEmail}`}
+                          className="inline-flex items-center gap-1.5 break-all hover:text-primary hover:underline"
+                        >
+                          <Mail className="size-3.5 shrink-0" />
+                          {cliente.derivadoPorEmail}
+                        </a>
+                      ) : (
+                        "No informado"
+                      )
+                    }
+                  />
+                </dl>
+              ) : (
+                <div className="p-5">
+                  <p className="text-sm font-medium">
+                    Sin abogado derivante
+                  </p>
+                </div>
+              )}
+            </section>
+
+
+
             <FamiliaresCliente
               clienteId={cliente.clienteId}
               nombreCliente={cliente.nombreCompleto}
@@ -739,7 +811,7 @@ export default function ClienteDetalleScreen({
             />
 
             <section className="overflow-hidden rounded-lg border bg-card">
-              <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
+              <header className="flex flex-col gap-3 border-b bg-muted/30 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
                   <BriefcaseBusiness className="size-4 text-primary" />
 
@@ -747,14 +819,31 @@ export default function ClienteDetalleScreen({
                     <h2 className="text-sm font-semibold">
                       Expedientes administrativos relacionados
                     </h2>
-
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      Participación y expedientes judiciales asociados.
-                    </p>
                   </div>
                 </div>
 
-                <Badge variant="outline">{cliente.casos.length}</Badge>
+                <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
+                  <Badge variant="outline">{cliente.casos.length}</Badge>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={
+                      !cliente.activo ||
+                      operacionPendiente ||
+                      accionEstado !== null
+                    }
+                    title={
+                      cliente.activo
+                        ? undefined
+                        : "Reactivá el cliente para crear un expediente administrativo."
+                    }
+                    onClick={() => setNuevoCasoOpen(true)}
+                  >
+                    <Plus />
+                    Nuevo expediente
+                  </Button>
+                </div>
               </header>
 
               {cliente.casos.length === 0 ? (
@@ -785,6 +874,12 @@ export default function ClienteDetalleScreen({
           </div>
         </>
       )}
+
+      <NuevoCasoDialog
+        open={nuevoCasoOpen}
+        onOpenChange={setNuevoCasoOpen}
+        clienteInicial={cliente}
+      />
     </div>
   );
 }

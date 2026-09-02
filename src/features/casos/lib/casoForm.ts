@@ -10,6 +10,11 @@ export type CasoParticipanteForm = {
   esPrincipal: boolean;
 };
 
+export type ClienteInicialCaso = Pick<
+  CasoParticipanteForm,
+  "clienteId" | "nombreCompleto" | "dni" | "cuil"
+>;
+
 export type CasoFormState = {
   titulo: string;
   faseInterna: FaseCaso;
@@ -33,6 +38,23 @@ export const FORM_CASO_INICIAL: CasoFormState = {
   tipoAdministrativoOriginal: null,
   clientes: [],
 };
+
+export function crearFormCasoInicial(
+  clienteInicial?: ClienteInicialCaso,
+): CasoFormState {
+  return {
+    ...FORM_CASO_INICIAL,
+    clientes: clienteInicial
+      ? [
+          {
+            ...clienteInicial,
+            tipoParticipacion: "Titular",
+            esPrincipal: true,
+          },
+        ]
+      : [],
+  };
+}
 
 export function crearFormDesdeCaso(caso: CasoDetalleResponse): CasoFormState {
   const beneficio = caso.tipoBeneficioId == null ? null : {

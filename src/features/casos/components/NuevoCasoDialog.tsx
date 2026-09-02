@@ -1,6 +1,10 @@
 "use client";
 
-import { esCasoFormValido } from "@/features/casos/lib/casoForm";
+import {
+  crearFormCasoInicial,
+  esCasoFormValido,
+  type ClienteInicialCaso,
+} from "@/features/casos/lib/casoForm";
 
 import { FormEvent, useState } from "react";
 import { AlertCircle, BriefcaseBusiness, Loader2 } from "lucide-react";
@@ -18,7 +22,6 @@ import { useCrearCaso } from "../hooks/useCrearCaso";
 
 import CasoFormFields, {
   crearRequestDesdeForm,
-  FORM_CASO_INICIAL,
   type CasoFormState,
 } from "./CasoFormFields";
 
@@ -26,14 +29,18 @@ type NuevoCasoDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCasoCreado?: () => void;
+  clienteInicial?: ClienteInicialCaso;
 };
 
 export default function NuevoCasoDialog({
   open,
   onOpenChange,
   onCasoCreado,
+  clienteInicial,
 }: NuevoCasoDialogProps) {
-  const [form, setForm] = useState<CasoFormState>(FORM_CASO_INICIAL);
+  const [form, setForm] = useState<CasoFormState>(() =>
+    crearFormCasoInicial(clienteInicial),
+  );
 
   const crearCasoMutation = useCrearCaso();
 
@@ -48,7 +55,7 @@ export default function NuevoCasoDialog({
   };
 
   const limpiarFormulario = () => {
-    setForm(FORM_CASO_INICIAL);
+    setForm(crearFormCasoInicial(clienteInicial));
     crearCasoMutation.reset();
   };
 
@@ -95,7 +102,9 @@ export default function NuevoCasoDialog({
               <DialogTitle>Nuevo expediente administrativo</DialogTitle>
 
               <DialogDescription className="mt-1">
-                Registrá el asunto jurídico y asociá sus participantes.
+                {clienteInicial
+                  ? `${clienteInicial.nombreCompleto} quedará asociado como titular y cliente principal.`
+                  : "Registrá el asunto jurídico y asociá sus participantes."}
               </DialogDescription>
             </div>
           </div>

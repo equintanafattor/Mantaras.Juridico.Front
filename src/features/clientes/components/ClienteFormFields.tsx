@@ -12,6 +12,9 @@ export type ClienteFormState = {
   dni: string;
   cuil: string;
   claveSeguridadSocial: string;
+  derivadoPor: string;
+  derivadoPorTelefono: string;
+  derivadoPorEmail: string;
   fechaNacimiento: string;
   telefono: string;
   email: string;
@@ -26,6 +29,9 @@ export const FORM_CLIENTE_INICIAL: ClienteFormState = {
   dni: "",
   cuil: "",
   claveSeguridadSocial: "",
+  derivadoPor: "",
+  derivadoPorTelefono: "",
+  derivadoPorEmail: "",
   fechaNacimiento: "",
   telefono: "",
   email: "",
@@ -48,6 +54,9 @@ export function crearFormDesdeCliente(
     dni: cliente.dni ?? "",
     cuil: cliente.cuil ?? "",
     claveSeguridadSocial: "",
+    derivadoPor: cliente.derivadoPor ?? "",
+    derivadoPorTelefono: cliente.derivadoPorTelefono ?? "",
+    derivadoPorEmail: cliente.derivadoPorEmail ?? "",
     fechaNacimiento: cliente.fechaNacimiento?.slice(0, 10) ?? "",
     telefono: cliente.telefono ?? "",
     email: cliente.email ?? "",
@@ -66,6 +75,9 @@ export function crearRequestDesdeForm(
     dni: nullable(form.dni),
     cuil: nullable(form.cuil),
     claveSeguridadSocial: nullable(form.claveSeguridadSocial),
+    derivadoPor: nullable(form.derivadoPor),
+    derivadoPorTelefono: nullable(form.derivadoPorTelefono),
+    derivadoPorEmail: nullable(form.derivadoPorEmail),
     fechaNacimiento: nullable(form.fechaNacimiento),
     telefono: nullable(form.telefono),
     email: nullable(form.email),
@@ -247,6 +259,63 @@ export default function ClienteFormFields({
               value={form.provincia}
               onChange={(event) => onChange("provincia", event.target.value)}
               maxLength={150}
+              disabled={disabled}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4 border-t pt-5">
+        <div>
+          <h3 className="text-sm font-medium">Abogado derivante</h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Completá estos datos solamente si el cliente fue derivado por otro
+            profesional.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor={`${prefijo}-derivado-por`}>
+              Nombre del abogado
+            </Label>
+            <Input
+              id={`${prefijo}-derivado-por`}
+              value={form.derivadoPor}
+              onChange={(event) =>
+                onChange("derivadoPor", event.target.value)
+              }
+              maxLength={200}
+              disabled={disabled}
+              placeholder="Ej. Dra. María Pérez"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`${prefijo}-derivado-telefono`}>Teléfono</Label>
+            <Input
+              id={`${prefijo}-derivado-telefono`}
+              type="tel"
+              value={form.derivadoPorTelefono}
+              onChange={(event) =>
+                onChange("derivadoPorTelefono", event.target.value)
+              }
+              maxLength={50}
+              disabled={disabled}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`${prefijo}-derivado-email`}>Email</Label>
+            <Input
+              id={`${prefijo}-derivado-email`}
+              type="email"
+              value={form.derivadoPorEmail}
+              onChange={(event) =>
+                onChange("derivadoPorEmail", event.target.value)
+              }
+              maxLength={200}
               disabled={disabled}
             />
           </div>

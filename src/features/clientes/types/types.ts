@@ -7,6 +7,9 @@ export type ClienteResponse = {
   nombreCompleto: string;
   dni: string | null;
   cuil: string | null;
+  derivadoPor: string | null;
+  derivadoPorTelefono: string | null;
+  derivadoPorEmail: string | null;
   fechaNacimiento: string | null;
   telefono: string | null;
   email: string | null;
@@ -67,6 +70,9 @@ export type CrearClienteRequest = {
   dni: string | null;
   cuil: string | null;
   claveSeguridadSocial: string | null;
+  derivadoPor: string | null;
+  derivadoPorTelefono: string | null;
+  derivadoPorEmail: string | null;
   fechaNacimiento: string | null;
   telefono: string | null;
   email: string | null;
