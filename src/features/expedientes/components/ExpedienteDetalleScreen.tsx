@@ -6,16 +6,19 @@ import {
   ArrowLeft,
   BriefcaseBusiness,
   CalendarDays,
+  ChevronRight,
   FileText,
   GitBranch,
   Loader2,
   Pencil,
+  UserRound,
 } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCaso } from "@/features/casos/hooks/useCaso";
 
 import { useActualizarExpediente } from "../hooks/useActualizarExpediente";
 import { useCambiarEstadoExpediente } from "../hooks/useCambiarEstadoExpediente";
@@ -200,6 +203,7 @@ export default function ExpedienteDetalleScreen({
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
 
   const expedienteQuery = useExpediente(expedienteId);
+  const casoQuery = useCaso(expedienteQuery.data?.casoId ?? null);
   const actualizarMutation = useActualizarExpediente();
   const cambiarEstadoMutation = useCambiarEstadoExpediente();
 
@@ -559,10 +563,6 @@ export default function ExpedienteDetalleScreen({
                     <h2 className="text-sm font-semibold">
                       Información procesal
                     </h2>
-
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      Datos identificatorios y estado del trámite.
-                    </p>
                   </div>
                 </header>
 
@@ -606,12 +606,8 @@ export default function ExpedienteDetalleScreen({
 
                   <div>
                     <h2 className="text-sm font-semibold">
-                      Jerarquía procesal
+                      Jerarquía de expedientes
                     </h2>
-
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      Expediente judicial de origen y derivados directos.
-                    </p>
                   </div>
                 </header>
 
@@ -665,15 +661,22 @@ export default function ExpedienteDetalleScreen({
             </div>
 
             <aside className="space-y-6">
-              <section className="overflow-hidden rounded-lg border bg-card">
+              <Link
+                href={`/casos/${expediente.casoId}`}
+                className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:border-primary/25 hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
                 <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                   <BriefcaseBusiness className="size-4 text-primary" />
 
-                  <h2 className="text-sm font-semibold">Expediente administrativo relacionado</h2>
+                  <h2 className="flex-1 text-sm font-semibold">
+                    Expediente administrativo relacionado
+                  </h2>
+
+                  <ChevronRight className="size-4 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                 </header>
 
                 <div className="p-5">
-                  <p className="font-medium leading-6">
+                  <p className="font-medium leading-6 group-hover:text-primary">
                     {expediente.tituloCaso}
                   </p>
 
@@ -681,6 +684,85 @@ export default function ExpedienteDetalleScreen({
                     Expediente administrativo #{expediente.casoId}
                   </p>
                 </div>
+              </Link>
+
+              <section className="overflow-hidden rounded-lg border bg-card">
+                <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
+                  <UserRound className="size-4 text-primary" />
+
+                  <h2 className="text-sm font-semibold">
+                    {casoQuery.data?.clientes.length === 1
+                      ? "Cliente relacionado"
+                      : "Clientes relacionados"}
+                  </h2>
+                </header>
+
+                {casoQuery.isLoading ? (
+                  <div className="space-y-3 p-5">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                ) : casoQuery.isError ? (
+                  <div className="p-5">
+                    <p className="text-sm text-muted-foreground">
+                      No pudimos cargar los clientes relacionados.
+                    </p>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => casoQuery.refetch()}
+                    >
+                      Reintentar
+                    </Button>
+                  </div>
+                ) : casoQuery.data?.clientes.length ? (
+                  <div className="divide-y">
+                    {[...casoQuery.data.clientes]
+                      .sort(
+                        (a, b) => Number(b.esPrincipal) - Number(a.esPrincipal),
+                      )
+                      .map((cliente) => (
+                        <Link
+                          key={cliente.clienteId}
+                          href={`/clientes/${cliente.clienteId}`}
+                          className="group/cliente flex items-center gap-3 p-5 transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                        >
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+                            <UserRound className="size-4" />
+                          </span>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="truncate text-sm font-medium group-hover/cliente:text-primary">
+                                {cliente.nombreCompleto}
+                              </p>
+
+                              {cliente.esPrincipal && (
+                                <Badge variant="secondary">Principal</Badge>
+                              )}
+                            </div>
+
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {cliente.dni
+                                ? `DNI ${cliente.dni}`
+                                : cliente.cuil
+                                  ? `CUIL ${cliente.cuil}`
+                                  : "Sin documento informado"}
+                            </p>
+                          </div>
+
+                          <ChevronRight className="size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover/cliente:translate-x-0.5 group-hover/cliente:text-primary" />
+                        </Link>
+                      ))}
+                  </div>
+                ) : (
+                  <p className="p-5 text-sm text-muted-foreground">
+                    No hay clientes relacionados.
+                  </p>
+                )}
               </section>
 
               <section className="overflow-hidden rounded-lg border bg-card">
@@ -699,10 +781,10 @@ export default function ExpedienteDetalleScreen({
                     value={formatearFechaHora(expediente.fechaModificacion)}
                   />
 
-                  <Dato
+{/*                   <Dato
                     label="Identificador interno"
                     value={`#${expediente.expedienteId}`}
-                  />
+                  /> */}
                 </dl>
               </section>
             </aside>
