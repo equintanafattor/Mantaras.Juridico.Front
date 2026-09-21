@@ -50,12 +50,6 @@ type CasoDetalleScreenProps = {
 
 type AccionEstado = "darDeBaja" | "restaurar";
 
-const FASE_LABELS: Record<FaseCaso, string> = {
-  Preadministrativa: "Preadministrativa",
-  Juicio: "Juicio",
-  Postjuicio: "Postjuicio",
-};
-
 const TIPO_EXPEDIENTE_LABELS: Record<TipoExpediente, string> = {
   Principal: "Principal",
   Incidente: "Incidente",
@@ -117,7 +111,7 @@ function FaseBadge({ fase }: { fase: FaseCaso }) {
 
   return (
     <Badge variant="outline" className={`rounded-sm ${className}`}>
-      {FASE_LABELS[fase]}
+      {fase}
     </Badge>
   );
 }
@@ -417,7 +411,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
         Volver a expedientes administrativos
       </Link>
 
-      <header className="flex flex-col gap-5 border-b pb-6 lg:flex-row lg:items-start lg:justify-between">
+      <header className="flex flex-col gap-5 rounded-lg border border-amber-700/15 border-l-4 border-l-amber-600 bg-amber-50/40 p-5 lg:flex-row lg:items-start lg:justify-between dark:bg-amber-950/10">
         <div className="flex min-w-0 items-start gap-4">
           <span className="hidden size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground sm:flex">
             <BriefcaseBusiness className="size-5" />
@@ -520,7 +514,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
             </div>
           )}
 
-          <footer className="flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:justify-end">
+          <footer className="sticky bottom-4 z-10 flex flex-col-reverse gap-2 rounded-lg border bg-card/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
@@ -645,7 +639,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                 <dl className="grid gap-5 p-5 sm:grid-cols-2">
                   <Dato
                     label="Fase interna"
-                    value={FASE_LABELS[caso.faseInterna]}
+                    value={caso.faseInterna}
                   />
 
                   <Dato

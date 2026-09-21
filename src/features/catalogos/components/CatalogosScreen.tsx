@@ -50,7 +50,11 @@ function CatalogoPanel({ tipo }: { tipo: TipoCatalogo }) {
       setEdicion(null);
       setNombre("");
       setPage(1);
-      setMensaje("Nombre guardado. Los expedientes administrativos mostrarán el nombre actualizado.");
+      setMensaje(
+        tipo === "beneficios" || tipo === "administrativos"
+          ? "Nombre guardado. Los expedientes administrativos mostrarán el nombre actualizado."
+          : "Nombre guardado. Los expedientes nuevos podrán usar esta opción; los valores históricos se conservan.",
+      );
     } catch {
       // Mostrar el error de la API debajo, conservando el borrador.
     }
@@ -235,6 +239,9 @@ export default function CatalogosScreen() {
       </header>
       <CatalogoPanel tipo="beneficios" />
       <CatalogoPanel tipo="administrativos" />
+      <CatalogoPanel tipo="fases" />
+      <CatalogoPanel tipo="tramites" />
+      <CatalogoPanel tipo="estadosLegales" />
     </div>
   );
 }

@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { AlertCircle, FileText, Loader2, Pencil, Save } from "lucide-react";
+import {
+  AlertCircle,
+  FilePlus2,
+  FileText,
+  Loader2,
+  Pencil,
+  Save,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -282,6 +289,34 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
 
   const actual = edicion ?? hoja!;
   const vista = crearHojaForm(actual);
+
+  if (!actual.registrada && !edicion) {
+    return (
+      <section className="flex flex-col gap-4 rounded-lg border border-dashed bg-muted/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 className="flex items-center gap-2 text-sm font-semibold">
+            <FileText className="size-4" />
+            Hoja de resumen
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Este expediente administrativo no tiene una hoja de resumen.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={query.isFetching}
+          onClick={() => {
+            setGuardada(false);
+            setEdicion(actual);
+          }}
+        >
+          <FilePlus2 />
+          Crear hoja de resumen
+        </Button>
+      </section>
+    );
+  }
 
   return (
     <section

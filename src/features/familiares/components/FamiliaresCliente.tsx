@@ -18,6 +18,7 @@ type Props = {
   nombreCliente: string;
   activo: boolean;
   disabled?: boolean;
+  integrado?: boolean;
 };
 
 export default function FamiliaresCliente(props: Props) {
@@ -35,6 +36,7 @@ function ContenidoFamiliares({
   nombreCliente,
   activo,
   disabled = false,
+  integrado = false,
 }: Props) {
   const query = useFamiliares(clienteId);
   const mutation = useDesvincularFamiliar(clienteId);
@@ -65,10 +67,12 @@ function ContenidoFamiliares({
 
   return (
     <section
-      className="overflow-hidden rounded-lg border bg-card"
+      className={
+        integrado ? "overflow-hidden border-t" : "overflow-hidden rounded-lg border bg-card"
+      }
       aria-labelledby={`familiares-${clienteId}`}
     >
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-5 py-4">
         <div className="flex items-center gap-3">
           <UsersRound className="size-4 text-primary" />
 

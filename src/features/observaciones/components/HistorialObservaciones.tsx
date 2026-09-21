@@ -8,7 +8,6 @@ import {
   Loader2,
   MessageSquareText,
   Send,
-  UserRound,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -96,7 +95,7 @@ export default function HistorialObservaciones({
 
   return (
     <section className="overflow-hidden rounded-lg border bg-card">
-      <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
+      <header className="flex items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3 sm:px-5">
         <div className="flex items-center gap-3">
           <MessageSquareText className="size-4 text-primary" />
 
@@ -124,7 +123,12 @@ export default function HistorialObservaciones({
         )}
       </header>
 
-      <form className="border-b bg-muted/10 p-5" onSubmit={guardar}>
+      <form
+        className={
+          esResumen ? "border-b bg-muted/10 p-4" : "border-b bg-muted/10 p-5"
+        }
+        onSubmit={guardar}
+      >
         <label
           htmlFor={`observacion-${entidad}-${propietarioId}`}
           className="text-sm font-medium"
@@ -137,7 +141,7 @@ export default function HistorialObservaciones({
           value={texto}
           disabled={crearObservacionMutation.isPending}
           maxLength={2000}
-          rows={3}
+          rows={esResumen ? 2 : 3}
           className="mt-2 resize-y bg-background"
           placeholder={
             esMovimiento
@@ -209,11 +213,9 @@ export default function HistorialObservaciones({
       </form>
 
       {observacionesQuery.isLoading ? (
-        <div className="space-y-5 p-5">
+        <div className={esResumen ? "space-y-3 p-4" : "space-y-5 p-5"}>
           {Array.from({ length: 2 }).map((_, index) => (
             <div key={index} className="flex items-start gap-3">
-              <Skeleton className="size-9 shrink-0 rounded-full" />
-
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-40" />
                 <Skeleton className="h-4 w-full" />
@@ -263,12 +265,8 @@ export default function HistorialObservaciones({
           {visibles.map((observacion) => (
             <li
               key={observacion.observacionId}
-              className="flex items-start gap-3 p-5"
+              className={esResumen ? "p-4" : "p-5"}
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
-                <UserRound className="size-4" />
-              </span>
-
               <article className="min-w-0 flex-1">
                 <header className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <p className="truncate text-sm font-medium">
@@ -281,7 +279,11 @@ export default function HistorialObservaciones({
                   </p>
                 </header>
 
-                <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-7">
+                <p
+                  className={`${
+                    esResumen ? "mt-2 line-clamp-3 leading-6" : "mt-3 leading-7"
+                  } whitespace-pre-wrap break-words text-sm`}
+                >
                   {observacion.texto}
                 </p>
               </article>

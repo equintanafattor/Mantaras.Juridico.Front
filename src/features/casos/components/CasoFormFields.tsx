@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import CatalogoSelect from "@/features/catalogos/components/CatalogoSelect";
+import CatalogoNombreSelect from "@/features/catalogos/components/CatalogoNombreSelect";
 import type { CasoFormState } from "../lib/casoForm";
 export { crearFormDesdeCaso, crearRequestDesdeForm, FORM_CASO_INICIAL } from "../lib/casoForm";
 export type { CasoFormState, CasoParticipanteForm } from "../lib/casoForm";
@@ -195,41 +196,22 @@ export default function CasoFormFields({
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="caso-fase">
-            Fase interna <span className="text-destructive">*</span>
-          </Label>
+        <CatalogoNombreSelect
+          tipo="fases"
+          label="Fase interna"
+          value={form.faseInterna}
+          required
+          disabled={disabled}
+          onChange={(value) => actualizarCampo("faseInterna", value as FaseCaso)}
+        />
 
-          <select
-            id="caso-fase"
-            value={form.faseInterna}
-            disabled={disabled}
-            required
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            onChange={(event) =>
-              actualizarCampo("faseInterna", event.target.value as FaseCaso)
-            }
-          >
-            <option value="Preadministrativa">Preadministrativa</option>
-            <option value="Juicio">Juicio</option>
-            <option value="Postjuicio">Postjuicio</option>
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="caso-tipo-tramite">Tipo de trámite</Label>
-
-          <Input
-            id="caso-tipo-tramite"
-            value={form.tipoTramite}
-            disabled={disabled}
-            maxLength={200}
-            placeholder="Ej.: Reajuste previsional"
-            onChange={(event) =>
-              actualizarCampo("tipoTramite", event.target.value)
-            }
-          />
-        </div>
+        <CatalogoNombreSelect
+          tipo="tramites"
+          label="Tipo de trámite"
+          value={form.tipoTramite}
+          disabled={disabled}
+          onChange={(value) => actualizarCampo("tipoTramite", value)}
+        />
       </section>
 
       <section className="space-y-4 border-t pt-5" aria-label="Datos administrativos">
@@ -238,9 +220,13 @@ export default function CasoFormFields({
           <Link href="/catalogos" target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">Administrar catálogos (otra pestaña)</Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2 sm:col-span-2">
+          <div className="space-y-2">
             <Label htmlFor="caso-anses">Número de expediente ANSES</Label>
             <Input id="caso-anses" value={form.numeroExpedienteAnses} maxLength={100} disabled={disabled} placeholder="Opcional; conservá los ceros y separadores" onChange={(event) => actualizarCampo("numeroExpedienteAnses", event.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="caso-numero-beneficio">Número de beneficio</Label>
+            <Input id="caso-numero-beneficio" value={form.numeroBeneficio} maxLength={100} disabled={disabled} placeholder="Opcional; conservá los ceros y separadores" onChange={(event) => actualizarCampo("numeroBeneficio", event.target.value)} />
           </div>
           <CatalogoSelect tipo="beneficios" label="Tipo de beneficio" value={form.tipoBeneficio?.id ?? null} original={form.tipoBeneficioOriginal} seleccionado={form.tipoBeneficio} disabled={disabled} onChange={(item) => actualizarCampo("tipoBeneficio", item)} />
           <CatalogoSelect tipo="administrativos" label="Tipo de expediente administrativo" value={form.tipoAdministrativo?.id ?? null} original={form.tipoAdministrativoOriginal} seleccionado={form.tipoAdministrativo} disabled={disabled} onChange={(item) => actualizarCampo("tipoAdministrativo", item)} />

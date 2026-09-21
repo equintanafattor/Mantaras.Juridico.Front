@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import CatalogoNombreSelect from "@/features/catalogos/components/CatalogoNombreSelect";
 
 import type { ExpedienteFormState } from "./ExpedienteFormFields";
 
@@ -88,18 +89,13 @@ export default function ExpedienteDatosFormFields({
         />
       </div>
 
-      <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor={`${idPrefix}-estado-legal`}>Estado legal</Label>
-
-        <Input
-          id={`${idPrefix}-estado-legal`}
+      <div className="sm:col-span-2">
+        <CatalogoNombreSelect
+          tipo="estadosLegales"
+          label="Estado legal"
           value={form.estadoLegal}
           disabled={disabled}
-          maxLength={200}
-          placeholder="Ej.: Iniciado, en trámite, elevado a Cámara..."
-          onChange={(event) =>
-            actualizarCampo("estadoLegal", event.target.value)
-          }
+          onChange={(value) => actualizarCampo("estadoLegal", value)}
         />
       </div>
     </section>

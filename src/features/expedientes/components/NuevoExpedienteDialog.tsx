@@ -81,7 +81,7 @@ const PASOS_NUEVO_CASO = [
 function crearFormInicial(casoIdInicial?: number | null): ExpedienteFormState {
   return {
     ...FORM_EXPEDIENTE_INICIAL,
-    casoId: casoIdInicial ?? null,
+    casoIds: casoIdInicial == null ? [] : [casoIdInicial],
   };
 }
 
@@ -388,7 +388,7 @@ function NuevoExpedienteDialogContenido({
   const requierePadre = expedienteExistenteForm.tipoExpediente !== "Principal";
 
   const formularioExistenteValido =
-    expedienteExistenteForm.casoId !== null &&
+    expedienteExistenteForm.casoIds.length > 0 &&
     expedienteExistenteForm.caratula.trim().length > 0 &&
     (!requierePadre || expedienteExistenteForm.expedientePadreId !== null);
 

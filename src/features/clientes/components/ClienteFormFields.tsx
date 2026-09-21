@@ -1,3 +1,9 @@
+"use client";
+
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -101,6 +107,7 @@ export default function ClienteFormFields({
   onChange,
 }: ClienteFormFieldsProps) {
   const prefijo = modo === "crear" ? "nuevo-cliente" : "editar-cliente";
+  const [mostrarClave, setMostrarClave] = useState(false);
 
   return (
     <>
@@ -178,20 +185,37 @@ export default function ClienteFormFields({
             <Label htmlFor={`${prefijo}-clave`}>
               Clave de Seguridad Social
             </Label>
-            <Input
-              id={`${prefijo}-clave`}
-              type="password"
-              value={form.claveSeguridadSocial}
-              onChange={(event) =>
-                onChange("claveSeguridadSocial", event.target.value)
-              }
-              maxLength={500}
-              autoComplete="new-password"
-              disabled={disabled}
-              placeholder={
-                modo === "editar" ? "Dejar vacío para conservarla" : undefined
-              }
-            />
+            <div className="relative">
+              <Input
+                id={`${prefijo}-clave`}
+                type={mostrarClave ? "text" : "password"}
+                value={form.claveSeguridadSocial}
+                onChange={(event) =>
+                  onChange("claveSeguridadSocial", event.target.value)
+                }
+                maxLength={500}
+                autoComplete="new-password"
+                disabled={disabled}
+                className="pr-10"
+                placeholder={
+                  modo === "editar"
+                    ? "Dejar vacío para conservarla"
+                    : undefined
+                }
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0"
+                disabled={disabled}
+                aria-label={mostrarClave ? "Ocultar clave" : "Mostrar clave"}
+                aria-pressed={mostrarClave}
+                onClick={() => setMostrarClave((actual) => !actual)}
+              >
+                {mostrarClave ? <EyeOff /> : <Eye />}
+              </Button>
+            </div>
 
             {modo === "editar" && (
               <p className="text-xs text-muted-foreground">

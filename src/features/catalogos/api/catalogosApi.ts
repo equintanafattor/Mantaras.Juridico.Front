@@ -6,6 +6,7 @@ import { CATALOGOS, type CatalogoItem, type TipoCatalogo } from "../types/types"
 type CatalogoResponse = Omit<CatalogoItem, "id"> & {
   tipoBeneficioId?: number;
   tipoExpedienteAdministrativoId?: number;
+  opcionCatalogoId?: number;
 };
 
 function mapear(tipo: TipoCatalogo, item: CatalogoResponse): CatalogoItem {

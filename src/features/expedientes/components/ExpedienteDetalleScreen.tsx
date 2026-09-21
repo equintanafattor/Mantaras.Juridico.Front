@@ -24,6 +24,7 @@ import { useActualizarExpediente } from "../hooks/useActualizarExpediente";
 import { useCambiarEstadoExpediente } from "../hooks/useCambiarEstadoExpediente";
 import { useExpediente } from "../hooks/useExpediente";
 import type {
+  CasoExpedienteResponse,
   ExpedienteRelacionadoResponse,
   TipoExpediente,
 } from "../types/types";
@@ -168,6 +169,114 @@ function ExpedienteRelacionado({
   );
 }
 
+function ClientesCasoRelacionado({ casoId }: { casoId: number }) {
+  const casoQuery = useCaso(casoId);
+
+  if (casoQuery.isLoading) {
+    return (
+      <div className="space-y-3 p-4">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    );
+  }
+
+  if (casoQuery.isError) {
+    return (
+      <div className="p-4">
+        <p className="text-sm text-muted-foreground">
+          No pudimos cargar los clientes relacionados.
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          onClick={() => casoQuery.refetch()}
+        >
+          Reintentar
+        </Button>
+      </div>
+    );
+  }
+
+  if (!casoQuery.data?.clientes.length) {
+    return (
+      <p className="p-4 text-sm text-muted-foreground">
+        No hay clientes relacionados.
+      </p>
+    );
+  }
+
+  return (
+    <div className="divide-y">
+      {[...casoQuery.data.clientes]
+        .sort((a, b) => Number(b.esPrincipal) - Number(a.esPrincipal))
+        .map((cliente) => (
+          <Link
+            key={cliente.clienteId}
+            href={`/clientes/${cliente.clienteId}`}
+            className="group/cliente flex items-center gap-3 p-4 transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+              <UserRound className="size-4" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="truncate text-sm font-medium group-hover/cliente:text-primary">
+                  {cliente.nombreCompleto}
+                </p>
+                {cliente.esPrincipal && (
+                  <Badge variant="secondary">Principal</Badge>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {cliente.dni
+                  ? `DNI ${cliente.dni}`
+                  : cliente.cuil
+                    ? `CUIL ${cliente.cuil}`
+                    : "Sin documento informado"}
+              </p>
+            </div>
+            <ChevronRight className="size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover/cliente:translate-x-0.5 group-hover/cliente:text-primary" />
+          </Link>
+        ))}
+    </div>
+  );
+}
+
+function CasoRelacionadoCard({ caso }: { caso: CasoExpedienteResponse }) {
+  return (
+    <Link
+      href={`/casos/${caso.casoId}`}
+      className="group block border-b p-4 transition-colors last:border-b-0 hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-medium leading-6 group-hover:text-primary">
+            {caso.titulo}
+          </p>
+          <dl className="mt-3 grid gap-2 text-xs text-muted-foreground">
+            <div>
+              <dt className="inline font-medium">Tipo de beneficio: </dt>
+              <dd className="inline">
+                {caso.tipoBeneficioNombre?.trim() || "No informado"}
+              </dd>
+            </div>
+            <div>
+              <dt className="inline font-medium">Número de beneficio: </dt>
+              <dd className="inline">
+                {caso.numeroBeneficio?.trim() || "No informado"}
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <ChevronRight className="mt-1 size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+      </div>
+    </Link>
+  );
+}
+
 function DetalleSkeleton() {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
@@ -203,7 +312,6 @@ export default function ExpedienteDetalleScreen({
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
 
   const expedienteQuery = useExpediente(expedienteId);
-  const casoQuery = useCaso(expedienteQuery.data?.casoId ?? null);
   const actualizarMutation = useActualizarExpediente();
   const cambiarEstadoMutation = useCambiarEstadoExpediente();
 
@@ -213,7 +321,7 @@ export default function ExpedienteDetalleScreen({
   const requierePadre = form.tipoExpediente !== "Principal";
 
   const formularioValido =
-    form.casoId !== null &&
+    form.casoIds.length > 0 &&
     form.caratula.trim().length > 0 &&
     (!requierePadre || form.expedientePadreId !== null);
 
@@ -353,7 +461,7 @@ export default function ExpedienteDetalleScreen({
         Volver a expedientes judiciales
       </Link>
 
-      <header className="flex flex-col gap-5 border-b pb-6 lg:flex-row lg:items-start lg:justify-between">
+      <header className="flex flex-col gap-5 rounded-lg border border-sky-800/15 border-l-4 border-l-sky-700 bg-sky-50/45 p-5 lg:flex-row lg:items-start lg:justify-between dark:bg-sky-950/10">
         <div className="flex min-w-0 items-start gap-4">
           <span className="hidden size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground sm:flex">
             <FileText className="size-5" />
@@ -368,8 +476,13 @@ export default function ExpedienteDetalleScreen({
               {expediente.caratula}
             </h1>
 
-            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              {expediente.numeroExpediente || "Sin número de expediente judicial"}
+            <p className="mt-2 flex flex-wrap gap-x-2 text-sm text-muted-foreground sm:text-base">
+              <span>
+                {expediente.numeroExpediente ||
+                  "Sin número de expediente judicial"}
+              </span>
+              <span aria-hidden="true">·</span>
+              <span>{expediente.juzgado?.trim() || "Juzgado no informado"}</span>
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -448,7 +561,7 @@ export default function ExpedienteDetalleScreen({
             </div>
           )}
 
-          <footer className="flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:justify-end">
+          <footer className="sticky bottom-4 z-10 flex flex-col-reverse gap-2 rounded-lg border bg-card/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
@@ -485,7 +598,7 @@ export default function ExpedienteDetalleScreen({
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 {accionEstado === "darDeBaja"
                   ? "No podrá darse de baja mientras tenga expedientes judiciales relacionados activos."
-                  : "Solo podrá restaurarse si el expediente administrativo y su expediente judicial de origen se encuentran activos."}
+                  : "Solo podrá restaurarse si todos sus expedientes administrativos y su expediente judicial de origen se encuentran activos."}
               </p>
 
               <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -661,108 +774,43 @@ export default function ExpedienteDetalleScreen({
             </div>
 
             <aside className="space-y-6">
-              <Link
-                href={`/casos/${expediente.casoId}`}
-                className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:border-primary/25 hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
+              <section className="overflow-hidden rounded-lg border bg-card">
                 <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                   <BriefcaseBusiness className="size-4 text-primary" />
 
                   <h2 className="flex-1 text-sm font-semibold">
-                    Expediente administrativo relacionado
+                    {expediente.casos.length === 1
+                      ? "Expediente administrativo relacionado"
+                      : "Expedientes administrativos relacionados"}
                   </h2>
-
-                  <ChevronRight className="size-4 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                 </header>
-
-                <div className="p-5">
-                  <p className="font-medium leading-6 group-hover:text-primary">
-                    {expediente.tituloCaso}
-                  </p>
-
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Expediente administrativo #{expediente.casoId}
-                  </p>
+                <div>
+                  {expediente.casos.map((caso) => (
+                    <CasoRelacionadoCard key={caso.casoId} caso={caso} />
+                  ))}
                 </div>
-              </Link>
+              </section>
 
               <section className="overflow-hidden rounded-lg border bg-card">
                 <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                   <UserRound className="size-4 text-primary" />
 
                   <h2 className="text-sm font-semibold">
-                    {casoQuery.data?.clientes.length === 1
-                      ? "Cliente relacionado"
-                      : "Clientes relacionados"}
+                    Clientes relacionados
                   </h2>
                 </header>
-
-                {casoQuery.isLoading ? (
-                  <div className="space-y-3 p-5">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ) : casoQuery.isError ? (
-                  <div className="p-5">
-                    <p className="text-sm text-muted-foreground">
-                      No pudimos cargar los clientes relacionados.
-                    </p>
-
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-3"
-                      onClick={() => casoQuery.refetch()}
-                    >
-                      Reintentar
-                    </Button>
-                  </div>
-                ) : casoQuery.data?.clientes.length ? (
-                  <div className="divide-y">
-                    {[...casoQuery.data.clientes]
-                      .sort(
-                        (a, b) => Number(b.esPrincipal) - Number(a.esPrincipal),
-                      )
-                      .map((cliente) => (
-                        <Link
-                          key={cliente.clienteId}
-                          href={`/clientes/${cliente.clienteId}`}
-                          className="group/cliente flex items-center gap-3 p-5 transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-                        >
-                          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
-                            <UserRound className="size-4" />
-                          </span>
-
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="truncate text-sm font-medium group-hover/cliente:text-primary">
-                                {cliente.nombreCompleto}
-                              </p>
-
-                              {cliente.esPrincipal && (
-                                <Badge variant="secondary">Principal</Badge>
-                              )}
-                            </div>
-
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              {cliente.dni
-                                ? `DNI ${cliente.dni}`
-                                : cliente.cuil
-                                  ? `CUIL ${cliente.cuil}`
-                                  : "Sin documento informado"}
-                            </p>
-                          </div>
-
-                          <ChevronRight className="size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover/cliente:translate-x-0.5 group-hover/cliente:text-primary" />
-                        </Link>
-                      ))}
-                  </div>
-                ) : (
-                  <p className="p-5 text-sm text-muted-foreground">
-                    No hay clientes relacionados.
-                  </p>
-                )}
+                <div className="divide-y">
+                  {expediente.casos.map((caso) => (
+                    <div key={caso.casoId}>
+                      {expediente.casos.length > 1 && (
+                        <p className="border-b bg-muted/10 px-4 py-2 text-xs font-medium text-muted-foreground">
+                          {caso.titulo}
+                        </p>
+                      )}
+                      <ClientesCasoRelacionado casoId={caso.casoId} />
+                    </div>
+                  ))}
+                </div>
               </section>
 
               <section className="overflow-hidden rounded-lg border bg-card">

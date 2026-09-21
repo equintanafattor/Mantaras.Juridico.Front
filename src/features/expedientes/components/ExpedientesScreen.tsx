@@ -40,6 +40,18 @@ function mostrarValor(value: string | null) {
   return value?.trim() || "—";
 }
 
+function resumirCasos(expediente: ExpedienteResponse) {
+  const [primerCaso, ...restantes] = expediente.casos;
+
+  if (!primerCaso) {
+    return "Sin expediente administrativo";
+  }
+
+  return restantes.length === 0
+    ? primerCaso.titulo
+    : `${primerCaso.titulo} y ${restantes.length} más`;
+}
+
 function formatearFecha(value: string | null) {
   if (!value) {
     return "—";
@@ -153,8 +165,10 @@ function ExpedienteMobileCard({
 
       <dl className="mt-4 grid gap-3 text-sm">
         <div>
-          <dt className="text-xs text-muted-foreground">Expediente administrativo</dt>
-          <dd className="mt-1 font-medium">{expediente.tituloCaso}</dd>
+          <dt className="text-xs text-muted-foreground">
+            Expedientes administrativos
+          </dt>
+          <dd className="mt-1 font-medium">{resumirCasos(expediente)}</dd>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -226,7 +240,7 @@ export default function ExpedientesScreen() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-      <section className="flex flex-col justify-between gap-4 border-b pb-6 sm:flex-row sm:items-end">
+      <section className="flex flex-col justify-between gap-4 rounded-lg border border-sky-800/15 border-l-4 border-l-sky-700 bg-sky-50/45 p-5 sm:flex-row sm:items-end dark:bg-sky-950/10">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
             Gestión
@@ -390,7 +404,9 @@ export default function ExpedientesScreen() {
                   <thead className="border-b bg-muted/40 text-left text-xs text-muted-foreground">
                     <tr>
                       <th className="px-5 py-3 font-medium">Expediente judicial</th>
-                      <th className="px-5 py-3 font-medium">Expediente administrativo</th>
+                      <th className="px-5 py-3 font-medium">
+                        Expedientes administrativos
+                      </th>
                       <th className="px-5 py-3 font-medium">Tipo</th>
                       <th className="px-5 py-3 font-medium">Estado legal</th>
                       <th className="px-5 py-3 font-medium">Inicio</th>
@@ -450,7 +466,7 @@ export default function ExpedientesScreen() {
 
                           <td className="max-w-56 px-5 py-4">
                             <span className="block truncate">
-                              {expediente.tituloCaso}
+                              {resumirCasos(expediente)}
                             </span>
                           </td>
 

@@ -16,10 +16,20 @@ export type ExpedienteRelacionadoResponse = {
   activo: boolean;
 };
 
+export type CasoExpedienteResponse = {
+  casoId: number;
+  titulo: string;
+  numeroExpedienteAnses: string | null;
+  numeroBeneficio: string | null;
+  tipoBeneficioId: number | null;
+  tipoBeneficioNombre: string | null;
+  tipoBeneficioActivo: boolean | null;
+  activo: boolean;
+};
+
 export type ExpedienteResponse = {
   expedienteId: number;
-  casoId: number;
-  tituloCaso: string;
+  casos: CasoExpedienteResponse[];
   expedientePadreId: number | null;
   tipoExpediente: TipoExpediente;
   numeroExpediente: string | null;
@@ -56,7 +66,7 @@ export type BuscarExpedientesParams = {
 };
 
 export type CrearExpedienteRequest = {
-  casoId: number;
+  casoIds: number[];
   expedientePadreId: number | null;
   tipoExpediente: TipoExpediente;
   numeroExpediente: string | null;
@@ -68,7 +78,7 @@ export type CrearExpedienteRequest = {
 
 export type CrearExpedientePrincipalRequest = Omit<
   CrearExpedienteRequest,
-  "casoId" | "expedientePadreId" | "tipoExpediente"
+  "casoIds" | "expedientePadreId" | "tipoExpediente"
 >;
 
 export type CrearCasoConExpedientePrincipalRequest = {
@@ -85,7 +95,4 @@ export type CrearCasoConExpedientePrincipalResponse = DatosAdministrativos & {
   fechaCreacion: string;
 };
 
-export type ActualizarExpedienteRequest = Omit<
-  CrearExpedienteRequest,
-  "casoId"
->;
+export type ActualizarExpedienteRequest = CrearExpedienteRequest;

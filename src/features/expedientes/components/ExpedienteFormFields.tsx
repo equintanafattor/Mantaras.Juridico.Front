@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { FileText, FolderTree } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { useCasos } from "@/features/casos/hooks/useCasos";
 
 import { useExpedientes } from "../hooks/useExpedientes";
@@ -19,7 +19,7 @@ import type {
 import ExpedienteDatosFormFields from "./ExpedienteDatosFormFields";
 
 export type ExpedienteFormState = {
-  casoId: number | null;
+  casoIds: number[];
   expedientePadreId: number | null;
   tipoExpediente: TipoExpediente;
   numeroExpediente: string;
@@ -30,7 +30,7 @@ export type ExpedienteFormState = {
 };
 
 export const FORM_EXPEDIENTE_INICIAL: ExpedienteFormState = {
-  casoId: null,
+  casoIds: [],
   expedientePadreId: null,
   tipoExpediente: "Principal",
   numeroExpediente: "",
@@ -44,7 +44,7 @@ export function crearFormDesdeExpediente(
   expediente: ExpedienteDetalleResponse,
 ): ExpedienteFormState {
   return {
-    casoId: expediente.casoId,
+    casoIds: expediente.casos.map((caso) => caso.casoId),
     expedientePadreId: expediente.expedientePadreId,
     tipoExpediente: expediente.tipoExpediente,
     numeroExpediente: expediente.numeroExpediente ?? "",
@@ -68,22 +68,10 @@ const TIPOS_EXPEDIENTE: Array<{
   value: TipoExpediente;
   label: string;
 }> = [
-  {
-    value: "Principal",
-    label: "Principal",
-  },
-  {
-    value: "Incidente",
-    label: "Incidente",
-  },
-  {
-    value: "Apelacion",
-    label: "Apelación",
-  },
-  {
-    value: "Ejecucion",
-    label: "Ejecución",
-  },
+  { value: "Principal", label: "Principal" },
+  { value: "Incidente", label: "Incidente" },
+  { value: "Apelacion", label: "Apelación" },
+  { value: "Ejecucion", label: "Ejecución" },
 ];
 
 function normalizarOpcional(value: string) {
@@ -95,12 +83,14 @@ function normalizarOpcional(value: string) {
 export function crearRequestDesdeForm(
   form: ExpedienteFormState,
 ): CrearExpedienteRequest {
-  if (form.casoId === null) {
-    throw new Error("Debe seleccionarse un expediente administrativo para crear el expediente.");
+  if (form.casoIds.length === 0) {
+    throw new Error(
+      "Debe seleccionarse al menos un expediente administrativo.",
+    );
   }
 
   return {
-    casoId: form.casoId,
+    casoIds: form.casoIds,
     expedientePadreId: form.expedientePadreId,
     tipoExpediente: form.tipoExpediente,
     numeroExpediente: normalizarOpcional(form.numeroExpediente),
@@ -114,15 +104,7 @@ export function crearRequestDesdeForm(
 export function crearActualizarRequestDesdeForm(
   form: ExpedienteFormState,
 ): ActualizarExpedienteRequest {
-  return {
-    expedientePadreId: form.expedientePadreId,
-    tipoExpediente: form.tipoExpediente,
-    numeroExpediente: normalizarOpcional(form.numeroExpediente),
-    caratula: form.caratula.trim(),
-    juzgado: normalizarOpcional(form.juzgado),
-    fechaInicio: normalizarOpcional(form.fechaInicio),
-    estadoLegal: normalizarOpcional(form.estadoLegal),
-  };
+  return crearRequestDesdeForm(form);
 }
 
 export default function ExpedienteFormFields({
@@ -139,21 +121,22 @@ export default function ExpedienteFormFields({
     soloActivos: true,
   });
 
+  const tieneCasos = form.casoIds.length > 0;
   const expedientesQuery = useExpedientes(
     {
       page: 1,
       pageSize: 100,
-      casoId: form.casoId ?? undefined,
       soloActivos: modo === "crear",
     },
-    form.casoId !== null,
+    tieneCasos,
     false,
   );
 
   const expedientesDelCaso = (expedientesQuery.data?.items ?? []).filter(
-    (expediente) => expediente.expedienteId !== expedienteActualId,
+    (expediente) =>
+      expediente.expedienteId !== expedienteActualId &&
+      expediente.casos.some((caso) => form.casoIds.includes(caso.casoId)),
   );
-
   const expedientePrincipal =
     expedientesDelCaso.find(
       (expediente) => expediente.tipoExpediente === "Principal",
@@ -162,7 +145,7 @@ export default function ExpedienteFormFields({
   useEffect(() => {
     if (
       modo === "crear" &&
-      form.casoId !== null &&
+      tieneCasos &&
       expedientePrincipal &&
       form.tipoExpediente === "Principal"
     ) {
@@ -172,22 +155,26 @@ export default function ExpedienteFormFields({
         expedientePadreId: expedientePrincipal.expedienteId,
       });
     }
-  }, [expedientePrincipal, form, modo, onChange]);
+  }, [expedientePrincipal, form, modo, onChange, tieneCasos]);
 
   const actualizarCampo = <K extends keyof ExpedienteFormState>(
     campo: K,
     value: ExpedienteFormState[K],
   ) => {
-    onChange({
-      ...form,
-      [campo]: value,
-    });
+    onChange({ ...form, [campo]: value });
   };
 
-  const cambiarCaso = (value: string) => {
+  const alternarCaso = (casoId: number) => {
+    if (bloquearCaso) return;
+
+    const seleccionado = form.casoIds.includes(casoId);
+    const casoIds = seleccionado
+      ? form.casoIds.filter((id) => id !== casoId)
+      : [...form.casoIds, casoId];
+
     onChange({
       ...form,
-      casoId: value ? Number(value) : null,
+      casoIds,
       expedientePadreId: null,
       tipoExpediente: "Principal",
     });
@@ -214,47 +201,72 @@ export default function ExpedienteFormFields({
     <div className="space-y-6">
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="expediente-caso">
-            Expediente administrativo <span className="text-destructive">*</span>
-          </Label>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Label>
+              Expedientes administrativos relacionados{" "}
+              <span className="text-destructive">*</span>
+            </Label>
+
+            <Badge variant="outline">{form.casoIds.length}</Badge>
+          </div>
 
           {casosQuery.isLoading ? (
-            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-28 w-full" />
           ) : casosQuery.isError ? (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
               No pudimos cargar los expedientes administrativos activos.
             </div>
           ) : (
-            <select
-              id="expediente-caso"
-              value={form.casoId ?? ""}
-              disabled={disabled || modo === "editar" || bloquearCaso}
-              required
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              onChange={(event) => cambiarCaso(event.target.value)}
-            >
-              <option value="">Seleccioná un expediente administrativo...</option>
+            <div className="max-h-60 space-y-2 overflow-y-auto rounded-lg border p-2">
+              {casosQuery.data?.items.map((caso) => {
+                const seleccionado = form.casoIds.includes(caso.casoId);
 
-              {casosQuery.data?.items.map((caso) => (
-                <option key={caso.casoId} value={caso.casoId}>
-                  {caso.titulo}
-                </option>
-              ))}
-            </select>
+                return (
+                  <label
+                    key={caso.casoId}
+                    className="flex cursor-pointer items-start gap-3 rounded-md p-3 transition-colors hover:bg-muted/50 has-[:checked]:bg-primary/5"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={seleccionado}
+                      disabled={disabled || bloquearCaso}
+                      className="mt-1 size-4 rounded border-input accent-primary"
+                      onChange={() => alternarCaso(caso.casoId)}
+                    />
+
+                    <span className="min-w-0">
+                      <span className="block text-sm font-medium">
+                        {caso.titulo}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">
+                        {caso.numeroExpedienteAnses
+                          ? `ANSES ${caso.numeroExpedienteAnses}`
+                          : `Expediente administrativo #${caso.casoId}`}
+                      </span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+
+          {form.casoIds.length === 0 && (
+            <p className="text-xs text-destructive">
+              Seleccioná al menos un expediente administrativo.
+            </p>
           )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="expediente-tipo">
-            Tipo de expediente judicial <span className="text-destructive">*</span>
+            Tipo de expediente judicial{" "}
+            <span className="text-destructive">*</span>
           </Label>
 
           <select
             id="expediente-tipo"
             value={form.tipoExpediente}
-            disabled={
-              disabled || form.casoId === null || expedientesQuery.isLoading
-            }
+            disabled={disabled || form.casoIds.length === 0 || expedientesQuery.isLoading}
             required
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             onChange={(event) =>
@@ -265,9 +277,7 @@ export default function ExpedienteFormFields({
               <option
                 key={tipo.value}
                 value={tipo.value}
-                disabled={
-                  tipo.value === "Principal" && expedientePrincipal !== null
-                }
+                disabled={tipo.value === "Principal" && expedientePrincipal !== null}
               >
                 {tipo.label}
               </option>
@@ -286,7 +296,7 @@ export default function ExpedienteFormFields({
             value={form.expedientePadreId ?? ""}
             disabled={
               disabled ||
-              form.casoId === null ||
+              form.casoIds.length === 0 ||
               esPrincipal ||
               expedientesQuery.isLoading
             }
@@ -317,19 +327,19 @@ export default function ExpedienteFormFields({
           </select>
         </div>
 
-        {form.casoId !== null && expedientesQuery.isLoading && (
+        {tieneCasos && expedientesQuery.isLoading && (
           <div className="sm:col-span-2">
             <Skeleton className="h-16 w-full" />
           </div>
         )}
 
-        {form.casoId !== null && expedientesQuery.isError && (
+        {tieneCasos && expedientesQuery.isError && (
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive sm:col-span-2">
-            No pudimos consultar los expedientes judiciales del expediente administrativo.
+            No pudimos consultar los expedientes judiciales relacionados.
           </div>
         )}
 
-        {form.casoId !== null &&
+        {tieneCasos &&
           !expedientesQuery.isLoading &&
           !expedientesQuery.isError && (
             <div className="flex items-start gap-3 rounded-lg border bg-muted/30 p-4 text-sm sm:col-span-2">
@@ -341,10 +351,10 @@ export default function ExpedienteFormFields({
 
               <p className="text-muted-foreground">
                 {expedienteActualEsPrincipal
-                  ? "Este es el expediente judicial principal del expediente administrativo y no requiere un expediente judicial de origen."
+                  ? "Este expediente judicial es principal y no requiere un expediente judicial de origen."
                   : expedientePrincipal
-                    ? "Este expediente administrativo ya tiene un expediente judicial principal. El expediente judicial deberá relacionarse como incidente, apelación o ejecución."
-                    : "Este expediente administrativo todavía no tiene expediente judicial principal. Debés crear el principal antes de registrar expedientes judiciales relacionados."}
+                    ? "El primer expediente administrativo seleccionado ya tiene un judicial principal. Este deberá registrarse como incidente, apelación o ejecución."
+                    : "El primer expediente administrativo seleccionado todavía no tiene expediente judicial principal."}
               </p>
             </div>
           )}

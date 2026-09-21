@@ -20,6 +20,7 @@ export type CasoFormState = {
   faseInterna: FaseCaso;
   tipoTramite: string;
   numeroExpedienteAnses: string;
+  numeroBeneficio: string;
   tipoBeneficio: ReferenciaCatalogo | null;
   tipoAdministrativo: ReferenciaCatalogo | null;
   tipoBeneficioOriginal: ReferenciaCatalogo | null;
@@ -32,6 +33,7 @@ export const FORM_CASO_INICIAL: CasoFormState = {
   faseInterna: "Preadministrativa",
   tipoTramite: "",
   numeroExpedienteAnses: "",
+  numeroBeneficio: "",
   tipoBeneficio: null,
   tipoAdministrativo: null,
   tipoBeneficioOriginal: null,
@@ -65,6 +67,7 @@ export function crearFormDesdeCaso(caso: CasoDetalleResponse): CasoFormState {
   };
   return {
     numeroExpedienteAnses: caso.numeroExpedienteAnses ?? "",
+    numeroBeneficio: caso.numeroBeneficio ?? "",
     tipoBeneficio: beneficio,
     tipoAdministrativo: tipo,
     tipoBeneficioOriginal: beneficio,
@@ -92,6 +95,7 @@ function normalizarOpcional(value: string) {
 export function crearRequestDesdeForm(form: CasoFormState): CrearCasoRequest {
   return {
     numeroExpedienteAnses: normalizarOpcional(form.numeroExpedienteAnses),
+    numeroBeneficio: normalizarOpcional(form.numeroBeneficio),
     tipoBeneficioId: form.tipoBeneficio?.id ?? null,
     tipoExpedienteAdministrativoId: form.tipoAdministrativo?.id ?? null,
     titulo: form.titulo.trim(),
@@ -109,7 +113,8 @@ export function esCasoFormValido(form: CasoFormState): boolean {
   const asignable = (item: ReferenciaCatalogo | null, original: ReferenciaCatalogo | null) =>
     item === null || (Number.isSafeInteger(item.id) && item.id > 0 && (item.activo || item.id === original?.id));
   return form.titulo.trim().length > 0 && form.titulo.trim().length <= 300 &&
-    form.tipoTramite.trim().length <= 200 && form.numeroExpedienteAnses.length <= 100 &&
+    form.faseInterna.trim().length > 0 && form.faseInterna.trim().length <= 200 &&
+    form.tipoTramite.trim().length <= 200 && form.numeroExpedienteAnses.length <= 100 && form.numeroBeneficio.length <= 100 &&
     form.clientes.length > 0 && form.clientes.filter((cliente) => cliente.esPrincipal).length === 1 &&
     asignable(form.tipoBeneficio, form.tipoBeneficioOriginal) && asignable(form.tipoAdministrativo, form.tipoAdministrativoOriginal);
 }
@@ -117,6 +122,7 @@ export function esCasoFormValido(form: CasoFormState): boolean {
 export function datosAdministrativosDesdeForm(form: CasoFormState): DatosAdministrativos {
   return {
     numeroExpedienteAnses: normalizarOpcional(form.numeroExpedienteAnses),
+    numeroBeneficio: normalizarOpcional(form.numeroBeneficio),
     tipoBeneficioId: form.tipoBeneficio?.id ?? null,
     tipoBeneficioNombre: form.tipoBeneficio?.nombre ?? null,
     tipoBeneficioActivo: form.tipoBeneficio?.activo ?? null,

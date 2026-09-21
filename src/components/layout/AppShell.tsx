@@ -58,6 +58,9 @@ const navigationItems = [
     icon: Files,
     adminOnly: false,
   },
+];
+
+const settingsItems = [
   { href: "/catalogos", label: "Catálogos", icon: Files, adminOnly: false },
   {
     href: "/usuarios",
@@ -73,15 +76,23 @@ function rutaActiva(pathname: string, href: string) {
     : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function Navigation({ isAdmin }: { isAdmin: boolean }) {
+function Navigation({
+  isAdmin,
+  items = navigationItems,
+  label = "Navegación principal",
+}: {
+  isAdmin: boolean;
+  items?: typeof navigationItems;
+  label?: string;
+}) {
   const pathname = usePathname();
 
-  const itemsVisibles = navigationItems.filter(
+  const itemsVisibles = items.filter(
     (item) => !item.adminOnly || isAdmin,
   );
 
   return (
-    <nav aria-label="Navegación principal" className="flex flex-col gap-1">
+    <nav aria-label={label} className="flex flex-col gap-1">
       {itemsVisibles.map((item) => {
         const Icon = item.icon;
         const isActive = rutaActiva(pathname, item.href);
@@ -149,7 +160,7 @@ export default function AppShell({ children }: AppShellProps) {
 
   const isUnauthorizedAdminPage = pathname.startsWith("/usuarios") && !isAdmin;
 
-  const currentNavigationItem = navigationItems.find((item) =>
+  const currentNavigationItem = [...navigationItems, ...settingsItems].find((item) =>
     rutaActiva(pathname, item.href),
   );
 
@@ -205,6 +216,17 @@ export default function AppShell({ children }: AppShellProps) {
           </p>
 
           <Navigation isAdmin={isAdmin} />
+        </div>
+
+        <div className="border-t border-sidebar-border px-4 py-4">
+          <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35">
+            Opciones
+          </p>
+          <Navigation
+            isAdmin={isAdmin}
+            items={settingsItems}
+            label="Opciones del sistema"
+          />
         </div>
 
         <div className="border-t border-sidebar-border p-4">
@@ -269,8 +291,20 @@ export default function AppShell({ children }: AppShellProps) {
                   </SheetDescription>
                 </SheetHeader>
 
-                <div className="flex-1 px-4 py-5">
+                <div className="flex-1 overflow-y-auto px-4 py-5">
+                  <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35">
+                    Navegación
+                  </p>
                   <Navigation isAdmin={isAdmin} />
+
+                  <p className="mb-3 mt-6 border-t border-sidebar-border px-3 pt-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35">
+                    Opciones
+                  </p>
+                  <Navigation
+                    isAdmin={isAdmin}
+                    items={settingsItems}
+                    label="Opciones del sistema"
+                  />
                 </div>
 
                 <div className="border-t border-sidebar-border p-4">

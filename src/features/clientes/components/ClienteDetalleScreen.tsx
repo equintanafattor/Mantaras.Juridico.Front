@@ -539,7 +539,7 @@ export default function ClienteDetalleScreen({
             </div>
           )}
 
-          <footer className="flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:justify-end">
+          <footer className="sticky bottom-4 z-10 flex flex-col-reverse gap-2 rounded-lg border bg-card/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
@@ -646,10 +646,17 @@ export default function ClienteDetalleScreen({
 
           <div className="space-y-6">
             <section
-              className="rounded-lg border bg-card p-5"
-              aria-label="Identificación y expedientes"
+              className="overflow-hidden rounded-lg border bg-card"
+              aria-label="Información del cliente"
             >
-              <dl className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+              <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
+                <UserRound className="size-4 text-primary" />
+                <h2 className="text-sm font-semibold">
+                  Información personal y relaciones
+                </h2>
+              </header>
+
+              <dl className="grid gap-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
                 <Dato label="DNI" value={formatearDni(cliente.dni)} />
 
                 <Dato label="CUIL" value={formatearCuil(cliente.cuil)} />
@@ -675,16 +682,15 @@ export default function ClienteDetalleScreen({
                   value={`${cliente.casos.length} administrativos · ${totalExpedientes} judiciales`}
                 />
               </dl>
-              <div className="mt-5 border-t pt-4 print:hidden">
+              <div className="border-t px-5 py-4 print:hidden">
                 <ClaveSeguridadSocial
                   clienteId={cliente.clienteId}
                   disabled={operacionPendiente || accionEstado !== null}
                 />
               </div>
-            </section>
 
-                        <details className="rounded-lg border bg-card">
-              <summary className="cursor-pointer rounded-lg p-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <details className="border-t">
+              <summary className="cursor-pointer p-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
                 Datos personales, contacto y registro
               </summary>
 
@@ -742,7 +748,7 @@ export default function ClienteDetalleScreen({
               </dl>
             </details>
 
-            <section className="overflow-hidden rounded-lg border bg-card">
+            <section className="overflow-hidden border-t">
               <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                 <Scale className="size-4 text-primary" />
 
@@ -808,7 +814,9 @@ export default function ClienteDetalleScreen({
               nombreCliente={cliente.nombreCompleto}
               activo={cliente.activo}
               disabled={operacionPendiente || accionEstado !== null}
+              integrado
             />
+            </section>
 
             <section className="overflow-hidden rounded-lg border bg-card">
               <header className="flex flex-col gap-3 border-b bg-muted/30 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">

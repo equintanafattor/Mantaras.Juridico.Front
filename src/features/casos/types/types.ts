@@ -1,6 +1,6 @@
 import type { DatosAdministrativos } from "@/features/catalogos/types/types";
 
-export type FaseCaso = "Preadministrativa" | "Juicio" | "Postjuicio";
+export type FaseCaso = string;
 
 export type TipoParticipacionCliente =
   | "Titular"
@@ -79,6 +79,7 @@ export type CasoClienteRequest = {
 
 export type CrearCasoRequest = {
   numeroExpedienteAnses: string | null;
+  numeroBeneficio: string | null;
   tipoBeneficioId: number | null;
   tipoExpedienteAdministrativoId: number | null;
   titulo: string;

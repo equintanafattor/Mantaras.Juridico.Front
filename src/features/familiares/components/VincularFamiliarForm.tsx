@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { useClientes } from "@/features/clientes/hooks/useClientes";
+import NuevoClienteDialog from "@/features/clientes/components/NuevoClienteDialog";
 import type { ClienteResponse } from "@/features/clientes/types/types";
 
 import { useVincularFamiliar } from "../hooks/useFamiliares";
@@ -214,6 +215,7 @@ export default function VincularFamiliarForm({
     null,
   );
   const [parentesco, setParentesco] = useState("");
+  const [nuevoClienteOpen, setNuevoClienteOpen] = useState(false);
 
   const mutation = useVincularFamiliar(clienteId);
   const bloqueado = disabled || mutation.isPending;
@@ -249,10 +251,21 @@ export default function VincularFamiliarForm({
     <div className="space-y-4 border-b bg-muted/15 p-5">
       <h3 className="text-sm font-semibold">Vincular un familiar</h3>
 
-      <p className="text-xs text-muted-foreground">
-        Seleccioná un cliente existente. No se crean personas ni expedientes
-        desde este formulario.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">
+          Seleccioná un cliente existente o crealo sin salir de esta ficha.
+        </p>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={bloqueado}
+          onClick={() => setNuevoClienteOpen(true)}
+        >
+          <UserPlus />
+          Crear cliente
+        </Button>
+      </div>
 
       {!seleccionado ? (
         <>
@@ -374,6 +387,11 @@ export default function VincularFamiliarForm({
           </div>
         </form>
       )}
+
+      <NuevoClienteDialog
+        open={nuevoClienteOpen}
+        onOpenChange={setNuevoClienteOpen}
+      />
     </div>
   );
 }

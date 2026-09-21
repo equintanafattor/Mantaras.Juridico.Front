@@ -23,16 +23,11 @@ import { useCasos } from "../hooks/useCasos";
 import type { CasoResponse, FaseCaso } from "../types/types";
 
 import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
+import { useOpcionesCatalogo } from "@/features/catalogos/hooks/useCatalogos";
 
 import NuevoCasoDialog from "./NuevoCasoDialog";
 
 const PAGE_SIZE = 10;
-
-const FASE_LABELS: Record<FaseCaso, string> = {
-  Preadministrativa: "Preadministrativa",
-  Juicio: "Juicio",
-  Postjuicio: "Postjuicio",
-};
 
 function mostrarValor(value: string | null) {
   return value?.trim() || "—";
@@ -67,7 +62,7 @@ function FaseStatus({ fase }: { fase: FaseCaso }) {
 
   return (
     <Badge variant="outline" className={`rounded-sm ${className}`}>
-      {FASE_LABELS[fase]}
+      {fase}
     </Badge>
   );
 }
@@ -164,6 +159,7 @@ export default function CasosScreen() {
   const [nuevoCasoOpen, setNuevoCasoOpen] = useState(false);
 
   const busquedaDebounced = useDebouncedValue(busqueda.trim(), 400);
+  const fasesQuery = useOpcionesCatalogo("fases");
 
   const { data, isLoading, isFetching, isError, error, refetch } = useCasos({
     page,
@@ -200,7 +196,7 @@ export default function CasosScreen() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-      <section className="flex flex-col justify-between gap-4 border-b pb-6 sm:flex-row sm:items-end">
+      <section className="flex flex-col justify-between gap-4 rounded-lg border border-amber-700/15 border-l-4 border-l-amber-600 bg-amber-50/40 p-5 sm:flex-row sm:items-end dark:bg-amber-950/10">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
             Gestión
@@ -245,9 +241,11 @@ export default function CasosScreen() {
             aria-label="Filtrar por fase"
           >
             <option value="">Todas las fases</option>
-            <option value="Preadministrativa">Preadministrativa</option>
-            <option value="Juicio">Juicio</option>
-            <option value="Postjuicio">Postjuicio</option>
+            {fasesQuery.data?.map((fase) => (
+              <option key={fase.id} value={fase.nombre}>
+                {fase.nombre}
+              </option>
+            ))}
           </select>
 
           <label className="flex h-10 cursor-pointer items-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-3 text-sm">
