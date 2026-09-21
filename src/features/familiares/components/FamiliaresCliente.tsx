@@ -83,10 +83,6 @@ function ContenidoFamiliares({
             >
               Familiares relacionados
             </h2>
-
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Parentesco y acceso a la ficha de cada familiar.
-            </p>
           </div>
 
           {query.isSuccess && (

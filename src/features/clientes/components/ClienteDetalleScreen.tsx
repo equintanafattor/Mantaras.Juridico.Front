@@ -690,7 +690,7 @@ export default function ClienteDetalleScreen({
               </div>
 
               <details className="border-t">
-              <summary className="cursor-pointer p-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
+              <summary className="cursor-pointer p-5 text-sm font-semibold bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
                 Datos personales, contacto y registro
               </summary>
 
