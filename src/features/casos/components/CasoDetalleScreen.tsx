@@ -1,5 +1,6 @@
 "use client";
 
+import AgendaContexto from "@/features/agenda/components/AgendaContexto";
 import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
 
 import { esCasoFormValido } from "@/features/casos/lib/casoForm";
@@ -474,6 +475,8 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
           </div>
         )}
       </header>
+
+      {!modoEdicion ? <AgendaContexto key={`caso-${caso.casoId}`} contexto={{ tipo: "caso", id: caso.casoId, nombre: caso.titulo }} activo={caso.activo} /> : null}
 
       {modoEdicion ? (
         <form className="space-y-6" onSubmit={guardar}>

@@ -1,5 +1,6 @@
 "use client";
 
+import AgendaContexto from "@/features/agenda/components/AgendaContexto";
 import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
 
 import { FormEvent, useState, type ReactNode } from "react";
@@ -498,6 +499,8 @@ export default function ClienteDetalleScreen({
           </div>
         )}
       </header>
+
+      {!modoEdicion ? <AgendaContexto key={`cliente-${cliente.clienteId}`} contexto={{ tipo: "cliente", id: cliente.clienteId, nombre: cliente.nombreCompleto }} activo={cliente.activo} /> : null}
 
       {modoEdicion ? (
         <form className="space-y-6" onSubmit={guardar}>

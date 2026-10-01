@@ -1,4 +1,5 @@
 import type { ResumenEntradaAgenda, EntradaAgendaResponse, GuardarEntradaAgendaRequest, PrioridadAgenda } from "../types/types";
+import type { ContextoAgenda } from "./agendaContexto";
 import type { SeleccionAgenda } from "./filtrosAgenda";
 
 export type AgendaForm = {
@@ -10,9 +11,9 @@ export function fechaHoyAgenda(fecha = new Date()) {
   const partes = new Intl.DateTimeFormat("en", { timeZone: "America/Argentina/Buenos_Aires", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(fecha);
   return `${partes.find(p => p.type === "year")!.value}-${partes.find(p => p.type === "month")!.value}-${partes.find(p => p.type === "day")!.value}`;
 }
-export function agendaFormInicial(vencimiento = false): AgendaForm {
+export function agendaFormInicial(vencimiento = false, contexto?: ContextoAgenda): AgendaForm {
   const hoy = fechaHoyAgenda();
-  return { tipoEntradaAgendaId: null, titulo: "", descripcion: "", prioridad: "Normal", fechaInicio: hoy, horaInicio: "", fechaFin: "", horaFin: "", fechaVencimiento: vencimiento ? hoy : "", horaVencimiento: "", clientes: [], casos: [], expedientes: [], responsableIds: [] };
+  return { tipoEntradaAgendaId: null, titulo: "", descripcion: "", prioridad: "Normal", fechaInicio: hoy, horaInicio: "", fechaFin: "", horaFin: "", fechaVencimiento: vencimiento ? hoy : "", horaVencimiento: "", clientes: contexto?.tipo === "cliente" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], casos: contexto?.tipo === "caso" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], expedientes: contexto?.tipo === "expediente" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], responsableIds: [] };
 }
 export function agendaFormDesdeEntrada(entrada: EntradaAgendaResponse, listado: ResumenEntradaAgenda): AgendaForm {
   function relaciones(ids: number[], items: SeleccionAgenda[]) { return ids.map(id => ({ id, nombre: items.find(item => item.id === id)?.nombre ?? `ID ${id}` })); }

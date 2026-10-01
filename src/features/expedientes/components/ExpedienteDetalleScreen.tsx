@@ -1,5 +1,6 @@
 "use client";
 
+import AgendaContexto from "@/features/agenda/components/AgendaContexto";
 import { FormEvent, useState } from "react";
 import {
   AlertCircle,
@@ -519,6 +520,8 @@ export default function ExpedienteDetalleScreen({
           </div>
         )}
       </header>
+
+      {!modoEdicion ? <AgendaContexto key={`expediente-${expediente.expedienteId}`} contexto={{ tipo: "expediente", id: expediente.expedienteId, nombre: expediente.caratula }} activo={expediente.activo} /> : null}
 
       {modoEdicion ? (
         <form className="space-y-6" onSubmit={guardar}>

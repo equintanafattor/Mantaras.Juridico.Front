@@ -9,10 +9,11 @@ import { agendaKeys } from "../hooks/agendaKeys";
 import { useActualizarEntradaAgenda, useCrearEntradaAgenda, useCrearVencimientoManual } from "../hooks/useAgenda";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
 import { agendaFormDesdeEntrada, agendaFormInicial, requestDesdeAgendaForm, type AgendaForm } from "../lib/agendaForm";
+import type { ContextoAgenda } from "../lib/agendaContexto";
 import type { ResumenEntradaAgenda } from "../types/types";
 import AgendaFormFields from "./AgendaFormFields";
 
-export type EditorAgenda = { modo: "entrada" | "vencimiento" } | { modo: "editar"; entrada: ResumenEntradaAgenda };
+export type EditorAgenda = { modo: "entrada" | "vencimiento"; contexto?: ContextoAgenda } | { modo: "editar"; entrada: ResumenEntradaAgenda };
 function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSaved }: { inicial: AgendaForm; id?: number; vencimientoManual: boolean; onClose: () => void; onPending: (value: boolean) => void; onSaved: () => void }) {
   const [form, setForm] = useState(inicial);
   const [error, setError] = useState<string>();
@@ -50,7 +51,7 @@ export default function AgendaFormDialog({ editor, onClose, onSaved }: { editor:
   return <Dialog open onOpenChange={open => { if (!open && !pending) onClose(); }}>
     <DialogContent showCloseButton={!pending} className="max-h-[92dvh] overflow-y-auto sm:max-w-3xl">
       <DialogHeader><DialogTitle>{editor.modo === "editar" ? "Editar entrada" : editor.modo === "vencimiento" ? "Nuevo vencimiento manual" : "Nueva entrada de agenda"}</DialogTitle><DialogDescription>Completá los datos y las asociaciones. Los campos con * son obligatorios.</DialogDescription></DialogHeader>
-      {editor.modo === "editar" ? <Edicion entrada={editor.entrada} {...props} /> : <Formulario inicial={agendaFormInicial(editor.modo === "vencimiento")} vencimientoManual={editor.modo === "vencimiento"} {...props} />}
+      {editor.modo === "editar" ? <Edicion entrada={editor.entrada} {...props} /> : <Formulario inicial={agendaFormInicial(editor.modo === "vencimiento", editor.contexto)} vencimientoManual={editor.modo === "vencimiento"} {...props} />}
     </DialogContent>
   </Dialog>;
 }
