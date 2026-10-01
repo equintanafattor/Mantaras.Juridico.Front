@@ -100,6 +100,7 @@ export default function AgendaScreen() {
           <p className="mt-2 text-sm text-muted-foreground">Tareas, compromisos y vencimientos. Horarios de Argentina.</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link href="/agenda/configuracion" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Configuración</Link>
           <Button onClick={() => setEditor({ modo: "entrada" })}>Nueva entrada</Button>
           <Button variant="outline" onClick={() => setEditor({ modo: "vencimiento" })}>Nuevo vencimiento</Button>
         <Button className={vista === "calendario" ? "hidden" : undefined} variant="outline" onClick={() => void agenda.refetch()} disabled={agenda.isFetching}>

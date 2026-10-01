@@ -8,8 +8,8 @@ import { FACTORES_ANTICIPACION, MAX_MINUTOS_RECORDATORIO, requestDesdeRecordator
 import type { BaseCalculoRecordatorioAgenda, CrearRecordatorioAgendaRequest } from "../types/types";
 
 const SELECT_CLASS = "h-9 w-full rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring";
-export default function AgendaRecordatoriosAlta({ items, tieneVencimiento, onChange, onDraftChange }: {
-  items: CrearRecordatorioAgendaRequest[]; tieneVencimiento: boolean;
+export default function AgendaRecordatoriosAlta({ items, tieneVencimiento, onChange, onDraftChange, predeterminados = false }: {
+  items: CrearRecordatorioAgendaRequest[]; tieneVencimiento: boolean; predeterminados?: boolean;
   onChange: (items: CrearRecordatorioAgendaRequest[], resetDraft?: boolean) => void; onDraftChange: (dirty: boolean) => void;
 }) {
   const [base, setBase] = useState<BaseCalculoRecordatorioAgenda>("Inicio");
@@ -18,6 +18,7 @@ export default function AgendaRecordatoriosAlta({ items, tieneVencimiento, onCha
   const [error, setError] = useState<string>();
   function agregar() {
     try {
+      if (predeterminados && items.length >= 10) throw new Error("Podés configurar hasta diez recordatorios predeterminados.");
       const request = requestDesdeRecordatorioForm(base, cantidad, unidad, tieneVencimiento);
       if (items.some(item => item.baseCalculo === request.baseCalculo && item.minutosAnticipacion === request.minutosAnticipacion)) throw new Error("Este recordatorio ya está en la lista.");
       onChange([...items, request], true);
@@ -26,7 +27,7 @@ export default function AgendaRecordatoriosAlta({ items, tieneVencimiento, onCha
   }
   return <section className="space-y-3 border-t pt-4" aria-label="Recordatorios al guardar">
     <h3 className="font-medium">Recordatorios internos</h3>
-    <p className="text-sm text-muted-foreground">Agregá los avisos a esta lista. Se crearán al guardar la entrada, junto con los predeterminados que correspondan.</p>
+    <p className="text-sm text-muted-foreground">{predeterminados ? "Agregá o quitá avisos y guardá la configuración. Máximo: diez avisos." : "Agregá los avisos a esta lista. Se crearán al guardar la entrada, junto con los predeterminados que correspondan."}</p>
     {items.length ? <ul className="space-y-2">{items.map((item, index) => <li key={`${item.baseCalculo}-${item.minutosAnticipacion}`} className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3 text-sm"><span>{item.minutosAnticipacion === 0 ? "En el momento del" : `${item.minutosAnticipacion} minutos antes del`} {item.baseCalculo === "Inicio" ? "inicio" : "vencimiento"}</span><Button type="button" variant="outline" size="sm" onClick={() => onChange(items.filter((_, i) => i !== index))}>Quitar</Button></li>)}</ul> : <p className="text-sm text-muted-foreground">Sin avisos personalizados en esta lista.</p>}
     <div className="grid gap-3 sm:grid-cols-3">
       <div className="space-y-2"><Label htmlFor="agenda-alta-recordatorio-base">Antes de</Label><select id="agenda-alta-recordatorio-base" className={SELECT_CLASS} value={base} onChange={e => { const value = e.target.value as BaseCalculoRecordatorioAgenda; setBase(value); setError(undefined); onDraftChange(value !== "Inicio" || cantidad !== "30" || unidad !== "Minutos"); }}><option value="Inicio">Inicio</option><option value="Vencimiento" disabled={!tieneVencimiento}>Vencimiento</option></select></div>
