@@ -213,3 +213,6 @@ export type ReglaVencimientoResponse = {
   fechaModificacion: string | null;
   activo: boolean;
 };
+
+export type OpcionAgendaResponse = { id: number; nombre: string; activo: boolean };
+export type OpcionesAgendaResponse = { tiposEntrada: OpcionAgendaResponse[]; responsables: OpcionAgendaResponse[] };

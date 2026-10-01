@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { useAgendaCalendario } from "../hooks/useAgendaCalendario";
 import { useEntradaAgenda } from "../hooks/useAgenda";
 import { agruparEntradasCalendario, diasCalendario, type ElementoCalendario } from "../lib/calendarioAgenda";
+import { rangoCalendarioFiltrado, type FiltrosAgenda } from "../lib/filtrosAgenda";
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
 import type { EntradaAgendaListadoResponse } from "../types/types";
 
@@ -61,19 +62,20 @@ function DetalleCalendario({ entrada, onClose }: { entrada?: EntradaAgendaListad
   );
 }
 
-export default function AgendaCalendario({ mes }: { mes: string }) {
-  const agenda = useAgendaCalendario(mes);
+export default function AgendaCalendario({ mes, filtros }: { mes: string; filtros: FiltrosAgenda }) {
+  const agenda = useAgendaCalendario(mes, filtros);
+  const rango = rangoCalendarioFiltrado(mes, filtros);
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>();
   const [entradaSeleccionada, setEntradaSeleccionada] = useState<EntradaAgendaListadoResponse>();
   const dias = diasCalendario(mes);
-  const porDia = agruparEntradasCalendario(dias, agenda.data ?? []);
+  const porDia = agruparEntradasCalendario(dias.map((dia) => ({ ...dia, valido: dia.valido && rango !== null && dia.fecha >= rango.desde && dia.fecha <= rango.hasta })), agenda.data ?? []);
 
   function seleccionarEntrada(entrada: EntradaAgendaListadoResponse) {
     setDiaSeleccionado(undefined);
     setEntradaSeleccionada(entrada);
   }
 
-  if (agenda.isPending) return <Skeleton aria-label="Cargando calendario" className="h-96 w-full" />;
+  if (rango !== null && agenda.isPending) return <Skeleton aria-label="Cargando calendario" className="h-96 w-full" />;
   if (agenda.isError) return (
     <div role="alert" className="rounded-lg border bg-card p-6">
       <div className="flex items-center gap-2 font-medium"><AlertCircle className="size-5 text-destructive" />No pudimos cargar el calendario</div>
@@ -86,9 +88,9 @@ export default function AgendaCalendario({ mes }: { mes: string }) {
     <section aria-label="Calendario mensual" className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">Eventos en su fecha de inicio y duración; vencimientos en su fecha límite.</p>
-        <Button variant="outline" disabled={agenda.isFetching} onClick={() => void agenda.refetch()}><RotateCcw className={agenda.isFetching ? "animate-spin" : undefined} />Actualizar calendario</Button>
+        <Button variant="outline" disabled={agenda.isFetching || rango === null} onClick={() => void agenda.refetch()}><RotateCcw className={agenda.isFetching ? "animate-spin" : undefined} />Actualizar calendario</Button>
       </div>
-      {agenda.data.length === 0 ? <p role="status" className="text-sm text-muted-foreground">No hay entradas en este mes ni en los días adyacentes.</p> : null}
+      {(agenda.data?.length ?? 0) === 0 ? <p role="status" className="text-sm text-muted-foreground">No hay entradas para los filtros y el mes seleccionado.</p> : null}
       <div className="overflow-x-auto rounded-lg border bg-card" tabIndex={0} aria-label="Grilla del calendario, desplazable horizontalmente">
         <div className="min-w-[700px]" aria-busy={agenda.isFetching}>
           <div className="grid grid-cols-7 border-b bg-muted/40">{DIAS.map((dia) => <div key={dia} className="px-3 py-2 text-center text-xs font-semibold">{dia}</div>)}</div>

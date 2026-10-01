@@ -3,8 +3,12 @@ import type { PagedResponse } from "@/features/casos/types/types";
 import { queryString, validarId } from "../lib/queryString";
 import type {
   BuscarAgendaRequest, GuardarEntradaAgendaRequest, CambiarEstadoAgendaRequest,
-  EntradaAgendaResponse, EntradaAgendaListadoResponse,
+  EntradaAgendaResponse, EntradaAgendaListadoResponse, OpcionesAgendaResponse,
 } from "../types/types";
+
+export function obtenerOpcionesAgenda(signal?: AbortSignal) {
+  return apiRequest<OpcionesAgendaResponse>("/api/agenda/opciones", { signal });
+}
 
 export function buscarAgenda(params: BuscarAgendaRequest = {}, signal?: AbortSignal) {
   return apiRequest<PagedResponse<EntradaAgendaListadoResponse>>(

@@ -12,11 +12,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAgenda } from "../hooks/useAgenda";
 import {
-  desplazarMes, mesActualArgentina, mostrarFechaAgenda, nombreMes, rangoMes,
+  desplazarMes, mesActualArgentina, mostrarFechaAgenda, nombreMes,
 } from "../lib/periodoAgenda";
 import type { EntradaAgendaListadoResponse, RelacionAgendaResponse } from "../types/types";
 
 import AgendaCalendario from "./AgendaCalendario";
+import AgendaFiltros from "./AgendaFiltros";
+import { FILTROS_AGENDA_INICIALES, parametrosFiltrosAgenda, rangoListadoAgenda, type FiltrosAgenda } from "../lib/filtrosAgenda";
 
 type VistaAgenda = "lista" | "tarjetas" | "calendario";
 const PAGE_SIZE = 12;
@@ -73,8 +75,9 @@ export default function AgendaScreen() {
   const [mes, setMes] = useState(mesActualArgentina);
   const [vista, setVista] = useState<VistaAgenda>("lista");
   const [page, setPage] = useState(1);
-  const rango = rangoMes(mes);
-  const agenda = useAgenda({ ...rango, page, pageSize: PAGE_SIZE, soloActivos: true }, vista !== "calendario");
+  const [filtros, setFiltros] = useState<FiltrosAgenda>(FILTROS_AGENDA_INICIALES);
+  const rango = rangoListadoAgenda(mes, filtros);
+  const agenda = useAgenda({ ...parametrosFiltrosAgenda(filtros), ...rango, page, pageSize: PAGE_SIZE, soloActivos: true, incluirVencimientos: true }, vista !== "calendario");
 
   function cambiarMes(nuevoMes: string) {
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(nuevoMes) || nuevoMes < "0001-01" || nuevoMes > "9999-12") return;
@@ -110,12 +113,14 @@ export default function AgendaScreen() {
         </div>
       </section>
 
+      <AgendaFiltros value={filtros} onApply={(next) => { setFiltros(next); setPage(1); }} />
+
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-semibold capitalize">{nombreMes(mes)}</h2>
+        <h2 className="text-lg font-semibold capitalize">{vista !== "calendario" && (filtros.desde || filtros.hasta) ? "Resultados del rango de fechas" : nombreMes(mes)}</h2>
         <p className={cn("text-sm text-muted-foreground", vista === "calendario" && "hidden")} role="status">{agenda.isPending ? "Cargando entradas…" : agenda.isError ? "Consulta pendiente de reintento" : `${agenda.data.totalItems} ${agenda.data.totalItems === 1 ? "entrada" : "entradas"} en el período`}</p>
       </div>
 
-      {vista === "calendario" ? <AgendaCalendario key={mes} mes={mes} /> : agenda.isPending ? (
+      {vista === "calendario" ? <AgendaCalendario key={`${mes}-${JSON.stringify(filtros)}`} mes={mes} filtros={filtros} /> : agenda.isPending ? (
         <div className="space-y-3" aria-label="Cargando Agenda" aria-busy="true">{[0, 1, 2].map((id) => <Skeleton key={id} className="h-32 w-full rounded-lg" />)}</div>
       ) : agenda.isError ? (
         <div role="alert" className="rounded-lg border border-destructive/25 bg-card p-6">
@@ -126,8 +131,8 @@ export default function AgendaScreen() {
       ) : agenda.data.items.length === 0 ? (
         <div className="rounded-lg border border-dashed bg-card px-6 py-12 text-center">
           <CalendarDays className="mx-auto size-8 text-muted-foreground" />
-          <h2 className="mt-4 font-semibold">No hay entradas para este período</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Elegí otro mes para consultar la agenda del estudio.</p>
+          <h2 className="mt-4 font-semibold">No hay entradas para esta consulta</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Probá cambiar el período o limpiar los filtros.</p>
         </div>
       ) : (
         <div aria-busy={agenda.isFetching} className={vista === "tarjetas" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "divide-y overflow-hidden rounded-lg border"}>
