@@ -6,8 +6,8 @@ import type { BuscarRecordatoriosAgendaRequest, CrearRecordatorioAgendaRequest, 
 import { agendaKeys } from "./agendaKeys";
 import { useInvalidarAgenda } from "./useInvalidarAgenda";
 
-export function useRecordatoriosAgenda(params: BuscarRecordatoriosAgendaRequest = {}) {
-  return useQuery({ queryKey: agendaKeys.recordatorios(params), queryFn: ({ signal }) => api.buscarRecordatoriosAgenda(params, signal) });
+export function useRecordatoriosAgenda(params: BuscarRecordatoriosAgendaRequest = {}, refetchInterval: number | false = false) {
+  return useQuery({ refetchInterval, queryKey: agendaKeys.recordatorios(params), queryFn: ({ signal }) => api.buscarRecordatoriosAgenda(params, signal) });
 }
 export function useCrearRecordatorioAgenda() {
   const onSuccess = useInvalidarAgenda();

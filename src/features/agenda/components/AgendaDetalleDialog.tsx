@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCambiarEstadoAgenda, useEntradaAgenda } from "../hooks/useAgenda";
+import AgendaRecordatorios from "./AgendaRecordatorios";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
 import { accionesEstadoAgenda, mostrarFechaAuditoriaAgenda, NOMBRES_ESTADO_AGENDA, relacionesDetalleAgenda } from "../lib/estadosAgenda";
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
@@ -20,11 +21,13 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
   const detalle = useEntradaAgenda(entrada.entradaAgendaId);
   const opciones = useOpcionesAgenda();
   const cambiarEstado = useCambiarEstadoAgenda();
+  const [recordatoriosPendientes, setRecordatoriosPendientes] = useState(false);
+  const ocupado = cambiarEstado.isPending || recordatoriosPendientes;
   const [mensaje, setMensaje] = useState<string>();
   const [error, setError] = useState<string>();
   const [objetivo, setObjetivo] = useState<EstadoEntradaAgenda>();
   const data = detalle.data;
-  const bloqueado = cambiarEstado.isPending || detalle.isFetching;
+  const bloqueado = ocupado || detalle.isFetching;
 
   async function cambiar(estado: EstadoEntradaAgenda) {
     if (bloqueado || !data || !accionesEstadoAgenda(data.estado).some(item => item.estado === estado)) return;
@@ -37,10 +40,10 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
     finally { setObjetivo(undefined); }
   }
 
-  return <Dialog open onOpenChange={open => { if (!open && !cambiarEstado.isPending) onClose(); }}>
-    <DialogContent showCloseButton={!cambiarEstado.isPending} className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
+  return <Dialog open onOpenChange={open => { if (!open && !ocupado) onClose(); }}>
+    <DialogContent showCloseButton={!ocupado} className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
       <DialogHeader><DialogTitle className="pr-6 break-words">{data?.titulo ?? entrada.titulo}</DialogTitle><DialogDescription>{data?.tipoEntradaNombre ?? entrada.tipoEntradaNombre} · Entrada #{entrada.entradaAgendaId}</DialogDescription></DialogHeader>
-      {detalle.isPending ? <Skeleton className="h-60 w-full" aria-label="Cargando detalle de Agenda" /> : detalle.isError ? <div role="alert"><p>{detalle.error.message}</p><Button className="mt-3" variant="outline" disabled={detalle.isFetching || cambiarEstado.isPending} onClick={() => void detalle.refetch()}>Reintentar</Button></div> : data ? <div className="space-y-5" aria-busy={bloqueado}>
+      {detalle.isPending ? <Skeleton className="h-60 w-full" aria-label="Cargando detalle de Agenda" /> : detalle.isError ? <div role="alert"><p>{detalle.error.message}</p><Button className="mt-3" variant="outline" disabled={detalle.isFetching || ocupado} onClick={() => void detalle.refetch()}>Reintentar</Button></div> : data ? <div className="space-y-5" aria-busy={bloqueado}>
         <div className="flex flex-wrap gap-2"><Badge variant="outline">{NOMBRES_ESTADO_AGENDA[data.estado]}</Badge><Badge variant={data.prioridad === "Urgente" ? "destructive" : "secondary"}>{data.prioridad}</Badge>{data.estaVencida ? <Badge variant="destructive">Vencida</Badge> : data.proximaAVencer ? <Badge variant="outline">Próxima a vencer</Badge> : null}</div>
         {data.descripcion ? <p className="whitespace-pre-wrap break-words text-sm">{data.descripcion}</p> : <p className="text-sm text-muted-foreground">Sin descripción</p>}
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
@@ -50,12 +53,13 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
         </dl>
         <section className="space-y-1"><h3 className="text-sm font-medium">Responsables</h3>{data.responsableIds.length === 0 ? <p className="text-sm text-muted-foreground">Sin responsables asignados</p> : <ul className="space-y-1 text-sm">{data.responsableIds.map(id => <li key={id}>{opciones.data?.responsables.find(item => item.id === id)?.nombre ?? entrada.responsables.find(item => item.id === id)?.nombre ?? `ID ${id}`} · #{id}</li>)}</ul>}</section>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Asociaciones titulo="Clientes" items={relacionesDetalleAgenda(data.clienteIds, entrada.clientes)} ruta="/clientes" disabled={cambiarEstado.isPending} />
-          <Asociaciones titulo="Expedientes administrativos" items={relacionesDetalleAgenda(data.casoIds, entrada.casos)} ruta="/casos" disabled={cambiarEstado.isPending} />
-          <Asociaciones titulo="Expedientes judiciales" items={relacionesDetalleAgenda(data.expedienteIds, entrada.expedientes)} ruta="/expedientes" disabled={cambiarEstado.isPending} />
+          <Asociaciones titulo="Clientes" items={relacionesDetalleAgenda(data.clienteIds, entrada.clientes)} ruta="/clientes" disabled={ocupado} />
+          <Asociaciones titulo="Expedientes administrativos" items={relacionesDetalleAgenda(data.casoIds, entrada.casos)} ruta="/casos" disabled={ocupado} />
+          <Asociaciones titulo="Expedientes judiciales" items={relacionesDetalleAgenda(data.expedienteIds, entrada.expedientes)} ruta="/expedientes" disabled={ocupado} />
         </div>
         <dl className="grid gap-2 border-t pt-3 text-xs text-muted-foreground sm:grid-cols-2"><div><dt>Creada</dt><dd>{mostrarFechaAuditoriaAgenda(data.fechaCreacion)}</dd></div>{data.fechaModificacion ? <div><dt>Última modificación</dt><dd>{mostrarFechaAuditoriaAgenda(data.fechaModificacion)}</dd></div> : null}</dl>
         <p className="text-xs text-muted-foreground">Horarios de Argentina.</p>
+        <AgendaRecordatorios entrada={data} nombresUsuarios={opciones.data?.responsables} disabled={cambiarEstado.isPending || detalle.isFetching} onPending={setRecordatoriosPendientes} />
         <section className="space-y-3 border-t pt-4" aria-label="Acciones de Agenda">
           <Button variant="outline" disabled={bloqueado} onClick={() => onEdit(entrada)}>Editar entrada</Button>
           <div className="flex flex-wrap gap-2">{accionesEstadoAgenda(data.estado).map(item => <Button key={item.estado} variant={item.estado === "Cancelada" ? "destructive" : "outline"} disabled={bloqueado} onClick={() => void cambiar(item.estado)}>{cambiarEstado.isPending && objetivo === item.estado ? "Actualizando…" : item.label}</Button>)}</div>
@@ -64,7 +68,7 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
       </div> : null}
       {mensaje ? <p role="status" className="text-sm">{mensaje}</p> : null}
       {error ? <div role="alert" className="space-y-2 text-sm text-destructive"><p className="whitespace-pre-wrap">{error}</p><Button variant="outline" size="sm" disabled={bloqueado} onClick={() => void detalle.refetch()}>Actualizar detalle</Button></div> : null}
-      <div className="flex justify-end"><Button variant="outline" disabled={cambiarEstado.isPending} onClick={onClose}>Cerrar</Button></div>
+      <div className="flex justify-end"><Button variant="outline" disabled={ocupado} onClick={onClose}>Cerrar</Button></div>
     </DialogContent>
   </Dialog>;
 }
