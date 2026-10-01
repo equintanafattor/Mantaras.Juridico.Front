@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { AlertCircle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAgendaCalendario } from "../hooks/useAgendaCalendario";
-import { useEntradaAgenda } from "../hooks/useAgenda";
 import { agruparEntradasCalendario, diasCalendario, type ElementoCalendario } from "../lib/calendarioAgenda";
 import { rangoCalendarioFiltrado, type FiltrosAgenda } from "../lib/filtrosAgenda";
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
@@ -28,52 +25,16 @@ function Elemento({ elemento, onSelect }: { elemento: ElementoCalendario; onSele
   );
 }
 
-function DetalleCalendario({ entrada, onClose, onEdit }: { entrada?: EntradaAgendaListadoResponse; onClose: () => void; onEdit: (entrada: EntradaAgendaListadoResponse) => void }) {
-  const detalle = useEntradaAgenda(entrada?.entradaAgendaId);
-  return (
-    <Dialog open={entrada !== undefined} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="pr-6 break-words">{entrada?.titulo ?? "Detalle de Agenda"}</DialogTitle>
-          <DialogDescription>{entrada?.tipoEntradaNombre}</DialogDescription>
-        </DialogHeader>
-        {detalle.isPending ? <Skeleton className="h-40 w-full" /> : detalle.isError ? (
-          <div role="alert"><p>{detalle.error.message}</p><Button className="mt-3" variant="outline" onClick={() => void detalle.refetch()}>Reintentar</Button></div>
-        ) : detalle.data ? (
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2"><Badge variant="outline">{detalle.data.estado === "EnCurso" ? "En curso" : detalle.data.estado}</Badge><Badge variant="secondary">{detalle.data.prioridad}</Badge></div>
-            {detalle.data.descripcion ? <p className="whitespace-pre-wrap break-words text-sm">{detalle.data.descripcion}</p> : null}
-            <dl className="grid gap-3 text-sm sm:grid-cols-2">
-              <div><dt className="text-muted-foreground">Inicio</dt><dd>{mostrarFechaAgenda(detalle.data.fechaInicio)}{detalle.data.horaInicio ? ` · ${detalle.data.horaInicio.slice(0, 5)}` : " · Sin hora"}</dd></div>
-              {detalle.data.fechaFin ? <div><dt className="text-muted-foreground">Fin</dt><dd>{mostrarFechaAgenda(detalle.data.fechaFin)}{detalle.data.horaFin ? ` · ${detalle.data.horaFin.slice(0, 5)}` : ""}</dd></div> : null}
-              {detalle.data.fechaVencimiento ? <div><dt className="text-muted-foreground">Vencimiento</dt><dd>{mostrarFechaAgenda(detalle.data.fechaVencimiento)}{detalle.data.horaVencimiento ? ` · ${detalle.data.horaVencimiento.slice(0, 5)}` : " · Sin hora"}</dd></div> : null}
-            </dl>
-            {entrada?.responsables.length ? <p className="text-sm">Responsables: {entrada.responsables.map((item) => item.nombre).join(", ")}</p> : null}
-            <div className="flex flex-col gap-2">
-              {entrada?.clientes.map((item) => <Link key={`cliente-${item.id}`} href={`/clientes/${item.id}`} className="text-sm text-primary hover:underline">Cliente: {item.nombre}</Link>)}
-              {entrada?.casos.map((item) => <Link key={`caso-${item.id}`} href={`/casos/${item.id}`} className="text-sm text-primary hover:underline">Expediente administrativo: {item.nombre}</Link>)}
-              {entrada?.expedientes.map((item) => <Link key={`expediente-${item.id}`} href={`/expedientes/${item.id}`} className="text-sm text-primary hover:underline">Expediente judicial: {item.nombre}</Link>)}
-            </div>
-            <p className="text-xs text-muted-foreground">Horarios de Argentina.</p>
-            {entrada ? <Button variant="outline" onClick={() => { onClose(); onEdit(entrada); }}>Editar entrada</Button> : null}
-          </div>
-        ) : null}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-export default function AgendaCalendario({ mes, filtros, onEdit }: { mes: string; filtros: FiltrosAgenda; onEdit: (entrada: EntradaAgendaListadoResponse) => void }) {
+export default function AgendaCalendario({ mes, filtros, onDetail }: { mes: string; filtros: FiltrosAgenda; onDetail: (entrada: EntradaAgendaListadoResponse) => void }) {
   const agenda = useAgendaCalendario(mes, filtros);
   const rango = rangoCalendarioFiltrado(mes, filtros);
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>();
-  const [entradaSeleccionada, setEntradaSeleccionada] = useState<EntradaAgendaListadoResponse>();
   const dias = diasCalendario(mes);
   const porDia = agruparEntradasCalendario(dias.map((dia) => ({ ...dia, valido: dia.valido && rango !== null && dia.fecha >= rango.desde && dia.fecha <= rango.hasta })), agenda.data ?? []);
 
   function seleccionarEntrada(entrada: EntradaAgendaListadoResponse) {
     setDiaSeleccionado(undefined);
-    setEntradaSeleccionada(entrada);
+    onDetail(entrada);
   }
 
   if (rango !== null && agenda.isPending) return <Skeleton aria-label="Cargando calendario" className="h-96 w-full" />;
@@ -115,7 +76,6 @@ export default function AgendaCalendario({ mes, filtros, onEdit }: { mes: string
           <div className="space-y-2">{(porDia.get(diaSeleccionado ?? "") ?? []).map((elemento) => <Elemento key={elemento.entrada.entradaAgendaId} elemento={elemento} onSelect={() => seleccionarEntrada(elemento.entrada)} />)}</div>
         </DialogContent>
       </Dialog>
-      <DetalleCalendario onEdit={onEdit} entrada={entradaSeleccionada} onClose={() => setEntradaSeleccionada(undefined)} />
     </section>
   );
 }
