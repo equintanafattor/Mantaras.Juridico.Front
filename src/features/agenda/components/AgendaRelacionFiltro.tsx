@@ -11,8 +11,8 @@ import { buscarExpedientes } from "@/features/expedientes/api/expedientesApi";
 import type { SeleccionAgenda } from "../lib/filtrosAgenda";
 
 type TipoRelacion = "cliente" | "caso" | "expediente";
-async function buscar(tipo: TipoRelacion, busqueda: string, page: number, signal: AbortSignal) {
-  const params = { busqueda, page, pageSize: 8, soloActivos: false };
+async function buscar(tipo: TipoRelacion, busqueda: string, page: number, soloActivos: boolean, signal: AbortSignal) {
+  const params = { busqueda, page, pageSize: 8, soloActivos };
   if (tipo === "cliente") {
     const result = await buscarClientes(params, signal);
     return { ...result, items: result.items.map((x) => ({ id: x.clienteId, nombre: `${x.nombreCompleto}${x.dni ? ` · DNI ${x.dni}` : ""}${!x.activo ? " (inactivo)" : ""}` })) };
@@ -25,8 +25,8 @@ async function buscar(tipo: TipoRelacion, busqueda: string, page: number, signal
   return { ...result, items: result.items.map((x) => ({ id: x.expedienteId, nombre: `${x.caratula}${x.numeroExpediente ? ` · ${x.numeroExpediente}` : ""}${!x.activo ? " (inactivo)" : ""}` })) };
 }
 
-export default function AgendaRelacionFiltro({ tipo, label, value, onChange }: {
-  tipo: TipoRelacion; label: string; value: SeleccionAgenda | null; onChange: (value: SeleccionAgenda | null) => void;
+export default function AgendaRelacionFiltro({ tipo, label, value, onChange, soloActivos = false }: {
+  soloActivos?: boolean; tipo: TipoRelacion; label: string; value: SeleccionAgenda | null; onChange: (value: SeleccionAgenda | null) => void;
 }) {
   const id = useId();
   const [abierto, setAbierto] = useState(false);
@@ -34,8 +34,8 @@ export default function AgendaRelacionFiltro({ tipo, label, value, onChange }: {
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
   const query = useQuery({
-    queryKey: ["agenda", "relaciones", tipo, busqueda, page],
-    queryFn: ({ signal }) => buscar(tipo, busqueda, page, signal), enabled: abierto,
+    queryKey: ["agenda", "relaciones", tipo, busqueda, page, soloActivos],
+    queryFn: ({ signal }) => buscar(tipo, busqueda, page, soloActivos, signal), enabled: abierto,
   });
   function buscarTexto() { setBusqueda(texto.trim()); setPage(1); if (busqueda === texto.trim() && page === 1) void query.refetch(); }
   return (

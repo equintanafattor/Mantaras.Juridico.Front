@@ -28,7 +28,7 @@ function Elemento({ elemento, onSelect }: { elemento: ElementoCalendario; onSele
   );
 }
 
-function DetalleCalendario({ entrada, onClose }: { entrada?: EntradaAgendaListadoResponse; onClose: () => void }) {
+function DetalleCalendario({ entrada, onClose, onEdit }: { entrada?: EntradaAgendaListadoResponse; onClose: () => void; onEdit: (entrada: EntradaAgendaListadoResponse) => void }) {
   const detalle = useEntradaAgenda(entrada?.entradaAgendaId);
   return (
     <Dialog open={entrada !== undefined} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -55,6 +55,7 @@ function DetalleCalendario({ entrada, onClose }: { entrada?: EntradaAgendaListad
               {entrada?.expedientes.map((item) => <Link key={`expediente-${item.id}`} href={`/expedientes/${item.id}`} className="text-sm text-primary hover:underline">Expediente judicial: {item.nombre}</Link>)}
             </div>
             <p className="text-xs text-muted-foreground">Horarios de Argentina.</p>
+            {entrada ? <Button variant="outline" onClick={() => { onClose(); onEdit(entrada); }}>Editar entrada</Button> : null}
           </div>
         ) : null}
       </DialogContent>
@@ -62,7 +63,7 @@ function DetalleCalendario({ entrada, onClose }: { entrada?: EntradaAgendaListad
   );
 }
 
-export default function AgendaCalendario({ mes, filtros }: { mes: string; filtros: FiltrosAgenda }) {
+export default function AgendaCalendario({ mes, filtros, onEdit }: { mes: string; filtros: FiltrosAgenda; onEdit: (entrada: EntradaAgendaListadoResponse) => void }) {
   const agenda = useAgendaCalendario(mes, filtros);
   const rango = rangoCalendarioFiltrado(mes, filtros);
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>();
@@ -114,7 +115,7 @@ export default function AgendaCalendario({ mes, filtros }: { mes: string; filtro
           <div className="space-y-2">{(porDia.get(diaSeleccionado ?? "") ?? []).map((elemento) => <Elemento key={elemento.entrada.entradaAgendaId} elemento={elemento} onSelect={() => seleccionarEntrada(elemento.entrada)} />)}</div>
         </DialogContent>
       </Dialog>
-      <DetalleCalendario entrada={entradaSeleccionada} onClose={() => setEntradaSeleccionada(undefined)} />
+      <DetalleCalendario onEdit={onEdit} entrada={entradaSeleccionada} onClose={() => setEntradaSeleccionada(undefined)} />
     </section>
   );
 }

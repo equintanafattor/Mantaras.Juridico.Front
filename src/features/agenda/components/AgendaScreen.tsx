@@ -18,6 +18,7 @@ import type { EntradaAgendaListadoResponse, RelacionAgendaResponse } from "../ty
 
 import AgendaCalendario from "./AgendaCalendario";
 import AgendaFiltros from "./AgendaFiltros";
+import AgendaFormDialog, { type EditorAgenda } from "./AgendaFormDialog";
 import { FILTROS_AGENDA_INICIALES, parametrosFiltrosAgenda, rangoListadoAgenda, type FiltrosAgenda } from "../lib/filtrosAgenda";
 
 type VistaAgenda = "lista" | "tarjetas" | "calendario";
@@ -35,7 +36,7 @@ function Contextos({ items, ruta }: { items: RelacionAgendaResponse[]; ruta: str
   ));
 }
 
-function Entrada({ entrada, vista }: { entrada: EntradaAgendaListadoResponse; vista: VistaAgenda }) {
+function Entrada({ entrada, vista, onEdit }: { entrada: EntradaAgendaListadoResponse; vista: VistaAgenda; onEdit: () => void }) {
   const tieneContextos = entrada.clientes.length + entrada.casos.length + entrada.expedientes.length > 0;
   return (
     <article className={cn("min-w-0 bg-card p-4 sm:p-5", vista === "tarjetas" ? "rounded-lg border" : "sm:grid sm:grid-cols-[minmax(0,1fr)_13rem] sm:gap-6")}>
@@ -47,6 +48,7 @@ function Entrada({ entrada, vista }: { entrada: EntradaAgendaListadoResponse; vi
           {entrada.estaVencida ? <Badge variant="destructive">Vencida</Badge> : entrada.proximaAVencer ? <Badge variant="outline">Próxima a vencer</Badge> : null}
         </div>
         <h2 className="break-words font-semibold leading-6">{entrada.titulo}</h2>
+        <Button className="mt-2" type="button" variant="outline" size="sm" onClick={onEdit}>Editar</Button>
         {entrada.descripcion ? <p className="mt-1 line-clamp-2 break-words text-sm text-muted-foreground">{entrada.descripcion}</p> : null}
         {tieneContextos ? (
           <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2" aria-label="Contextos relacionados">
@@ -75,6 +77,8 @@ export default function AgendaScreen() {
   const [mes, setMes] = useState(mesActualArgentina);
   const [vista, setVista] = useState<VistaAgenda>("lista");
   const [page, setPage] = useState(1);
+  const [editor, setEditor] = useState<EditorAgenda>();
+  const [mensaje, setMensaje] = useState<string>();
   const [filtros, setFiltros] = useState<FiltrosAgenda>(FILTROS_AGENDA_INICIALES);
   const rango = rangoListadoAgenda(mes, filtros);
   const agenda = useAgenda({ ...parametrosFiltrosAgenda(filtros), ...rango, page, pageSize: PAGE_SIZE, soloActivos: true, incluirVencimientos: true }, vista !== "calendario");
@@ -93,10 +97,16 @@ export default function AgendaScreen() {
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Agenda</h1>
           <p className="mt-2 text-sm text-muted-foreground">Tareas, compromisos y vencimientos. Horarios de Argentina.</p>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setEditor({ modo: "entrada" })}>Nueva entrada</Button>
+          <Button variant="outline" onClick={() => setEditor({ modo: "vencimiento" })}>Nuevo vencimiento</Button>
         <Button className={vista === "calendario" ? "hidden" : undefined} variant="outline" onClick={() => void agenda.refetch()} disabled={agenda.isFetching}>
           <RotateCcw className={agenda.isFetching ? "animate-spin" : undefined} />Actualizar
         </Button>
+        </div>
       </header>
+      {mensaje ? <p role="status" className="text-sm text-muted-foreground">{mensaje}</p> : null}
+      {editor ? <AgendaFormDialog editor={editor} onClose={() => setEditor(undefined)} onSaved={() => { setEditor(undefined); setMensaje("Entrada guardada. Si no aparece, revisá el período y los filtros seleccionados."); }} /> : null}
 
       <section aria-label="Período y vista de Agenda" className="flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-card p-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -120,7 +130,7 @@ export default function AgendaScreen() {
         <p className={cn("text-sm text-muted-foreground", vista === "calendario" && "hidden")} role="status">{agenda.isPending ? "Cargando entradas…" : agenda.isError ? "Consulta pendiente de reintento" : `${agenda.data.totalItems} ${agenda.data.totalItems === 1 ? "entrada" : "entradas"} en el período`}</p>
       </div>
 
-      {vista === "calendario" ? <AgendaCalendario key={`${mes}-${JSON.stringify(filtros)}`} mes={mes} filtros={filtros} /> : agenda.isPending ? (
+      {vista === "calendario" ? <AgendaCalendario key={`${mes}-${JSON.stringify(filtros)}`} mes={mes} filtros={filtros} onEdit={(entrada) => setEditor({ modo: "editar", entrada })} /> : agenda.isPending ? (
         <div className="space-y-3" aria-label="Cargando Agenda" aria-busy="true">{[0, 1, 2].map((id) => <Skeleton key={id} className="h-32 w-full rounded-lg" />)}</div>
       ) : agenda.isError ? (
         <div role="alert" className="rounded-lg border border-destructive/25 bg-card p-6">
@@ -136,7 +146,7 @@ export default function AgendaScreen() {
         </div>
       ) : (
         <div aria-busy={agenda.isFetching} className={vista === "tarjetas" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "divide-y overflow-hidden rounded-lg border"}>
-          {agenda.data.items.map((entrada) => <Entrada key={entrada.entradaAgendaId} entrada={entrada} vista={vista} />)}
+          {agenda.data.items.map((entrada) => <Entrada key={entrada.entradaAgendaId} entrada={entrada} vista={vista} onEdit={() => setEditor({ modo: "editar", entrada })} />)}
         </div>
       )}
 
