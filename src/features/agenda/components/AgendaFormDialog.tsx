@@ -9,10 +9,10 @@ import { agendaKeys } from "../hooks/agendaKeys";
 import { useActualizarEntradaAgenda, useCrearEntradaAgenda, useCrearVencimientoManual } from "../hooks/useAgenda";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
 import { agendaFormDesdeEntrada, agendaFormInicial, requestDesdeAgendaForm, type AgendaForm } from "../lib/agendaForm";
-import type { EntradaAgendaListadoResponse } from "../types/types";
+import type { ResumenEntradaAgenda } from "../types/types";
 import AgendaFormFields from "./AgendaFormFields";
 
-export type EditorAgenda = { modo: "entrada" | "vencimiento" } | { modo: "editar"; entrada: EntradaAgendaListadoResponse };
+export type EditorAgenda = { modo: "entrada" | "vencimiento" } | { modo: "editar"; entrada: ResumenEntradaAgenda };
 function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSaved }: { inicial: AgendaForm; id?: number; vencimientoManual: boolean; onClose: () => void; onPending: (value: boolean) => void; onSaved: () => void }) {
   const [form, setForm] = useState(inicial);
   const [error, setError] = useState<string>();
@@ -38,7 +38,7 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
     <div className="sticky bottom-0 flex justify-end gap-2 border-t bg-popover py-3"><Button type="button" variant="outline" disabled={pending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={pending || !opciones.data}>{pending ? "Guardando…" : id !== undefined ? "Guardar cambios" : vencimientoManual ? "Crear vencimiento" : "Crear entrada"}</Button></div>
   </form>;
 }
-function Edicion({ entrada, ...props }: { entrada: EntradaAgendaListadoResponse; onClose: () => void; onPending: (value: boolean) => void; onSaved: () => void }) {
+function Edicion({ entrada, ...props }: { entrada: ResumenEntradaAgenda; onClose: () => void; onPending: (value: boolean) => void; onSaved: () => void }) {
   const detalle = useQuery({ queryKey: agendaKeys.entrada(entrada.entradaAgendaId), queryFn: ({ signal }) => obtenerEntradaAgenda(entrada.entradaAgendaId, signal), refetchOnMount: "always", refetchOnWindowFocus: false, refetchOnReconnect: false });
   if (detalle.isPending || detalle.isFetching) return <Skeleton className="h-64 w-full" aria-label="Cargando entrada para editar" />;
   if (detalle.isError) return <div role="alert"><p>{detalle.error.message}</p><Button variant="outline" onClick={() => void detalle.refetch()}>Reintentar</Button></div>;

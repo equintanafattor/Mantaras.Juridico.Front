@@ -1,4 +1,4 @@
-import type { EntradaAgendaListadoResponse, EntradaAgendaResponse, GuardarEntradaAgendaRequest, PrioridadAgenda } from "../types/types";
+import type { ResumenEntradaAgenda, EntradaAgendaResponse, GuardarEntradaAgendaRequest, PrioridadAgenda } from "../types/types";
 import type { SeleccionAgenda } from "./filtrosAgenda";
 
 export type AgendaForm = {
@@ -14,7 +14,7 @@ export function agendaFormInicial(vencimiento = false): AgendaForm {
   const hoy = fechaHoyAgenda();
   return { tipoEntradaAgendaId: null, titulo: "", descripcion: "", prioridad: "Normal", fechaInicio: hoy, horaInicio: "", fechaFin: "", horaFin: "", fechaVencimiento: vencimiento ? hoy : "", horaVencimiento: "", clientes: [], casos: [], expedientes: [], responsableIds: [] };
 }
-export function agendaFormDesdeEntrada(entrada: EntradaAgendaResponse, listado: EntradaAgendaListadoResponse): AgendaForm {
+export function agendaFormDesdeEntrada(entrada: EntradaAgendaResponse, listado: ResumenEntradaAgenda): AgendaForm {
   function relaciones(ids: number[], items: SeleccionAgenda[]) { return ids.map(id => ({ id, nombre: items.find(item => item.id === id)?.nombre ?? `ID ${id}` })); }
   return { tipoEntradaAgendaId: entrada.tipoEntradaAgendaId, titulo: entrada.titulo, descripcion: entrada.descripcion ?? "", prioridad: entrada.prioridad,
     fechaInicio: entrada.fechaInicio, horaInicio: entrada.horaInicio ?? "", fechaFin: entrada.fechaFin ?? "", horaFin: entrada.horaFin ?? "", fechaVencimiento: entrada.fechaVencimiento ?? "", horaVencimiento: entrada.horaVencimiento ?? "",

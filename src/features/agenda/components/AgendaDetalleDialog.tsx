@@ -11,13 +11,13 @@ import AgendaRecordatorios from "./AgendaRecordatorios";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
 import { accionesEstadoAgenda, mostrarFechaAuditoriaAgenda, NOMBRES_ESTADO_AGENDA, relacionesDetalleAgenda } from "../lib/estadosAgenda";
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
-import type { EntradaAgendaListadoResponse, EstadoEntradaAgenda, RelacionAgendaResponse } from "../types/types";
+import type { ResumenEntradaAgenda, EstadoEntradaAgenda, RelacionAgendaResponse } from "../types/types";
 
 function Asociaciones({ titulo, items, ruta, disabled }: { titulo: string; items: RelacionAgendaResponse[]; ruta: string; disabled: boolean }) {
   return <section className="space-y-1"><h3 className="text-sm font-medium">{titulo}</h3>{items.length === 0 ? <p className="text-sm text-muted-foreground">Sin asociaciones</p> : <ul className="space-y-1">{items.map(item => <li key={item.id}>{disabled ? <span className="break-words text-sm">{item.nombre}</span> : <Link href={`${ruta}/${item.id}`} className="break-words text-sm text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring">{item.nombre}</Link>}{item.referencia ? <span className="ml-2 text-xs text-muted-foreground">{item.referencia}</span> : null}</li>)}</ul>}</section>;
 }
 
-export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateChanged }: { onStateChanged: () => void; entrada: EntradaAgendaListadoResponse; onClose: () => void; onEdit: (entrada: EntradaAgendaListadoResponse) => void }) {
+export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateChanged }: { onStateChanged?: () => void; entrada: ResumenEntradaAgenda; onClose: () => void; onEdit: (entrada: ResumenEntradaAgenda) => void }) {
   const detalle = useEntradaAgenda(entrada.entradaAgendaId);
   const opciones = useOpcionesAgenda();
   const cambiarEstado = useCambiarEstadoAgenda();
@@ -34,7 +34,7 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
     setMensaje(undefined); setError(undefined); setObjetivo(estado);
     try {
       await cambiarEstado.mutateAsync({ id: entrada.entradaAgendaId, request: { estado } });
-      onStateChanged();
+      onStateChanged?.();
       setMensaje(`Estado actualizado: ${NOMBRES_ESTADO_AGENDA[estado]}.`);
     } catch (err) { setError(err instanceof Error ? err.message : "No pudimos cambiar el estado."); }
     finally { setObjetivo(undefined); }

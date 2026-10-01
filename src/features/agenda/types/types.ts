@@ -216,3 +216,7 @@ export type ReglaVencimientoResponse = {
 
 export type OpcionAgendaResponse = { id: number; nombre: string; activo: boolean };
 export type OpcionesAgendaResponse = { tiposEntrada: OpcionAgendaResponse[]; responsables: OpcionAgendaResponse[] };
+
+export type ResumenEntradaAgenda = Pick<EntradaAgendaListadoResponse,
+  "entradaAgendaId" | "titulo" | "tipoEntradaNombre" | "clientes" | "casos" | "expedientes" | "responsables"
+>;

@@ -1,15 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import AgendaDetalleDialog from "@/features/agenda/components/AgendaDetalleDialog";
+import AgendaFormDialog, { type EditorAgenda } from "@/features/agenda/components/AgendaFormDialog";
+import type { ResumenEntradaAgenda } from "@/features/agenda/types/types";
+import AgendaResumenPanel from "./AgendaResumenPanel";
 import {
   AlertCircle,
   ArrowRight,
-  BellRing,
   BriefcaseBusiness,
   Clock3,
   FileText,
   Files,
   UsersRound,
+  RotateCcw,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +24,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePanelResumen } from "../hooks/usePanelResumen";
 import type {
   ActividadRecienteResponse,
-  PanelAlertasResponse,
   PanelResumenResponse,
 } from "../types/types";
 
@@ -83,7 +87,7 @@ function PanelSkeleton() {
         ))}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(22rem,1fr)]">
         <div className="rounded-lg border bg-card">
           <div className="border-b p-5">
             <Skeleton className="h-5 w-40" />
@@ -248,49 +252,11 @@ function ActividadReciente({
   );
 }
 
-function AlertasPanel({ alertas }: { alertas: PanelAlertasResponse }) {
-  const alertasDisponibles = alertas.disponible;
-
-  return (
-    <section className="relative overflow-hidden rounded-lg border bg-card p-5 sm:p-6">
-      <div className="absolute inset-x-0 top-0 h-0.5 bg-sidebar-primary" />
-
-      <div className="flex items-start justify-between gap-4">
-        <span className="flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
-          <BellRing className="size-[18px]" />
-        </span>
-
-        <Badge
-          variant="outline"
-          className="rounded-sm bg-background text-muted-foreground"
-        >
-          {alertasDisponibles
-            ? `${alertas.totalPendientes} pendientes`
-            : "Próximamente"}
-        </Badge>
-      </div>
-
-      <h2 className="mt-5 font-semibold">Agenda y alertas</h2>
-
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        {alertasDisponibles
-          ? alertas.totalPendientes === 0
-            ? "No hay alertas ni vencimientos pendientes."
-            : "Tenés recordatorios o vencimientos que requieren atención."
-          : "Este espacio reunirá vencimientos, recordatorios y tareas importantes del estudio."}
-      </p>
-
-      {!alertasDisponibles && (
-        <div className="mt-5 rounded-md bg-muted/60 px-3 py-2.5 text-xs leading-5 text-muted-foreground">
-          La agenda será incorporada en un próximo entregable.
-        </div>
-      )}
-    </section>
-  );
-}
-
 export default function PanelScreen() {
   const panelQuery = usePanelResumen();
+  const [detalle, setDetalle] = useState<ResumenEntradaAgenda>();
+  const [editor, setEditor] = useState<EditorAgenda>();
+  const [mensaje, setMensaje] = useState<string>();
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
@@ -307,7 +273,11 @@ export default function PanelScreen() {
           Consultá el estado general del estudio y accedé a la actividad más
           reciente.
         </p>
+        <Button className="mt-4" variant="outline" disabled={panelQuery.isFetching} onClick={() => void panelQuery.refetch()}><RotateCcw className={panelQuery.isFetching ? "animate-spin" : undefined} />Actualizar resumen</Button>
       </section>
+      {mensaje ? <p role="status" className="text-sm text-muted-foreground">{mensaje}</p> : null}
+      {detalle ? <AgendaDetalleDialog key={detalle.entradaAgendaId} entrada={detalle} onClose={() => setDetalle(undefined)} onEdit={(entrada) => { setDetalle(undefined); setEditor({ modo: "editar", entrada }); }} /> : null}
+      {editor ? <AgendaFormDialog editor={editor} onClose={() => setEditor(undefined)} onSaved={() => { setEditor(undefined); setMensaje("Entrada de agenda guardada."); }} /> : null}
 
       {panelQuery.isLoading ? (
         <PanelSkeleton />
@@ -343,12 +313,12 @@ export default function PanelScreen() {
         >
           <ModulosResumen data={panelQuery.data} />
 
-          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(22rem,1fr)]">
             <ActividadReciente
               actividades={panelQuery.data.actividadReciente}
             />
 
-            <AlertasPanel alertas={panelQuery.data.alertas} />
+            <AgendaResumenPanel agenda={panelQuery.data.agenda} onSelect={setDetalle} />
           </div>
         </div>
       ) : null}
