@@ -16,7 +16,9 @@ import {
 } from "../lib/periodoAgenda";
 import type { EntradaAgendaListadoResponse, RelacionAgendaResponse } from "../types/types";
 
-type VistaAgenda = "lista" | "tarjetas";
+import AgendaCalendario from "./AgendaCalendario";
+
+type VistaAgenda = "lista" | "tarjetas" | "calendario";
 const PAGE_SIZE = 12;
 
 function Contextos({ items, ruta }: { items: RelacionAgendaResponse[]; ruta: string }) {
@@ -72,7 +74,7 @@ export default function AgendaScreen() {
   const [vista, setVista] = useState<VistaAgenda>("lista");
   const [page, setPage] = useState(1);
   const rango = rangoMes(mes);
-  const agenda = useAgenda({ ...rango, page, pageSize: PAGE_SIZE, soloActivos: true });
+  const agenda = useAgenda({ ...rango, page, pageSize: PAGE_SIZE, soloActivos: true }, vista !== "calendario");
 
   function cambiarMes(nuevoMes: string) {
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(nuevoMes) || nuevoMes < "0001-01" || nuevoMes > "9999-12") return;
@@ -88,7 +90,7 @@ export default function AgendaScreen() {
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Agenda</h1>
           <p className="mt-2 text-sm text-muted-foreground">Tareas, compromisos y vencimientos. Horarios de Argentina.</p>
         </div>
-        <Button variant="outline" onClick={() => void agenda.refetch()} disabled={agenda.isFetching}>
+        <Button className={vista === "calendario" ? "hidden" : undefined} variant="outline" onClick={() => void agenda.refetch()} disabled={agenda.isFetching}>
           <RotateCcw className={agenda.isFetching ? "animate-spin" : undefined} />Actualizar
         </Button>
       </header>
@@ -102,6 +104,7 @@ export default function AgendaScreen() {
           <Button variant="ghost" onClick={() => cambiarMes(mesActualArgentina())}>Mes actual</Button>
         </div>
         <div className="flex items-center gap-1" role="group" aria-label="Vista de Agenda">
+          <Button variant={vista === "calendario" ? "secondary" : "ghost"} aria-pressed={vista === "calendario"} onClick={() => setVista("calendario")}><CalendarDays />Calendario</Button>
           <Button variant={vista === "lista" ? "secondary" : "ghost"} aria-pressed={vista === "lista"} onClick={() => setVista("lista")}><List />Lista</Button>
           <Button variant={vista === "tarjetas" ? "secondary" : "ghost"} aria-pressed={vista === "tarjetas"} onClick={() => setVista("tarjetas")}><LayoutGrid />Tarjetas</Button>
         </div>
@@ -109,10 +112,10 @@ export default function AgendaScreen() {
 
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-lg font-semibold capitalize">{nombreMes(mes)}</h2>
-        <p className="text-sm text-muted-foreground" role="status">{agenda.isPending ? "Cargando entradas…" : agenda.isError ? "Consulta pendiente de reintento" : `${agenda.data.totalItems} ${agenda.data.totalItems === 1 ? "entrada" : "entradas"} en el período`}</p>
+        <p className={cn("text-sm text-muted-foreground", vista === "calendario" && "hidden")} role="status">{agenda.isPending ? "Cargando entradas…" : agenda.isError ? "Consulta pendiente de reintento" : `${agenda.data.totalItems} ${agenda.data.totalItems === 1 ? "entrada" : "entradas"} en el período`}</p>
       </div>
 
-      {agenda.isPending ? (
+      {vista === "calendario" ? <AgendaCalendario key={mes} mes={mes} /> : agenda.isPending ? (
         <div className="space-y-3" aria-label="Cargando Agenda" aria-busy="true">{[0, 1, 2].map((id) => <Skeleton key={id} className="h-32 w-full rounded-lg" />)}</div>
       ) : agenda.isError ? (
         <div role="alert" className="rounded-lg border border-destructive/25 bg-card p-6">
@@ -132,7 +135,7 @@ export default function AgendaScreen() {
         </div>
       )}
 
-      {agenda.data && !agenda.isError && agenda.data.totalPages > 1 ? (
+      {vista !== "calendario" && agenda.data && !agenda.isError && agenda.data.totalPages > 1 ? (
         <nav aria-label="Paginación de Agenda" className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-sm text-muted-foreground">Página {agenda.data.page} de {agenda.data.totalPages}</span>
           <div className="flex gap-2">

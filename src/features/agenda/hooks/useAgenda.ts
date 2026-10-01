@@ -6,8 +6,8 @@ import type { BuscarAgendaRequest, GuardarEntradaAgendaRequest, CambiarEstadoAge
 import { agendaKeys } from "./agendaKeys";
 import { useInvalidarAgenda } from "./useInvalidarAgenda";
 
-export function useAgenda(params: BuscarAgendaRequest = {}) {
-  return useQuery({ queryKey: agendaKeys.listado(params), queryFn: ({ signal }) => api.buscarAgenda(params, signal) });
+export function useAgenda(params: BuscarAgendaRequest = {}, enabled = true) {
+  return useQuery({ enabled, queryKey: agendaKeys.listado(params), queryFn: ({ signal }) => api.buscarAgenda(params, signal) });
 }
 export function useEntradaAgenda(id?: number) {
   return useQuery({ queryKey: agendaKeys.entrada(id), queryFn: id === undefined ? skipToken : ({ signal }) => api.obtenerEntradaAgenda(id, signal) });

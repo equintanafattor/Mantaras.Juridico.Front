@@ -42,6 +42,7 @@ export type BuscarAgendaRequest = {
   casoId?: number | null;
   expedienteId?: number | null;
   busqueda?: string | null;
+  incluirVencimientos?: boolean;
   soloActivos?: boolean;
 };
 
