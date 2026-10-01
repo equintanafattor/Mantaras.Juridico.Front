@@ -11,12 +11,14 @@ import { referenciaAgendaContexto, type ContextoAgenda } from "../lib/agendaCont
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
 import { NOMBRES_ESTADO_AGENDA } from "../lib/estadosAgenda";
 import type { ResumenEntradaAgenda } from "../types/types";
+import AplicarReglaAgendaDialog from "./AplicarReglaAgendaDialog";
 import AgendaDetalleDialog from "./AgendaDetalleDialog";
 import AgendaFormDialog, { type EditorAgenda } from "./AgendaFormDialog";
 
 export default function AgendaContexto({ contexto, activo }: { contexto: ContextoAgenda; activo: boolean }) {
   const agenda = useAgendaContexto(contexto);
   const [detalle, setDetalle] = useState<ResumenEntradaAgenda>();
+  const [aplicarRegla, setAplicarRegla] = useState(false);
   const [editor, setEditor] = useState<EditorAgenda>();
   const [mensaje, setMensaje] = useState<string>();
   const entradas = agenda.data ?? [];
@@ -25,7 +27,7 @@ export default function AgendaContexto({ contexto, activo }: { contexto: Context
     <header className="flex flex-wrap items-center justify-between gap-3">
       <div><h2 className="flex items-center gap-2 font-semibold"><CalendarDays className="size-5" />Agenda vinculada</h2><p className="mt-1 text-sm text-muted-foreground">Compromisos de hoy y próximos de esta ficha.</p></div>
       <div className="flex flex-wrap gap-2">
-        {activo ? <><Button type="button" size="sm" onClick={() => { setMensaje(undefined); setEditor({ modo: "entrada", contexto }); }}>Nueva entrada</Button><Button type="button" variant="outline" size="sm" onClick={() => { setMensaje(undefined); setEditor({ modo: "vencimiento", contexto }); }}>Nuevo vencimiento</Button></> : null}
+        {activo ? <><Button type="button" size="sm" onClick={() => { setMensaje(undefined); setEditor({ modo: "entrada", contexto }); }}>Nueva entrada</Button><Button type="button" variant="outline" size="sm" onClick={() => { setMensaje(undefined); setEditor({ modo: "vencimiento", contexto }); }}>Nuevo vencimiento</Button><Button type="button" variant="outline" size="sm" onClick={() => { setMensaje(undefined); setAplicarRegla(true); }}>Generar por regla</Button></> : null}
         <Link href="/agenda" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Ver agenda</Link>
       </div>
     </header>
@@ -43,6 +45,7 @@ export default function AgendaContexto({ contexto, activo }: { contexto: Context
       {entradas.length > 5 ? <p className="text-sm text-muted-foreground">Se muestran los primeros 5 de {entradas.length} compromisos. Podés consultar el resto en Agenda.</p> : null}
       <p className="text-xs text-muted-foreground">Entradas pendientes, en curso y pospuestas. Se toma el vencimiento o, si no lo hay, el inicio. Horarios de Argentina.</p>
     </div>
+    {aplicarRegla ? <AplicarReglaAgendaDialog contexto={contexto} onClose={() => setAplicarRegla(false)} onSaved={({ aplicacion, resumen }) => { setAplicarRegla(false); setDetalle(resumen); setMensaje(`Vencimiento generado para el ${mostrarFechaAgenda(aplicacion.fechaCalculada)}. La agenda vinculada se actualizó.`); }} /> : null}
     {detalle ? <AgendaDetalleDialog key={detalle.entradaAgendaId} entrada={detalle} onClose={() => setDetalle(undefined)} onEdit={entrada => { setDetalle(undefined); setEditor({ modo: "editar", entrada }); }} /> : null}
     {editor ? <AgendaFormDialog key={editor.modo === "editar" ? `editar-${editor.entrada.entradaAgendaId}` : editor.modo} editor={editor} onClose={() => setEditor(undefined)} onSaved={() => { setEditor(undefined); setMensaje("Entrada guardada. La agenda vinculada se actualizó."); }} /> : null}
   </section>;

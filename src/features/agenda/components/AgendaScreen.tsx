@@ -14,8 +14,9 @@ import { useAgenda } from "../hooks/useAgenda";
 import {
   desplazarMes, mesActualArgentina, mostrarFechaAgenda, nombreMes,
 } from "../lib/periodoAgenda";
-import type { EntradaAgendaListadoResponse, RelacionAgendaResponse } from "../types/types";
+import type { EntradaAgendaListadoResponse, RelacionAgendaResponse, ResumenEntradaAgenda } from "../types/types";
 
+import AplicarReglaAgendaDialog from "./AplicarReglaAgendaDialog";
 import AgendaCalendario from "./AgendaCalendario";
 import AgendaFiltros from "./AgendaFiltros";
 import AgendaDetalleDialog from "./AgendaDetalleDialog";
@@ -79,7 +80,8 @@ export default function AgendaScreen() {
   const [vista, setVista] = useState<VistaAgenda>("lista");
   const [page, setPage] = useState(1);
   const [editor, setEditor] = useState<EditorAgenda>();
-  const [detalle, setDetalle] = useState<EntradaAgendaListadoResponse>();
+  const [detalle, setDetalle] = useState<ResumenEntradaAgenda>();
+  const [aplicarRegla, setAplicarRegla] = useState(false);
   const [mensaje, setMensaje] = useState<string>();
   const [filtros, setFiltros] = useState<FiltrosAgenda>(FILTROS_AGENDA_INICIALES);
   const rango = rangoListadoAgenda(mes, filtros);
@@ -101,6 +103,7 @@ export default function AgendaScreen() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href="/agenda/configuracion" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Configuración</Link>
+          <Button variant="outline" onClick={() => { setMensaje(undefined); setAplicarRegla(true); }}>Generar por regla</Button>
           <Button onClick={() => setEditor({ modo: "entrada" })}>Nueva entrada</Button>
           <Button variant="outline" onClick={() => setEditor({ modo: "vencimiento" })}>Nuevo vencimiento</Button>
         <Button className={vista === "calendario" ? "hidden" : undefined} variant="outline" onClick={() => void agenda.refetch()} disabled={agenda.isFetching}>
@@ -110,6 +113,8 @@ export default function AgendaScreen() {
       </header>
       {mensaje ? <p role="status" className="text-sm text-muted-foreground">{mensaje}</p> : null}
       {editor ? <AgendaFormDialog editor={editor} onClose={() => setEditor(undefined)} onSaved={() => { setEditor(undefined); setPage(1); setMensaje("Entrada guardada. Si no aparece, revisá el período y los filtros seleccionados."); }} /> : null}
+
+      {aplicarRegla ? <AplicarReglaAgendaDialog onClose={() => setAplicarRegla(false)} onSaved={({ aplicacion, resumen }) => { setAplicarRegla(false); setDetalle(resumen); setPage(1); setMensaje(`Vencimiento generado para el ${mostrarFechaAgenda(aplicacion.fechaCalculada)}. Si no aparece en la lista, revisá el período y los filtros.`); }} /> : null}
 
       {detalle ? <AgendaDetalleDialog key={detalle.entradaAgendaId} entrada={detalle} onClose={() => setDetalle(undefined)} onStateChanged={() => setPage(1)} onEdit={(entrada) => { setDetalle(undefined); setEditor({ modo: "editar", entrada }); }} /> : null}
 
