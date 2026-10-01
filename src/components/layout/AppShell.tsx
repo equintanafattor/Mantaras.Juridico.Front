@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
+  CalendarDays,
   Files,
   Home,
   Landmark,
@@ -58,6 +59,7 @@ const navigationItems = [
     icon: Files,
     adminOnly: false,
   },
+  { href: "/agenda", label: "Agenda", icon: CalendarDays, adminOnly: false },
 ];
 
 const settingsItems = [
