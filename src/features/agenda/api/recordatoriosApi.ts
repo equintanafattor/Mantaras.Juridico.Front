@@ -22,3 +22,10 @@ export function obtenerRecordatoriosPredeterminados(origen: OrigenRecordatoriosP
 export function guardarRecordatoriosPredeterminados(origen: OrigenRecordatoriosPredeterminados, id: number, request: GuardarRecordatoriosPredeterminadosRequest) {
   return apiRequest<RecordatorioPredeterminadoResponse[]>(`/api/recordatorios-predeterminados/${origen}/${validarId(id)}`, { method: "PUT", body: request });
 }
+
+export function reprogramarRecordatorioAgenda(id: number, request: CrearRecordatorioAgendaRequest) {
+  return apiRequest<RecordatorioAgendaResponse>(`/api/recordatorios-agenda/${validarId(id)}`, { method: "PUT", body: request });
+}
+export function quitarRecordatorioAgenda(id: number) {
+  return apiRequest<void>(`/api/recordatorios-agenda/${validarId(id)}`, { method: "DELETE" });
+}

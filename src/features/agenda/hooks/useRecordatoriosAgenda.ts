@@ -24,3 +24,12 @@ export function useGuardarRecordatoriosPredeterminados() {
   const onSuccess = useInvalidarAgenda();
   return useMutation({ mutationFn: ({ origen, id, request }: { origen: api.OrigenRecordatoriosPredeterminados; id: number; request: GuardarRecordatoriosPredeterminadosRequest }) => api.guardarRecordatoriosPredeterminados(origen, id, request), onSuccess });
 }
+
+export function useReprogramarRecordatorioAgenda() {
+  const onSuccess = useInvalidarAgenda();
+  return useMutation({ mutationFn: ({ id, request }: { id: number; request: CrearRecordatorioAgendaRequest }) => api.reprogramarRecordatorioAgenda(id, request), onSuccess });
+}
+export function useQuitarRecordatorioAgenda() {
+  const onSuccess = useInvalidarAgenda();
+  return useMutation({ mutationFn: api.quitarRecordatorioAgenda, onSuccess });
+}

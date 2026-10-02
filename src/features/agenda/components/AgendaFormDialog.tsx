@@ -12,6 +12,7 @@ import { useInvalidarAgenda } from "../hooks/useInvalidarAgenda";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
 import { agendaFormDesdeEntrada, agendaFormInicial, requestDesdeAgendaForm, type AgendaForm } from "../lib/agendaForm";
 import { guardarAgendaConRecordatorios, type ProgresoGuardadoAgenda } from "../lib/guardarAgendaForm";
+import { cambianFechasRecordatoriosAgenda, firmaFechasRecordatoriosAgenda } from "../lib/fechasRecordatoriosAgenda";
 import { requestDesdeRecordatorioForm } from "../lib/recordatorioForm";
 import type { ContextoAgenda } from "../lib/agendaContexto";
 import type { CrearRecordatorioAgendaRequest, ResumenEntradaAgenda } from "../types/types";
@@ -29,10 +30,13 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
   const [progreso, setProgreso] = useState<ProgresoGuardadoAgenda>();
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
+  const [fechasConfirmadas, setFechasConfirmadas] = useState<string>();
   const lock = useRef(false);
   const opciones = useOpcionesAgenda();
   const invalidar = useInvalidarAgenda();
   const entradaGuardada = progreso?.entradaId !== undefined;
+  const cambianFechas = id !== undefined && cambianFechasRecordatoriosAgenda(original, form);
+  const firmaFechas = firmaFechasRecordatoriosAgenda(form);
 
   function informar(nextForm: AgendaForm, nextRecordatorios: CrearRecordatorioAgendaRequest[], nextDraft: boolean) {
     onChanges(JSON.stringify(nextForm) !== JSON.stringify(original) || nextRecordatorios.length > 0 || nextDraft, false);
@@ -46,6 +50,7 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
       // Tras un guardado parcial, sólo se reintentan los recordatorios pendientes.
       const request = entradaGuardada ? undefined : requestDesdeAgendaForm(form, vencimientoManual);
       if (request) {
+        if (cambianFechas && fechasConfirmadas !== firmaFechas) throw new Error("Confirmá que los recordatorios conservan su horario antes de guardar las nuevas fechas.");
         if (!opciones.data?.tiposEntrada.some(x => x.id === request.tipoEntradaAgendaId && x.activo)) throw new Error("Seleccioná un tipo de entrada activo.");
         if (request.responsableIds.some(id => !opciones.data?.responsables.some(x => x.id === id && x.activo))) throw new Error("Quitá los responsables inactivos o no disponibles.");
         if (draftDirty) throw new Error("Agregá el aviso a la lista o restablecé su borrador antes de guardar.");
@@ -70,7 +75,8 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
   return <form className="space-y-4" onSubmit={guardar}>
     <fieldset disabled={pending || entradaGuardada} className="min-w-0 space-y-4">
       <AgendaFormFields form={form} vencimientoManual={vencimientoManual} onChange={next => { setForm(next); setError(undefined); informar(next, recordatorios, draftDirty); }} />
-      {id === undefined ? <AgendaRecordatoriosAlta items={recordatorios} tieneVencimiento={!!form.fechaVencimiento} onChange={(next, resetDraft) => { setRecordatorios(next); if (resetDraft) setDraftDirty(false); setError(undefined); informar(form, next, resetDraft ? false : draftDirty); }} onDraftChange={dirty => { setDraftDirty(dirty); informar(form, recordatorios, dirty); }} /> : <p className="text-sm text-muted-foreground">Podés consultar y agregar recordatorios desde el detalle de la entrada.</p>}
+      {id === undefined ? <AgendaRecordatoriosAlta items={recordatorios} tieneVencimiento={!!form.fechaVencimiento} onChange={(next, resetDraft) => { setRecordatorios(next); if (resetDraft) setDraftDirty(false); setError(undefined); informar(form, next, resetDraft ? false : draftDirty); }} onDraftChange={dirty => { setDraftDirty(dirty); informar(form, recordatorios, dirty); }} /> : <p className="text-sm text-muted-foreground">Podés consultar, agregar, quitar y reprogramar recordatorios desde el detalle de la entrada.</p>}
+      {cambianFechas ? <div className="space-y-3 rounded-md border p-3"><p className="text-sm">Cambiaste fechas u horas que pueden afectar los avisos. Los recordatorios existentes conservan su horario, incluso si quitás el vencimiento. Después de guardar, revisalos y usá Reprogramar o Quitar desde el detalle.</p><label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={fechasConfirmadas === firmaFechas} onChange={e => setFechasConfirmadas(e.target.checked ? firmaFechas : undefined)} />Entiendo que los recordatorios no se recalculan automáticamente.</label></div> : null}
     </fieldset>
     {entradaGuardada && progreso.pendientes.length > 0 ? <p role="status" className="rounded-md border p-3 text-sm">La entrada #{progreso.entradaId} ya se guardó. Quedan {progreso.pendientes.length} recordatorios por guardar. Reintentá para continuar con esos avisos.</p> : null}
     {error ? <p role="alert" className="whitespace-pre-wrap text-sm text-destructive">{error}</p> : null}

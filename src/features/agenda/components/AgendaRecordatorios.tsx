@@ -10,6 +10,8 @@ import { mostrarFechaAuditoriaAgenda } from "../lib/estadosAgenda";
 import { FACTORES_ANTICIPACION, MAX_MINUTOS_RECORDATORIO, requestDesdeRecordatorioForm, type UnidadAnticipacionAgenda } from "../lib/recordatorioForm";
 import type { BaseCalculoRecordatorioAgenda, EntradaAgendaResponse, EstadoRecordatorioAgenda, OpcionAgendaResponse } from "../types/types";
 
+import RecordatorioAgendaAccionDialog, { type AccionRecordatorioAgenda } from "./RecordatorioAgendaAccionDialog";
+
 const SELECT_CLASS = "h-9 w-full rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring";
 export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios, onPending }: { entrada: EntradaAgendaResponse; disabled: boolean; nombresUsuarios?: OpcionAgendaResponse[]; onPending: (value: boolean) => void }) {
   const [estado, setEstado] = useState<EstadoRecordatorioAgenda | "">("");
@@ -20,12 +22,13 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
   const [mensaje, setMensaje] = useState<string>();
   const [error, setError] = useState<string>();
   const [atendiendoId, setAtendiendoId] = useState<number>();
+  const [accion, setAccion] = useState<AccionRecordatorioAgenda>();
   const lock = useRef(false);
   const consulta = useRecordatoriosAgenda({ entradaAgendaId: entrada.entradaAgendaId, estado: estado || undefined, page, pageSize: 5 }, 60_000);
   const crear = useCrearRecordatorioAgenda();
   const atender = useAtenderRecordatorioAgenda();
   const ocupado = crear.isPending || atender.isPending;
-  const bloqueado = disabled || ocupado;
+  const bloqueado = disabled || ocupado || accion !== undefined;
   const maxCantidad = MAX_MINUTOS_RECORDATORIO / FACTORES_ANTICIPACION[unidad];
 
   async function marcarAtendido(id: number) {
@@ -44,7 +47,7 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
       {consulta.data.items.length === 0 ? <p className="text-sm text-muted-foreground">No hay recordatorios para este filtro.</p> : <ul className="space-y-2">{consulta.data.items.map(item => <li key={item.recordatorioAgendaId} className="space-y-2 rounded-md border p-3">
         <div className="flex flex-wrap items-center justify-between gap-2"><time dateTime={item.fechaProgramadaUtc} className="text-sm font-medium">{mostrarFechaAuditoriaAgenda(item.fechaProgramadaUtc)}</time><Badge variant={item.estado === "Vencido" ? "destructive" : "outline"}>{item.estado}</Badge></div>
         {item.fechaAtendidoUtc ? <p className="text-xs text-muted-foreground">Atendido el {mostrarFechaAuditoriaAgenda(item.fechaAtendidoUtc)}{item.usuarioAtendioId ? ` por ${nombresUsuarios?.find(x => x.id === item.usuarioAtendioId)?.nombre ?? `usuario #${item.usuarioAtendioId}`}` : ""}.</p> : null}
-        {!item.atendido ? <Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void marcarAtendido(item.recordatorioAgendaId)}>{atender.isPending && atendiendoId === item.recordatorioAgendaId ? "Actualizando…" : "Marcar atendido"}</Button> : null}
+        {!item.atendido ? <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void marcarAtendido(item.recordatorioAgendaId)}>{atender.isPending && atendiendoId === item.recordatorioAgendaId ? "Actualizando…" : "Marcar atendido"}</Button><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => { onPending(true); setMensaje(undefined); setError(undefined); setAccion({ modo: "reprogramar", recordatorio: item }); }}>Reprogramar</Button><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => { onPending(true); setMensaje(undefined); setError(undefined); setAccion({ modo: "quitar", recordatorio: item }); }}>Quitar</Button></div> : null}
       </li>)}</ul>}
       {consulta.data.totalPages > 1 ? <nav aria-label="Paginación de recordatorios" className="flex flex-wrap items-center justify-between gap-2 text-xs"><span>Página {consulta.data.page} de {consulta.data.totalPages}</span><div className="flex gap-2"><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching || !consulta.data.hasPreviousPage} onClick={() => setPage(page - 1)}>Anterior</Button><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching || !consulta.data.hasNextPage} onClick={() => setPage(page + 1)}>Siguiente</Button></div></nav> : null}
     </div>}
@@ -67,6 +70,8 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
       <p className="text-xs text-muted-foreground">Cero avisa en el momento indicado. Si la entrada no tiene hora, se toman las 09:00 de Argentina. Máximo: 365 días de anticipación.</p>
       <Button type="submit" disabled={bloqueado || !entrada.activo}>{crear.isPending ? "Creando…" : "Agregar recordatorio"}</Button>
     </form>
+    <p className="text-xs text-muted-foreground">Al editar fechas u horas de la entrada, los avisos conservan su horario. Usá Reprogramar para recalcularlos con las fechas actuales. Los atendidos se conservan como historial.</p>
+    {accion ? <RecordatorioAgendaAccionDialog key={`${accion.modo}-${accion.recordatorio.recordatorioAgendaId}`} accion={accion} entrada={entrada} onClose={() => { setAccion(undefined); onPending(false); }} onSaved={() => { setAccion(undefined); setPage(1); setEstado(""); setMensaje(accion.modo === "quitar" ? "Recordatorio quitado." : "Recordatorio reprogramado."); onPending(false); }} /> : null}
     {mensaje ? <p role="status" className="text-sm">{mensaje}</p> : null}{error ? <p role="alert" className="whitespace-pre-wrap text-sm text-destructive">{error}</p> : null}
   </section>;
 }
