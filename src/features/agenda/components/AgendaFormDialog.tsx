@@ -75,6 +75,17 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
   return <form className="space-y-4" onSubmit={guardar}>
     <fieldset disabled={pending || entradaGuardada} className="min-w-0 space-y-4">
       <AgendaFormFields form={form} vencimientoManual={vencimientoManual} onChange={next => { setForm(next); setError(undefined); informar(next, recordatorios, draftDirty); }} />
+      {id === undefined ? <div className="space-y-3 rounded-md border p-3">
+        <label className="block text-sm font-medium" htmlFor="agenda-recurrencia">Repetir entrada</label>
+        <select id="agenda-recurrencia" className="h-9 w-full rounded-md border bg-background px-2" value={form.recurrenciaFrecuencia} onChange={e => { const next = { ...form, recurrenciaFrecuencia: e.target.value as AgendaForm["recurrenciaFrecuencia"] }; setForm(next); informar(next, recordatorios, draftDirty); }}>
+          <option value="">No repetir</option><option value="Diaria">Cada día</option><option value="Semanal">Cada semana</option><option value="Mensual">Cada mes</option><option value="Anual">Cada año</option>
+        </select>
+        {form.recurrenciaFrecuencia ? <div className="grid gap-3 sm:grid-cols-2">
+          <label className="text-sm">Cada cuántos períodos<input className="mt-1 h-9 w-full rounded-md border bg-background px-2" type="number" min={1} max={365} required value={form.recurrenciaIntervalo} onChange={e => { const next = { ...form, recurrenciaIntervalo: Number(e.target.value) }; setForm(next); informar(next, recordatorios, draftDirty); }} /></label>
+          <label className="text-sm">Total de entradas (incluye la primera)<input className="mt-1 h-9 w-full rounded-md border bg-background px-2" type="number" min={2} max={100} required value={form.recurrenciaCantidad} onChange={e => { const next = { ...form, recurrenciaCantidad: Number(e.target.value) }; setForm(next); informar(next, recordatorios, draftDirty); }} /></label>
+        </div> : null}
+        {form.recurrenciaFrecuencia ? <p className="text-xs text-muted-foreground">Se crean todas las entradas ahora. Cada una se edita y completa por separado. Los avisos predeterminados se generan para cada fecha; los avisos agregados abajo corresponden sólo a la primera entrada.</p> : null}
+      </div> : null}
       {id === undefined ? <AgendaRecordatoriosAlta items={recordatorios} tieneVencimiento={!!form.fechaVencimiento} onChange={(next, resetDraft) => { setRecordatorios(next); if (resetDraft) setDraftDirty(false); setError(undefined); informar(form, next, resetDraft ? false : draftDirty); }} onDraftChange={dirty => { setDraftDirty(dirty); informar(form, recordatorios, dirty); }} /> : <p className="text-sm text-muted-foreground">Podés consultar, agregar, quitar y reprogramar recordatorios desde el detalle de la entrada.</p>}
       {cambianFechas ? <div className="space-y-3 rounded-md border p-3"><p className="text-sm">Cambiaste fechas u horas que pueden afectar los avisos. Los recordatorios existentes conservan su horario, incluso si quitás el vencimiento. Después de guardar, revisalos y usá Reprogramar o Quitar desde el detalle.</p><label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={fechasConfirmadas === firmaFechas} onChange={e => setFechasConfirmadas(e.target.checked ? firmaFechas : undefined)} />Entiendo que los recordatorios no se recalculan automáticamente.</label></div> : null}
     </fieldset>

@@ -3,6 +3,7 @@ import type { ContextoAgenda } from "./agendaContexto";
 import type { SeleccionAgenda } from "./filtrosAgenda";
 
 export type AgendaForm = {
+  recurrenciaFrecuencia: "" | "Diaria" | "Semanal" | "Mensual" | "Anual"; recurrenciaIntervalo: number; recurrenciaCantidad: number;
   tipoEntradaAgendaId: number | null; titulo: string; descripcion: string; prioridad: PrioridadAgenda;
   fechaInicio: string; horaInicio: string; fechaFin: string; horaFin: string; fechaVencimiento: string; horaVencimiento: string;
   clientes: SeleccionAgenda[]; casos: SeleccionAgenda[]; expedientes: SeleccionAgenda[]; responsableIds: number[];
@@ -13,11 +14,11 @@ export function fechaHoyAgenda(fecha = new Date()) {
 }
 export function agendaFormInicial(vencimiento = false, contexto?: ContextoAgenda): AgendaForm {
   const hoy = fechaHoyAgenda();
-  return { tipoEntradaAgendaId: null, titulo: "", descripcion: "", prioridad: "Normal", fechaInicio: hoy, horaInicio: "", fechaFin: "", horaFin: "", fechaVencimiento: vencimiento ? hoy : "", horaVencimiento: "", clientes: contexto?.tipo === "cliente" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], casos: contexto?.tipo === "caso" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], expedientes: contexto?.tipo === "expediente" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], responsableIds: [] };
+  return { tipoEntradaAgendaId: null, titulo: "", descripcion: "", prioridad: "Normal", fechaInicio: hoy, horaInicio: "", fechaFin: "", horaFin: "", fechaVencimiento: vencimiento ? hoy : "", horaVencimiento: "", recurrenciaFrecuencia: "", recurrenciaIntervalo: 1, recurrenciaCantidad: 2, clientes: contexto?.tipo === "cliente" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], casos: contexto?.tipo === "caso" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], expedientes: contexto?.tipo === "expediente" ? [{ id: contexto.id, nombre: contexto.nombre }] : [], responsableIds: [] };
 }
 export function agendaFormDesdeEntrada(entrada: EntradaAgendaResponse, listado: ResumenEntradaAgenda): AgendaForm {
   function relaciones(ids: number[], items: SeleccionAgenda[]) { return ids.map(id => ({ id, nombre: items.find(item => item.id === id)?.nombre ?? `ID ${id}` })); }
-  return { tipoEntradaAgendaId: entrada.tipoEntradaAgendaId, titulo: entrada.titulo, descripcion: entrada.descripcion ?? "", prioridad: entrada.prioridad,
+  return { tipoEntradaAgendaId: entrada.tipoEntradaAgendaId, titulo: entrada.titulo, descripcion: entrada.descripcion ?? "", prioridad: entrada.prioridad, recurrenciaFrecuencia: "", recurrenciaIntervalo: 1, recurrenciaCantidad: 2,
     fechaInicio: entrada.fechaInicio, horaInicio: entrada.horaInicio ?? "", fechaFin: entrada.fechaFin ?? "", horaFin: entrada.horaFin ?? "", fechaVencimiento: entrada.fechaVencimiento ?? "", horaVencimiento: entrada.horaVencimiento ?? "",
     clientes: relaciones(entrada.clienteIds, listado.clientes), casos: relaciones(entrada.casoIds, listado.casos), expedientes: relaciones(entrada.expedienteIds, listado.expedientes), responsableIds: [...entrada.responsableIds] };
 }
@@ -35,6 +36,7 @@ export function requestDesdeAgendaForm(form: AgendaForm, vencimientoManual = fal
   if (!fechaValida(form.fechaInicio) || form.fechaInicio === "0001-01-01") throw new Error("Indicá una fecha de inicio válida.");
   for (const fecha of [form.fechaFin, form.fechaVencimiento]) if (fecha && (!fechaValida(fecha) || fecha < form.fechaInicio)) throw new Error("La fecha de fin y el vencimiento deben ser iguales o posteriores al inicio.");
   if (vencimientoManual && !form.fechaVencimiento) throw new Error("Indicá la fecha de vencimiento.");
+  if (form.recurrenciaFrecuencia && (!Number.isInteger(form.recurrenciaIntervalo) || form.recurrenciaIntervalo < 1 || form.recurrenciaIntervalo > 365 || !Number.isInteger(form.recurrenciaCantidad) || form.recurrenciaCantidad < 2 || form.recurrenciaCantidad > 100)) throw new Error("La recurrencia admite intervalos de 1 a 365 y entre 2 y 100 ocurrencias.");
   for (const hora of [form.horaInicio, form.horaFin, form.horaVencimiento]) if (hora && !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(hora)) throw new Error("Ingresá una hora válida.");
   if (form.horaFin && !form.fechaFin) throw new Error("La hora de fin requiere una fecha de fin.");
   if (form.horaVencimiento && !form.fechaVencimiento) throw new Error("La hora de vencimiento requiere una fecha de vencimiento.");
@@ -42,6 +44,7 @@ export function requestDesdeAgendaForm(form: AgendaForm, vencimientoManual = fal
   const grupos = [form.clientes.map(x => x.id), form.casos.map(x => x.id), form.expedientes.map(x => x.id), form.responsableIds];
   for (const ids of grupos) if (ids.length > 100 || ids.some(id => !Number.isSafeInteger(id) || id < 1) || new Set(ids).size !== ids.length) throw new Error("Cada grupo admite hasta 100 asociaciones diferentes.");
   return { tipoEntradaAgendaId: form.tipoEntradaAgendaId, titulo: form.titulo.trim(), descripcion: form.descripcion.trim() || null, prioridad: form.prioridad,
+    recurrencia: form.recurrenciaFrecuencia ? { frecuencia: form.recurrenciaFrecuencia, intervalo: form.recurrenciaIntervalo, cantidadOcurrencias: form.recurrenciaCantidad } : null,
     fechaInicio: form.fechaInicio, horaInicio: normalizarHora(form.horaInicio), fechaFin: form.fechaFin || null, horaFin: normalizarHora(form.horaFin), fechaVencimiento: form.fechaVencimiento || null, horaVencimiento: normalizarHora(form.horaVencimiento),
     clienteIds: grupos[0], casoIds: grupos[1], expedienteIds: grupos[2], responsableIds: grupos[3] };
 }

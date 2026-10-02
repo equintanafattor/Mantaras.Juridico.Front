@@ -63,6 +63,7 @@ export type CrearRecordatorioAgendaRequest = {
 };
 
 export type GuardarEntradaAgendaRequest = {
+  recurrencia?: { frecuencia: "Diaria" | "Semanal" | "Mensual" | "Anual"; intervalo: number; cantidadOcurrencias: number } | null;
   tipoEntradaAgendaId: number;
   titulo: string;
   descripcion: string | null;
@@ -117,6 +118,7 @@ export type AplicacionReglaVencimientoResponse = {
 
 export type EntradaAgendaListadoResponse = {
   entradaAgendaId: number;
+  recurrenciaAgendaId?: number | null;
   tipoEntradaAgendaId: number;
   tipoEntradaNombre: string;
   tipoEntradaColor: string | null;
@@ -148,6 +150,7 @@ export type RelacionAgendaResponse = {
 
 export type EntradaAgendaResponse = {
   entradaAgendaId: number;
+  recurrenciaAgendaId?: number | null;
   tipoEntradaAgendaId: number;
   tipoEntradaNombre: string;
   tipoEntradaColor: string | null;
@@ -218,5 +221,5 @@ export type OpcionAgendaResponse = { id: number; nombre: string; activo: boolean
 export type OpcionesAgendaResponse = { tiposEntrada: OpcionAgendaResponse[]; responsables: OpcionAgendaResponse[] };
 
 export type ResumenEntradaAgenda = Pick<EntradaAgendaListadoResponse,
-  "entradaAgendaId" | "titulo" | "tipoEntradaNombre" | "clientes" | "casos" | "expedientes" | "responsables"
+  "entradaAgendaId" | "recurrenciaAgendaId" | "titulo" | "tipoEntradaNombre" | "clientes" | "casos" | "expedientes" | "responsables"
 >;
