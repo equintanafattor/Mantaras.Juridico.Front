@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useReglasVencimiento } from "../hooks/useReglasVencimiento";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
+import DiasInhabilesAgendaPanel from "./DiasInhabilesAgendaPanel";
 import TiposEntradaAgendaPanel from "./TiposEntradaAgendaPanel";
 import ReglaVencimientoDialog from "./ReglaVencimientoDialog";
 import RecordatoriosPredeterminadosDialog, { type DestinoPredeterminadosAgenda } from "./RecordatoriosPredeterminadosDialog";
@@ -21,9 +22,10 @@ export default function AgendaConfiguracionScreen() {
   const reglas = useReglasVencimiento(soloActivas), opciones = useOpcionesAgenda();
   const tipo = opciones.data?.tiposEntrada.find(item => item.id === Number(tipoId));
   return <div className="mx-auto max-w-5xl space-y-6">
-    <header className="flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">Configuración de Agenda</h1><p className="mt-2 text-sm text-muted-foreground">Tipos de entrada, reglas de cálculo y avisos predeterminados para futuros compromisos.</p></div><Link href="/agenda" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Volver a Agenda</Link></header>
+    <header className="flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">Configuración de Agenda</h1><p className="mt-2 text-sm text-muted-foreground">Tipos de entrada, días inhábiles, reglas de cálculo y avisos predeterminados para futuros compromisos.</p></div><Link href="/agenda" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Volver a Agenda</Link></header>
     {mensaje ? <p role="status" className="text-sm">{mensaje}</p> : null}
     <TiposEntradaAgendaPanel />
+    <DiasInhabilesAgendaPanel />
     <section className="space-y-4 rounded-lg border bg-card p-5 sm:p-6" aria-label="Recordatorios por tipo de entrada">
       <div><h2 className="font-semibold">Recordatorios por tipo de entrada</h2><p className="mt-1 text-sm text-muted-foreground">Elegí el tipo para consultar, reemplazar o desactivar sus avisos predeterminados.</p></div>
       {opciones.isPending ? <Skeleton className="h-10 w-full" aria-label="Cargando tipos" /> : opciones.isError ? <div role="alert"><p>{opciones.error.message}</p><Button variant="outline" onClick={() => void opciones.refetch()}>Reintentar</Button></div> : <div className="flex flex-wrap items-end gap-3"><div className="min-w-0 flex-1 space-y-2"><Label htmlFor="agenda-config-tipo">Tipo de entrada</Label><select id="agenda-config-tipo" className="h-9 w-full rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" value={tipoId} onChange={e => setTipoId(e.target.value)}><option value="">Seleccionar tipo</option>{opciones.data.tiposEntrada.map(item => <option key={item.id} value={item.id}>{item.nombre}{item.activo ? "" : " (inactivo)"}</option>)}</select></div><Button variant="outline" disabled={!tipo} onClick={() => { if (tipo) { setMensaje(undefined); setDestino({ origen: "tipos-entrada", id: tipo.id, nombre: tipo.nombre }); } }}>Configurar avisos</Button></div>}
