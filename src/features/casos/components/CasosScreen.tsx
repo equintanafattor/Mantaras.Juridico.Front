@@ -221,8 +221,8 @@ export default function CasosScreen() {
         aria-label="Filtros de expedientes administrativos"
         className="rounded-lg border bg-card p-4"
       >
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <div className="relative min-w-0 flex-1">
+        <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+          <div className="relative min-w-0 flex-1 md:basis-full lg:basis-0">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
             <Input
@@ -237,7 +237,7 @@ export default function CasosScreen() {
           <select
             value={faseInterna}
             onChange={(event) => cambiarFase(event.target.value)}
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring lg:w-48"
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-1 lg:w-48 lg:flex-none"
             aria-label="Filtrar por fase"
           >
             <option value="">Todas las fases</option>

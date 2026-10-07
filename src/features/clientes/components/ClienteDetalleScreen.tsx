@@ -477,7 +477,7 @@ export default function ClienteDetalleScreen({
         Volver a clientes
       </Link>
 
-      <header className="flex flex-col gap-5 border-b pb-6 lg:flex-row lg:items-start lg:justify-between">
+      <header className="flex flex-col gap-5 border-b pb-6 md:flex-row md:items-start md:justify-between">
         <div className="flex min-w-0 items-start gap-4">
           <span className="hidden size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground sm:flex">
             <UserRound className="size-5" />
@@ -696,7 +696,7 @@ export default function ClienteDetalleScreen({
                 </Button>
               </header>
 
-              <dl className="grid gap-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
+              <dl className="grid gap-5 p-5 sm:grid-cols-2 lg:grid-cols-4">
                 <Dato label="DNI" value={formatearDni(cliente.dni)} />
 
                 <Dato label="CUIL" value={formatearCuil(cliente.cuil)} />

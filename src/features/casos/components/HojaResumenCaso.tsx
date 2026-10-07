@@ -321,7 +321,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
   return (
     <section
       aria-labelledby={`titulo-hoja-${casoId}`}
-      className="rounded-lg border border-amber-900/15 border-l-4 border-l-amber-400 bg-amber-50/60 p-4 shadow-sm sm:p-6 dark:border-amber-100/15 dark:border-l-amber-600 dark:bg-amber-950/15"
+      className="@container rounded-lg border border-amber-900/15 border-l-4 border-l-amber-400 bg-amber-50/60 p-4 shadow-sm sm:p-6 dark:border-amber-100/15 dark:border-l-amber-600 dark:bg-amber-950/15"
     >
       <header className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-amber-900/15 pb-4 dark:border-amber-100/15">
         <div>
@@ -389,7 +389,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
             </strong>
           </p>
 
-          <div className="grid gap-6 xl:grid-cols-3">
+          <div className="grid gap-6 @xl:grid-cols-3">
             {SECCIONES_HOJA.map((seccion) => (
               <section key={seccion.titulo} className="min-w-0">
                 <h4 className="border-b border-amber-900/15 pb-2 font-serif text-lg font-semibold dark:border-amber-100/15">

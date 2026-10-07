@@ -74,7 +74,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="grid min-h-screen bg-background lg:grid-cols-2">
+    <main className="grid min-h-dvh bg-background lg:grid-cols-2">
       <section className="relative hidden overflow-hidden bg-primary p-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between xl:p-16">
         <header className="flex items-center gap-3">
           <span className="flex size-11 items-center justify-center rounded-xl bg-accent text-accent-foreground">
@@ -110,7 +110,7 @@ export default function LoginPage() {
         </footer>
       </section>
 
-      <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
+      <section className="flex min-h-dvh items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
         <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-sm sm:p-8 lg:max-w-sm lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
           <header>
             <div className="flex items-center gap-3 lg:hidden">

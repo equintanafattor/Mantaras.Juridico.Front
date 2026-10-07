@@ -80,10 +80,13 @@ function Navigation({
   isAdmin,
   items = navigationItems,
   label = "Navegación principal",
+  compacta = false,
 }: {
   isAdmin: boolean;
   items?: typeof navigationItems;
   label?: string;
+  // Solo íconos entre lg y xl (barra lateral angosta en tablets).
+  compacta?: boolean;
 }) {
   const pathname = usePathname();
 
@@ -102,15 +105,19 @@ function Navigation({
             key={item.href}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
+            title={compacta ? item.label : undefined}
             className={cn(
               "relative flex min-h-10 items-center gap-3 py-2 rounded-md px-3 text-sm font-medium transition-colors",
+              compacta && "max-xl:justify-center max-xl:px-0",
               isActive
                 ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm before:absolute before:left-0 before:h-5 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
                 : "text-sidebar-foreground/65 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
             )}
           >
             <Icon className="size-4 shrink-0" />
-            <span>{item.label}</span>
+            <span className={cn(compacta && "max-xl:sr-only")}>
+              {item.label}
+            </span>
           </Link>
         );
       })}
@@ -118,14 +125,23 @@ function Navigation({
   );
 }
 
-function Brand() {
+function Brand({ compacta = false }: { compacta?: boolean }) {
   return (
-    <Link href="/" className="flex min-w-0 items-center gap-3">
+    <Link
+      href="/"
+      title={compacta ? "Mántaras Quintana" : undefined}
+      className="flex min-w-0 items-center gap-3"
+    >
       <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
         <Landmark className="size-5" />
       </span>
 
-      <span className="flex min-w-0 flex-1 flex-col">
+      <span
+        className={cn(
+          "flex min-w-0 flex-1 flex-col",
+          compacta && "max-xl:sr-only",
+        )}
+      >
         <span className="truncate text-[15px] font-semibold tracking-tight text-sidebar-foreground">
           Mántaras Quintana
         </span>
@@ -140,7 +156,7 @@ function Brand() {
 
 function LoadingScreen() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-3 text-muted-foreground">
         <Loader2 className="size-6 animate-spin text-primary" />
         <p className="text-sm">Cargando sesión...</p>
@@ -202,40 +218,41 @@ export default function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[17rem] border-r border-sidebar-border bg-sidebar lg:flex lg:flex-col">
-        <div className="flex h-[4.5rem] items-center px-5">
-          <Brand />
+    <div className="min-h-dvh bg-background">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-16 border-r border-sidebar-border bg-sidebar lg:flex lg:flex-col xl:w-[17rem]">
+        <div className="flex h-[4.5rem] items-center justify-center px-3 xl:justify-start xl:px-5">
+          <Brand compacta />
         </div>
 
         <div className="h-px bg-sidebar-border" />
 
-        <div className="flex-1 px-4 py-5">
-          <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35">
+        <div className="flex-1 overflow-y-auto px-3 py-5 xl:px-4">
+          <p className="mb-3 hidden px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35 xl:block">
             Navegación
           </p>
 
-          <Navigation isAdmin={isAdmin} />
+          <Navigation isAdmin={isAdmin} compacta />
         </div>
 
-        <div className="border-t border-sidebar-border px-4 py-4">
-          <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35">
+        <div className="border-t border-sidebar-border px-3 py-4 xl:px-4">
+          <p className="mb-3 hidden px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/35 xl:block">
             Opciones
           </p>
           <Navigation
             isAdmin={isAdmin}
             items={settingsItems}
             label="Opciones del sistema"
+            compacta
           />
         </div>
 
-        <div className="border-t border-sidebar-border p-4">
-          <div className="flex items-center gap-3 rounded-lg bg-white/5 p-2.5">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-white/10 text-sidebar-foreground">
+        <div className="border-t border-sidebar-border p-3 xl:p-4">
+          <div className="flex items-center justify-center gap-3 rounded-lg xl:justify-start xl:bg-white/5 xl:p-2.5">
+            <span className="hidden size-9 shrink-0 items-center justify-center rounded-md bg-white/10 text-sidebar-foreground xl:flex">
               <UserRound className="size-4" />
             </span>
 
-            <div className="min-w-0 flex-1">
+            <div className="hidden min-w-0 flex-1 xl:block">
               <p className="truncate text-sm font-medium text-sidebar-foreground">
                 {session.usuario.nombre}
               </p>
@@ -261,7 +278,7 @@ export default function AppShell({ children }: AppShellProps) {
         </div>
       </aside>
 
-      <div className="lg:pl-[17rem]">
+      <div className="lg:pl-16 xl:pl-[17rem]">
         <header className="sticky top-0 z-20 flex h-[4.5rem] items-center border-b bg-card/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 lg:hidden">
             <Sheet>
@@ -373,7 +390,7 @@ export default function AppShell({ children }: AppShellProps) {
           </div>
         </header>
 
-        <main className="min-h-[calc(100vh-4.5rem)] p-4 sm:p-6 lg:p-8">
+        <main className="min-h-[calc(100dvh-4.5rem)] p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>
