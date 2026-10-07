@@ -85,7 +85,7 @@ export default function NuevoClienteDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={cambiarApertura}>
+    <Dialog open={open} onOpenChange={cambiarApertura} disablePointerDismissal>
       <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-3xl sm:rounded-lg">
         <DialogHeader className="shrink-0 border-b bg-card px-5 py-4 pr-12 text-left sm:px-6 sm:py-5">
           <div className="flex items-start gap-3">
