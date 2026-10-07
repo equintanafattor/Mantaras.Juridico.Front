@@ -40,6 +40,7 @@ import ClienteFormFields, {
 
 import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
 import NuevoCasoDialog from "@/features/casos/components/NuevoCasoDialog";
+import NuevoExpedienteDialog from "@/features/expedientes/components/NuevoExpedienteDialog";
 import HojaResumenCaso from "@/features/casos/components/HojaResumenCaso";
 import FamiliaresCliente from "@/features/familiares/components/FamiliaresCliente";
 import ClaveSeguridadSocial from "./ClaveSeguridadSocial";
@@ -170,7 +171,15 @@ function ExpedienteRelacionado({
   );
 }
 
-function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
+function CasoRelacionado({
+  caso,
+  disabled,
+  onNuevoExpediente,
+}: {
+  caso: CasoClienteDetalleResponse;
+  disabled: boolean;
+  onNuevoExpediente: () => void;
+}) {
   return (
     <article className="overflow-hidden rounded-md border bg-background">
       <div className="p-4">
@@ -234,7 +243,22 @@ function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
             Expedientes judiciales
           </p>
 
-          <Badge variant="outline">{caso.expedientes.length}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{caso.expedientes.length}</Badge>
+
+            {caso.activo && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={disabled}
+                onClick={onNuevoExpediente}
+              >
+                <Plus />
+                Nuevo expediente judicial
+              </Button>
+            )}
+          </div>
         </div>
 
         {caso.expedientes.length === 0 ? (
@@ -290,6 +314,9 @@ export default function ClienteDetalleScreen({
   const [modoEdicion, setModoEdicion] = useState(false);
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
   const [nuevoCasoOpen, setNuevoCasoOpen] = useState(false);
+  const [nuevoExpedienteCasoId, setNuevoExpedienteCasoId] = useState<
+    number | null
+  >(null);
 
   const clienteQuery = useCliente(clienteId);
   const actualizarMutation = useActualizarCliente();
@@ -902,7 +929,14 @@ export default function ClienteDetalleScreen({
               ) : (
                 <div className="space-y-3 p-5">
                   {cliente.casos.map((caso) => (
-                    <CasoRelacionado key={caso.casoId} caso={caso} />
+                    <CasoRelacionado
+                      key={caso.casoId}
+                      caso={caso}
+                      disabled={operacionPendiente || accionEstado !== null}
+                      onNuevoExpediente={() =>
+                        setNuevoExpedienteCasoId(caso.casoId)
+                      }
+                    />
                   ))}
                 </div>
               )}
@@ -921,6 +955,17 @@ export default function ClienteDetalleScreen({
         open={nuevoCasoOpen}
         onOpenChange={setNuevoCasoOpen}
         clienteInicial={cliente}
+      />
+
+      <NuevoExpedienteDialog
+        open={nuevoExpedienteCasoId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setNuevoExpedienteCasoId(null);
+          }
+        }}
+        casoIdInicial={nuevoExpedienteCasoId}
+        bloquearCaso
       />
     </div>
   );
