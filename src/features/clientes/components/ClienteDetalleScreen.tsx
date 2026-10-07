@@ -651,9 +651,20 @@ export default function ClienteDetalleScreen({
             >
               <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                 <UserRound className="size-4 text-primary" />
-                <h2 className="text-sm font-semibold">
+                <h2 className="flex-1 text-sm font-semibold">
                   Información personal y relaciones
                 </h2>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Editar información personal y relaciones"
+                  title="Editar información personal y relaciones"
+                  disabled={operacionPendiente || accionEstado !== null}
+                  onClick={iniciarEdicion}
+                >
+                  <Pencil />
+                </Button>
               </header>
 
               <dl className="grid gap-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -689,10 +700,22 @@ export default function ClienteDetalleScreen({
                 />
               </div>
 
-              <details className="border-t">
-              <summary className="cursor-pointer p-5 text-sm font-semibold bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
+              <details className="relative border-t">
+                <summary className="cursor-pointer p-5 pr-16 text-sm font-semibold bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
                 Datos personales, contacto y registro
               </summary>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  className="absolute right-3 top-4"
+                  aria-label="Editar datos personales, contacto y registro"
+                  title="Editar datos personales, contacto y registro"
+                  disabled={operacionPendiente || accionEstado !== null}
+                  onClick={iniciarEdicion}
+                >
+                  <Pencil />
+                </Button>
 
               <dl className="grid gap-5 border-t p-5 sm:grid-cols-2 lg:grid-cols-3">
                 <Dato
@@ -752,9 +775,20 @@ export default function ClienteDetalleScreen({
               <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                 <Scale className="size-4 text-primary" />
 
-                <div>
+                <div className="flex-1">
                   <h2 className="text-sm font-semibold">Abogado derivante</h2>
                 </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Editar abogado derivante"
+                  title="Editar abogado derivante"
+                  disabled={operacionPendiente || accionEstado !== null}
+                  onClick={iniciarEdicion}
+                >
+                  <Pencil />
+                </Button>
               </header>
 
               {tieneAbogadoDerivante ? (
