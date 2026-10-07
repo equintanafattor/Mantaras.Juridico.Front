@@ -317,6 +317,8 @@ export default function ClienteDetalleScreen({
   const [nuevoExpedienteCasoId, setNuevoExpedienteCasoId] = useState<
     number | null
   >(null);
+  const [nuevoCasoConExpedienteOpen, setNuevoCasoConExpedienteOpen] =
+    useState(false);
 
   const clienteQuery = useCliente(clienteId);
   const actualizarMutation = useActualizarCliente();
@@ -891,7 +893,7 @@ export default function ClienteDetalleScreen({
                   </div>
                 </div>
 
-                <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
+                <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
                   <Badge variant="outline">{cliente.casos.length}</Badge>
 
                   <Button
@@ -911,6 +913,26 @@ export default function ClienteDetalleScreen({
                   >
                     <Plus />
                     Nuevo expediente
+                  </Button>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={
+                      !cliente.activo ||
+                      operacionPendiente ||
+                      accionEstado !== null
+                    }
+                    title={
+                      cliente.activo
+                        ? "Crear un expediente administrativo junto con su expediente judicial."
+                        : "Reactivá el cliente para crear expedientes."
+                    }
+                    onClick={() => setNuevoCasoConExpedienteOpen(true)}
+                  >
+                    <Plus />
+                    Administrativo y judicial
                   </Button>
                 </div>
               </header>
@@ -958,14 +980,16 @@ export default function ClienteDetalleScreen({
       />
 
       <NuevoExpedienteDialog
-        open={nuevoExpedienteCasoId !== null}
+        open={nuevoExpedienteCasoId !== null || nuevoCasoConExpedienteOpen}
         onOpenChange={(open) => {
           if (!open) {
             setNuevoExpedienteCasoId(null);
+            setNuevoCasoConExpedienteOpen(false);
           }
         }}
         casoIdInicial={nuevoExpedienteCasoId}
-        bloquearCaso
+        bloquearCaso={nuevoExpedienteCasoId !== null}
+        clienteInicial={cliente}
       />
     </div>
   );
