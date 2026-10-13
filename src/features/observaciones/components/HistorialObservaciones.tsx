@@ -268,7 +268,7 @@ export default function HistorialObservaciones({
               className={esResumen ? "px-4 py-3" : "px-5 py-3.5"}
             >
               <article className="min-w-0 flex-1">
-                <header className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+                <header className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
                   <Clock3 className="size-3.5 shrink-0" />
 
                   <span>{formatearFechaHora(observacion.fechaCreacion)}</span>
