@@ -1,6 +1,10 @@
 import { apiRequest } from "@/lib/api/apiClient";
 
-import type { CrearUsuarioRequest, UsuarioResponse } from "../types/types";
+import type {
+  CrearUsuarioRequest,
+  EditarUsuarioRequest,
+  UsuarioResponse,
+} from "../types/types";
 
 export async function obtenerUsuarios(
   signal?: AbortSignal,
@@ -16,6 +20,16 @@ export async function crearUsuario(
 ): Promise<UsuarioResponse> {
   return apiRequest<UsuarioResponse>("/api/usuarios", {
     method: "POST",
+    body: request,
+  });
+}
+
+export async function editarUsuario(
+  usuarioId: number,
+  request: EditarUsuarioRequest,
+): Promise<UsuarioResponse> {
+  return apiRequest<UsuarioResponse>(`/api/usuarios/${usuarioId}`, {
+    method: "PUT",
     body: request,
   });
 }

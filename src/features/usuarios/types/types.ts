@@ -16,3 +16,11 @@ export type CrearUsuarioRequest = {
   password: string;
   rol: RolUsuario;
 };
+
+export type EditarUsuarioRequest = {
+  nombre: string;
+  email: string;
+  rol: RolUsuario;
+  // null conserva la contraseña actual.
+  password: string | null;
+};

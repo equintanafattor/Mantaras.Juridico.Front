@@ -7,8 +7,10 @@ import {
   Circle,
   Eye,
   EyeOff,
+  Info,
   Loader2,
   ShieldCheck,
+  UserPen,
   UserPlus,
   UserRound,
 } from "lucide-react";
@@ -23,14 +25,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { guardarSesion } from "@/features/autenticacion/lib/authSession";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/AuthProvider";
 
 import { useCrearUsuario } from "../hooks/useCrearUsuario";
-import type { RolUsuario } from "../types/types";
+import { useEditarUsuario } from "../hooks/useEditarUsuario";
+import type { RolUsuario, UsuarioResponse } from "../types/types";
 
-type NuevoUsuarioDialogProps = {
+type UsuarioFormDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // Si se informa, el diálogo edita ese usuario; si no, crea uno nuevo.
+  usuario?: UsuarioResponse | null;
 };
 
 type UsuarioFormState = {
@@ -46,6 +53,21 @@ const FORM_INICIAL: UsuarioFormState = {
   password: "",
   rol: "Usuario",
 };
+
+function obtenerFormInicial(
+  usuario: UsuarioResponse | null | undefined,
+): UsuarioFormState {
+  if (!usuario) {
+    return FORM_INICIAL;
+  }
+
+  return {
+    nombre: usuario.nombre,
+    email: usuario.email,
+    password: "",
+    rol: usuario.roles[0] ?? "Usuario",
+  };
+}
 
 function passwordValida(password: string) {
   return (
@@ -83,19 +105,41 @@ function RequisitoPassword({
   );
 }
 
-export default function NuevoUsuarioDialog({
+export default function UsuarioFormDialog({
   open,
   onOpenChange,
-}: NuevoUsuarioDialogProps) {
-  const [form, setForm] = useState<UsuarioFormState>(FORM_INICIAL);
+  usuario = null,
+}: UsuarioFormDialogProps) {
+  const { session, cerrarSesion } = useAuth();
+
+  const [form, setForm] = useState<UsuarioFormState>(() =>
+    obtenerFormInicial(usuario),
+  );
   const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const crearUsuarioMutation = useCrearUsuario();
+  const editarUsuarioMutation = useEditarUsuario();
+
+  const esEdicion = usuario !== null;
+  const mutation = esEdicion ? editarUsuarioMutation : crearUsuarioMutation;
+
+  const esUsuarioActual =
+    usuario !== null && usuario.usuarioId === session?.usuario.usuarioId;
+
+  // En edición la contraseña es opcional: vacía conserva la actual.
+  const passwordRequerida = !esEdicion || form.password.length > 0;
+
+  // Cambiar email, rol o contraseña invalida el token del usuario editado.
+  const invalidaSesion =
+    usuario !== null &&
+    (form.email.trim() !== usuario.email ||
+      form.rol !== (usuario.roles[0] ?? "Usuario") ||
+      form.password.length > 0);
 
   const formularioValido =
     form.nombre.trim().length > 0 &&
     emailValido(form.email) &&
-    passwordValida(form.password);
+    (!passwordRequerida || passwordValida(form.password));
 
   const requisitosPassword = {
     longitud: form.password.length >= 10,
@@ -114,19 +158,19 @@ export default function NuevoUsuarioDialog({
       [campo]: value,
     }));
 
-    if (crearUsuarioMutation.isError || crearUsuarioMutation.isSuccess) {
-      crearUsuarioMutation.reset();
+    if (mutation.isError || mutation.isSuccess) {
+      mutation.reset();
     }
   };
 
   const limpiarFormulario = () => {
-    setForm(FORM_INICIAL);
+    setForm(obtenerFormInicial(usuario));
     setMostrarPassword(false);
-    crearUsuarioMutation.reset();
+    mutation.reset();
   };
 
   const cambiarApertura = (nextOpen: boolean) => {
-    if (!nextOpen && crearUsuarioMutation.isPending) {
+    if (!nextOpen && mutation.isPending) {
       return;
     }
 
@@ -145,12 +189,40 @@ export default function NuevoUsuarioDialog({
     }
 
     try {
-      await crearUsuarioMutation.mutateAsync({
-        nombre: form.nombre.trim(),
-        email: form.email.trim(),
-        password: form.password,
-        rol: form.rol,
-      });
+      if (usuario) {
+        const usuarioActualizado = await editarUsuarioMutation.mutateAsync({
+          usuarioId: usuario.usuarioId,
+          request: {
+            nombre: form.nombre.trim(),
+            email: form.email.trim(),
+            rol: form.rol,
+            password: form.password || null,
+          },
+        });
+
+        if (esUsuarioActual && session) {
+          if (invalidaSesion) {
+            // El token actual dejó de ser válido: hay que volver al login.
+            cerrarSesion();
+            return;
+          }
+
+          guardarSesion({
+            ...session,
+            usuario: {
+              ...session.usuario,
+              nombre: usuarioActualizado.nombre,
+            },
+          });
+        }
+      } else {
+        await crearUsuarioMutation.mutateAsync({
+          nombre: form.nombre.trim(),
+          email: form.email.trim(),
+          password: form.password,
+          rol: form.rol,
+        });
+      }
 
       onOpenChange(false);
       limpiarFormulario();
@@ -159,20 +231,26 @@ export default function NuevoUsuarioDialog({
     }
   };
 
+  const HeaderIcon = esEdicion ? UserPen : UserPlus;
+
   return (
     <Dialog open={open} onOpenChange={cambiarApertura} disablePointerDismissal>
       <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-xl sm:rounded-lg">
         <DialogHeader className="shrink-0 border-b bg-card px-5 py-4 pr-12 text-left sm:px-6 sm:py-5">
           <div className="flex items-start gap-3">
             <span className="hidden size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary sm:flex">
-              <UserPlus className="size-4" />
+              <HeaderIcon className="size-4" />
             </span>
 
             <div>
-              <DialogTitle>Nuevo usuario</DialogTitle>
+              <DialogTitle>
+                {esEdicion ? "Editar usuario" : "Nuevo usuario"}
+              </DialogTitle>
 
               <DialogDescription className="mt-1">
-                Creá una cuenta y definí sus permisos iniciales.
+                {esEdicion
+                  ? "Modificá los datos de la cuenta y sus permisos."
+                  : "Creá una cuenta y definí sus permisos iniciales."}
               </DialogDescription>
             </div>
           </div>
@@ -189,7 +267,7 @@ export default function NuevoUsuarioDialog({
                 <Input
                   id="usuario-nombre"
                   value={form.nombre}
-                  disabled={crearUsuarioMutation.isPending}
+                  disabled={mutation.isPending}
                   maxLength={150}
                   autoComplete="name"
                   placeholder="Nombre y apellido"
@@ -209,7 +287,8 @@ export default function NuevoUsuarioDialog({
                   id="usuario-email"
                   type="email"
                   value={form.email}
-                  disabled={crearUsuarioMutation.isPending}
+                  disabled={mutation.isPending}
+                  maxLength={256}
                   autoComplete="email"
                   placeholder="usuario@ejemplo.com"
                   required
@@ -223,11 +302,14 @@ export default function NuevoUsuarioDialog({
             <section className="space-y-3 border-t pt-5">
               <div>
                 <Label htmlFor="usuario-password">
-                  Contraseña <span className="text-destructive">*</span>
+                  {esEdicion ? "Nueva contraseña" : "Contraseña"}{" "}
+                  {!esEdicion && <span className="text-destructive">*</span>}
                 </Label>
 
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Definí una contraseña segura para el primer acceso.
+                  {esEdicion
+                    ? "Opcional. Dejala en blanco para no cambiarla."
+                    : "Definí una contraseña segura para el primer acceso."}
                 </p>
               </div>
 
@@ -236,10 +318,11 @@ export default function NuevoUsuarioDialog({
                   id="usuario-password"
                   type={mostrarPassword ? "text" : "password"}
                   value={form.password}
-                  disabled={crearUsuarioMutation.isPending}
+                  disabled={mutation.isPending}
+                  maxLength={200}
                   autoComplete="new-password"
                   className="pr-11"
-                  required
+                  required={!esEdicion}
                   onChange={(event) =>
                     actualizarCampo("password", event.target.value)
                   }
@@ -250,7 +333,7 @@ export default function NuevoUsuarioDialog({
                   variant="ghost"
                   size="icon"
                   className="absolute right-0 top-0"
-                  disabled={crearUsuarioMutation.isPending}
+                  disabled={mutation.isPending}
                   aria-label={
                     mostrarPassword
                       ? "Ocultar contraseña"
@@ -269,30 +352,32 @@ export default function NuevoUsuarioDialog({
                 </Button>
               </div>
 
-              <ul
-                aria-label="Requisitos de la contraseña"
-                className="grid gap-2 rounded-lg border bg-muted/30 p-3 sm:grid-cols-2"
-              >
-                <RequisitoPassword cumple={requisitosPassword.longitud}>
-                  Al menos 10 caracteres
-                </RequisitoPassword>
+              {passwordRequerida && (
+                <ul
+                  aria-label="Requisitos de la contraseña"
+                  className="grid gap-2 rounded-lg border bg-muted/30 p-3 sm:grid-cols-2"
+                >
+                  <RequisitoPassword cumple={requisitosPassword.longitud}>
+                    Al menos 10 caracteres
+                  </RequisitoPassword>
 
-                <RequisitoPassword cumple={requisitosPassword.mayuscula}>
-                  Una letra mayúscula
-                </RequisitoPassword>
+                  <RequisitoPassword cumple={requisitosPassword.mayuscula}>
+                    Una letra mayúscula
+                  </RequisitoPassword>
 
-                <RequisitoPassword cumple={requisitosPassword.minuscula}>
-                  Una letra minúscula
-                </RequisitoPassword>
+                  <RequisitoPassword cumple={requisitosPassword.minuscula}>
+                    Una letra minúscula
+                  </RequisitoPassword>
 
-                <RequisitoPassword cumple={requisitosPassword.numero}>
-                  Un número
-                </RequisitoPassword>
+                  <RequisitoPassword cumple={requisitosPassword.numero}>
+                    Un número
+                  </RequisitoPassword>
 
-                <RequisitoPassword cumple={requisitosPassword.simbolo}>
-                  Un símbolo
-                </RequisitoPassword>
-              </ul>
+                  <RequisitoPassword cumple={requisitosPassword.simbolo}>
+                    Un símbolo
+                  </RequisitoPassword>
+                </ul>
+              )}
             </section>
 
             <section className="space-y-3 border-t pt-5">
@@ -311,7 +396,7 @@ export default function NuevoUsuarioDialog({
                   type="button"
                   variant={form.rol === "Usuario" ? "secondary" : "outline"}
                   className="h-auto justify-start px-4 py-3 text-left"
-                  disabled={crearUsuarioMutation.isPending}
+                  disabled={mutation.isPending}
                   aria-pressed={form.rol === "Usuario"}
                   onClick={() => actualizarCampo("rol", "Usuario")}
                 >
@@ -332,7 +417,7 @@ export default function NuevoUsuarioDialog({
                     form.rol === "Administrador" ? "secondary" : "outline"
                   }
                   className="h-auto justify-start px-4 py-3 text-left"
-                  disabled={crearUsuarioMutation.isPending}
+                  disabled={mutation.isPending}
                   aria-pressed={form.rol === "Administrador"}
                   onClick={() => actualizarCampo("rol", "Administrador")}
                 >
@@ -349,7 +434,19 @@ export default function NuevoUsuarioDialog({
               </div>
             </section>
 
-            {crearUsuarioMutation.isError && (
+            {invalidaSesion && (
+              <div className="flex gap-3 rounded-lg border bg-muted/30 p-4 text-sm">
+                <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+
+                <p className="text-muted-foreground">
+                  {esUsuarioActual
+                    ? "Al guardar estos cambios se cerrará tu sesión y vas a tener que volver a ingresar."
+                    : "Al guardar estos cambios se cerrará la sesión actual de este usuario."}
+                </p>
+              </div>
+            )}
+
+            {mutation.isError && (
               <div
                 role="alert"
                 className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
@@ -358,12 +455,14 @@ export default function NuevoUsuarioDialog({
 
                 <div>
                   <p className="font-medium text-destructive">
-                    No pudimos crear el usuario
+                    {esEdicion
+                      ? "No pudimos guardar los cambios"
+                      : "No pudimos crear el usuario"}
                   </p>
 
                   <p className="mt-1 text-muted-foreground">
-                    {crearUsuarioMutation.error instanceof Error
-                      ? crearUsuarioMutation.error.message
+                    {mutation.error instanceof Error
+                      ? mutation.error.message
                       : "Revisá los datos e intentá nuevamente."}
                   </p>
                 </div>
@@ -375,7 +474,7 @@ export default function NuevoUsuarioDialog({
             <Button
               type="button"
               variant="outline"
-              disabled={crearUsuarioMutation.isPending}
+              disabled={mutation.isPending}
               onClick={() => cambiarApertura(false)}
             >
               Cancelar
@@ -383,13 +482,17 @@ export default function NuevoUsuarioDialog({
 
             <Button
               type="submit"
-              disabled={crearUsuarioMutation.isPending || !formularioValido}
+              disabled={mutation.isPending || !formularioValido}
             >
-              {crearUsuarioMutation.isPending && (
-                <Loader2 className="animate-spin" />
-              )}
+              {mutation.isPending && <Loader2 className="animate-spin" />}
 
-              {crearUsuarioMutation.isPending ? "Creando..." : "Crear usuario"}
+              {esEdicion
+                ? mutation.isPending
+                  ? "Guardando..."
+                  : "Guardar cambios"
+                : mutation.isPending
+                  ? "Creando..."
+                  : "Crear usuario"}
             </Button>
           </footer>
         </form>
