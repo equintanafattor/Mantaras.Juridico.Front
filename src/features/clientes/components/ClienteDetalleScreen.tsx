@@ -729,7 +729,7 @@ export default function ClienteDetalleScreen({
                 />
               </div>
 
-              <details className="relative border-t">
+              <details open className="relative border-t">
                 <summary className="cursor-pointer p-5 pr-16 text-sm font-semibold bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
                 Datos personales, contacto y registro
               </summary>
