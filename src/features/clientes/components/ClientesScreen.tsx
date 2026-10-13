@@ -212,7 +212,7 @@ export default function ClientesScreen() {
         aria-label="Filtros de clientes"
         className="rounded-lg border bg-card p-4"
       >
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <div className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 

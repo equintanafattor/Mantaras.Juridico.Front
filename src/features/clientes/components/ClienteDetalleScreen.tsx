@@ -41,6 +41,7 @@ import ClienteFormFields, {
 
 import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
 import NuevoCasoDialog from "@/features/casos/components/NuevoCasoDialog";
+import NuevoExpedienteDialog from "@/features/expedientes/components/NuevoExpedienteDialog";
 import HojaResumenCaso from "@/features/casos/components/HojaResumenCaso";
 import FamiliaresCliente from "@/features/familiares/components/FamiliaresCliente";
 import ClaveSeguridadSocial from "./ClaveSeguridadSocial";
@@ -171,7 +172,15 @@ function ExpedienteRelacionado({
   );
 }
 
-function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
+function CasoRelacionado({
+  caso,
+  disabled,
+  onNuevoExpediente,
+}: {
+  caso: CasoClienteDetalleResponse;
+  disabled: boolean;
+  onNuevoExpediente: () => void;
+}) {
   return (
     <article className="overflow-hidden rounded-md border bg-background">
       <div className="p-4">
@@ -235,7 +244,22 @@ function CasoRelacionado({ caso }: { caso: CasoClienteDetalleResponse }) {
             Expedientes judiciales
           </p>
 
-          <Badge variant="outline">{caso.expedientes.length}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{caso.expedientes.length}</Badge>
+
+            {caso.activo && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={disabled}
+                onClick={onNuevoExpediente}
+              >
+                <Plus />
+                Nuevo expediente judicial
+              </Button>
+            )}
+          </div>
         </div>
 
         {caso.expedientes.length === 0 ? (
@@ -291,6 +315,11 @@ export default function ClienteDetalleScreen({
   const [modoEdicion, setModoEdicion] = useState(false);
   const [accionEstado, setAccionEstado] = useState<AccionEstado | null>(null);
   const [nuevoCasoOpen, setNuevoCasoOpen] = useState(false);
+  const [nuevoExpedienteCasoId, setNuevoExpedienteCasoId] = useState<
+    number | null
+  >(null);
+  const [nuevoCasoConExpedienteOpen, setNuevoCasoConExpedienteOpen] =
+    useState(false);
 
   const clienteQuery = useCliente(clienteId);
   const actualizarMutation = useActualizarCliente();
@@ -449,7 +478,7 @@ export default function ClienteDetalleScreen({
         Volver a clientes
       </Link>
 
-      <header className="flex flex-col gap-5 border-b pb-6 lg:flex-row lg:items-start lg:justify-between">
+      <header className="flex flex-col gap-5 border-b pb-6 md:flex-row md:items-start md:justify-between">
         <div className="flex min-w-0 items-start gap-4">
           <span className="hidden size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground sm:flex">
             <UserRound className="size-5" />
@@ -654,12 +683,23 @@ export default function ClienteDetalleScreen({
             >
               <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                 <UserRound className="size-4 text-primary" />
-                <h2 className="text-sm font-semibold">
+                <h2 className="flex-1 text-sm font-semibold">
                   Información personal y relaciones
                 </h2>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Editar información personal y relaciones"
+                  title="Editar información personal y relaciones"
+                  disabled={operacionPendiente || accionEstado !== null}
+                  onClick={iniciarEdicion}
+                >
+                  <Pencil />
+                </Button>
               </header>
 
-              <dl className="grid gap-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
+              <dl className="grid gap-5 p-5 sm:grid-cols-2 lg:grid-cols-4">
                 <Dato label="DNI" value={formatearDni(cliente.dni)} />
 
                 <Dato label="CUIL" value={formatearCuil(cliente.cuil)} />
@@ -692,10 +732,22 @@ export default function ClienteDetalleScreen({
                 />
               </div>
 
-              <details className="border-t">
-              <summary className="cursor-pointer p-5 text-sm font-semibold bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
+              <details className="relative border-t">
+                <summary className="cursor-pointer p-5 pr-16 text-sm font-semibold bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
                 Datos personales, contacto y registro
               </summary>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  className="absolute right-3 top-4"
+                  aria-label="Editar datos personales, contacto y registro"
+                  title="Editar datos personales, contacto y registro"
+                  disabled={operacionPendiente || accionEstado !== null}
+                  onClick={iniciarEdicion}
+                >
+                  <Pencil />
+                </Button>
 
               <dl className="grid gap-5 border-t p-5 sm:grid-cols-2 lg:grid-cols-3">
                 <Dato
@@ -755,9 +807,20 @@ export default function ClienteDetalleScreen({
               <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">
                 <Scale className="size-4 text-primary" />
 
-                <div>
+                <div className="flex-1">
                   <h2 className="text-sm font-semibold">Abogado derivante</h2>
                 </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Editar abogado derivante"
+                  title="Editar abogado derivante"
+                  disabled={operacionPendiente || accionEstado !== null}
+                  onClick={iniciarEdicion}
+                >
+                  <Pencil />
+                </Button>
               </header>
 
               {tieneAbogadoDerivante ? (
@@ -833,7 +896,7 @@ export default function ClienteDetalleScreen({
                   </div>
                 </div>
 
-                <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
+                <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
                   <Badge variant="outline">{cliente.casos.length}</Badge>
 
                   <Button
@@ -854,6 +917,26 @@ export default function ClienteDetalleScreen({
                     <Plus />
                     Nuevo expediente
                   </Button>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={
+                      !cliente.activo ||
+                      operacionPendiente ||
+                      accionEstado !== null
+                    }
+                    title={
+                      cliente.activo
+                        ? "Crear un expediente administrativo junto con su expediente judicial."
+                        : "Reactivá el cliente para crear expedientes."
+                    }
+                    onClick={() => setNuevoCasoConExpedienteOpen(true)}
+                  >
+                    <Plus />
+                    Administrativo y judicial
+                  </Button>
                 </div>
               </header>
 
@@ -871,7 +954,14 @@ export default function ClienteDetalleScreen({
               ) : (
                 <div className="space-y-3 p-5">
                   {cliente.casos.map((caso) => (
-                    <CasoRelacionado key={caso.casoId} caso={caso} />
+                    <CasoRelacionado
+                      key={caso.casoId}
+                      caso={caso}
+                      disabled={operacionPendiente || accionEstado !== null}
+                      onNuevoExpediente={() =>
+                        setNuevoExpedienteCasoId(caso.casoId)
+                      }
+                    />
                   ))}
                 </div>
               )}
@@ -889,6 +979,19 @@ export default function ClienteDetalleScreen({
       <NuevoCasoDialog
         open={nuevoCasoOpen}
         onOpenChange={setNuevoCasoOpen}
+        clienteInicial={cliente}
+      />
+
+      <NuevoExpedienteDialog
+        open={nuevoExpedienteCasoId !== null || nuevoCasoConExpedienteOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setNuevoExpedienteCasoId(null);
+            setNuevoCasoConExpedienteOpen(false);
+          }
+        }}
+        casoIdInicial={nuevoExpedienteCasoId}
+        bloquearCaso={nuevoExpedienteCasoId !== null}
         clienteInicial={cliente}
       />
     </div>

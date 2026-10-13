@@ -265,8 +265,8 @@ export default function ExpedientesScreen() {
         aria-label="Filtros de expedientes judiciales"
         className="rounded-lg border bg-card p-4"
       >
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <div className="relative min-w-0 flex-1">
+        <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+          <div className="relative min-w-0 flex-1 md:basis-full lg:basis-0">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
             <Input
@@ -282,7 +282,7 @@ export default function ExpedientesScreen() {
             value={casoId}
             disabled={casosQuery.isLoading}
             onChange={(event) => cambiarCaso(event.target.value)}
-            className="h-10 min-w-56 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 lg:max-w-64"
+            className="h-10 min-w-56 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:flex-1 lg:max-w-64 lg:flex-none"
             aria-label="Filtrar por expediente administrativo"
           >
             <option value="">Todos los expedientes administrativos</option>

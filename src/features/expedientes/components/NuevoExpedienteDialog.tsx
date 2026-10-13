@@ -2,7 +2,12 @@
 
 import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
 
-import { esCasoFormValido, datosAdministrativosDesdeForm } from "@/features/casos/lib/casoForm";
+import {
+  crearFormCasoInicial,
+  datosAdministrativosDesdeForm,
+  esCasoFormValido,
+  type ClienteInicialCaso,
+} from "@/features/casos/lib/casoForm";
 
 import { FormEvent, useState } from "react";
 import {
@@ -31,7 +36,6 @@ import {
 
 import CasoFormFields, {
   crearRequestDesdeForm as crearCasoRequestDesdeForm,
-  FORM_CASO_INICIAL,
   type CasoFormState,
 } from "@/features/casos/components/CasoFormFields";
 
@@ -51,6 +55,7 @@ type NuevoExpedienteDialogProps = {
   onOpenChange: (open: boolean) => void;
   casoIdInicial?: number | null;
   bloquearCaso?: boolean;
+  clienteInicial?: ClienteInicialCaso;
   onExpedienteCreado?: () => void;
 };
 
@@ -85,11 +90,12 @@ function crearFormInicial(casoIdInicial?: number | null): ExpedienteFormState {
   };
 }
 
-function crearCasoFormInicial(): CasoFormState {
+function crearCasoFormInicial(
+  clienteInicial?: ClienteInicialCaso,
+): CasoFormState {
   return {
-    ...FORM_CASO_INICIAL,
+    ...crearFormCasoInicial(clienteInicial),
     faseInterna: "Juicio",
-    clientes: [],
   };
 }
 
@@ -362,24 +368,30 @@ function NuevoExpedienteDialogContenido({
   onOpenChange,
   casoIdInicial,
   bloquearCaso = false,
+  clienteInicial,
   onExpedienteCreado,
 }: NuevoExpedienteDialogProps) {
-  const [modoCaso, setModoCaso] = useState<ModoCaso>("existente");
+  const permiteCrearCasoNuevo = !bloquearCaso && casoIdInicial == null;
+
+  // Con un cliente de origen se arranca creando ambos expedientes.
+  const modoCasoInicial: ModoCaso =
+    permiteCrearCasoNuevo && clienteInicial ? "nuevo" : "existente";
+
+  const [modoCaso, setModoCaso] = useState<ModoCaso>(modoCasoInicial);
   const [pasoNuevoCaso, setPasoNuevoCaso] = useState<PasoNuevoCaso>(1);
 
   const [expedienteExistenteForm, setExpedienteExistenteForm] =
     useState<ExpedienteFormState>(() => crearFormInicial(casoIdInicial));
 
-  const [casoNuevoForm, setCasoNuevoForm] =
-    useState<CasoFormState>(crearCasoFormInicial);
+  const [casoNuevoForm, setCasoNuevoForm] = useState<CasoFormState>(() =>
+    crearCasoFormInicial(clienteInicial),
+  );
 
   const [expedienteNuevoForm, setExpedienteNuevoForm] =
     useState<ExpedienteFormState>(() => crearFormInicial());
 
   const crearExpedienteMutation = useCrearExpediente();
   const crearCasoConExpedienteMutation = useCrearCasoConExpedientePrincipal();
-
-  const permiteCrearCasoNuevo = !bloquearCaso && casoIdInicial == null;
 
   const operacionPendiente =
     crearExpedienteMutation.isPending ||
@@ -440,10 +452,10 @@ function NuevoExpedienteDialogContenido({
   };
 
   const limpiarFormulario = () => {
-    setModoCaso("existente");
+    setModoCaso(modoCasoInicial);
     setPasoNuevoCaso(1);
     setExpedienteExistenteForm(crearFormInicial(casoIdInicial));
-    setCasoNuevoForm(crearCasoFormInicial());
+    setCasoNuevoForm(crearCasoFormInicial(clienteInicial));
     setExpedienteNuevoForm(crearFormInicial());
 
     crearExpedienteMutation.reset();
@@ -534,7 +546,7 @@ function NuevoExpedienteDialogContenido({
         : "Crear ambos expedientes";
 
   return (
-    <Dialog open={open} onOpenChange={cambiarApertura}>
+    <Dialog open={open} onOpenChange={cambiarApertura} disablePointerDismissal>
       <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-4xl sm:rounded-lg">
         <DialogHeader className="shrink-0 border-b bg-card px-5 py-4 pr-12 text-left sm:px-6 sm:py-5">
           <DialogTitle>Nuevo expediente judicial</DialogTitle>

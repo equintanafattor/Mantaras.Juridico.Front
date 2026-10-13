@@ -3,6 +3,14 @@
 import { useId, useRef, useState, type FormEvent } from "react";
 import { ChevronLeft, ChevronRight, Loader2, Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -115,37 +123,12 @@ function CatalogoPanel({ tipo }: { tipo: TipoCatalogo }) {
           )}
         </form>
 
-        {mutation.isError && (
+        {mutation.isError && !confirmacion && (
           <p role="alert" className="rounded-md border border-destructive/30 p-3 text-sm text-destructive">
             {mutation.error.message}
           </p>
         )}
         {mensaje && <p role="status" className="rounded-md bg-secondary p-3 text-sm">{mensaje}</p>}
-
-        {confirmacion && (
-          <div role="group" aria-label="Confirmar cambio de estado" className="space-y-3 rounded-md border bg-muted/40 p-4">
-            <p className="text-sm">
-              ¿{confirmacion.activo ? "Desactivar" : "Reactivar"} <strong>{confirmacion.nombre}</strong>?{" "}
-              {confirmacion.activo && "Seguirá visible en los expedientes administrativos que ya lo usan, pero no se ofrecerá para nuevas asignaciones."}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant={confirmacion.activo ? "destructive" : "default"}
-                disabled={pendiente}
-                onClick={() => void confirmarEstado()}
-              >
-                {pendiente && <Loader2 className="animate-spin" />}Confirmar
-              </Button>
-              <Button type="button" variant="outline" disabled={pendiente} onClick={() => {
-                setConfirmacion(null);
-                mutation.reset();
-              }}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        )}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Input
@@ -223,6 +206,59 @@ function CatalogoPanel({ tipo }: { tipo: TipoCatalogo }) {
           </>
         )}
       </div>
+
+      <Dialog
+        open={confirmacion !== null}
+        onOpenChange={(open) => {
+          if (!open && !pendiente) {
+            setConfirmacion(null);
+            mutation.reset();
+          }
+        }}
+        disablePointerDismissal
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              ¿{confirmacion?.activo ? "Desactivar" : "Reactivar"}{" "}
+              {confirmacion?.nombre}?
+            </DialogTitle>
+            <DialogDescription>
+              {confirmacion?.activo
+                ? "Seguirá visible en los expedientes administrativos que ya lo usan, pero no se ofrecerá para nuevas asignaciones."
+                : "Volverá a ofrecerse para nuevas asignaciones."}
+            </DialogDescription>
+          </DialogHeader>
+
+          {mutation.isError && (
+            <p role="alert" className="rounded-md border border-destructive/30 p-3 text-sm text-destructive">
+              {mutation.error.message}
+            </p>
+          )}
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={pendiente}
+              onClick={() => {
+                setConfirmacion(null);
+                mutation.reset();
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              variant={confirmacion?.activo ? "destructive" : "default"}
+              disabled={pendiente}
+              onClick={() => void confirmarEstado()}
+            >
+              {pendiente && <Loader2 className="animate-spin" />}Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
