@@ -265,24 +265,25 @@ export default function HistorialObservaciones({
           {visibles.map((observacion) => (
             <li
               key={observacion.observacionId}
-              className={esResumen ? "p-4" : "p-5"}
+              className={esResumen ? "px-4 py-3" : "px-5 py-3.5"}
             >
               <article className="min-w-0 flex-1">
-                <header className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="truncate text-sm font-medium">
-                    {observacion.usuarioCreacion || "Usuario no informado"}
-                  </p>
+                <header className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+                  <Clock3 className="size-3.5 shrink-0" />
 
-                  <p className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-                    <Clock3 className="size-3.5" />
-                    {formatearFechaHora(observacion.fechaCreacion)}
-                  </p>
+                  <span>{formatearFechaHora(observacion.fechaCreacion)}</span>
+
+                  <span aria-hidden="true">·</span>
+
+                  <span className="min-w-0 truncate">
+                    {observacion.usuarioCreacion || "Usuario no informado"}
+                  </span>
                 </header>
 
                 <p
                   className={`${
-                    esResumen ? "mt-2 line-clamp-3 leading-6" : "mt-3 leading-7"
-                  } whitespace-pre-wrap break-words text-sm`}
+                    esResumen ? "line-clamp-3" : ""
+                  } mt-1 whitespace-pre-wrap break-words text-sm leading-6`}
                 >
                   {observacion.texto}
                 </p>
