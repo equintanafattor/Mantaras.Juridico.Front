@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
   Files,
+  Folder,
   Home,
   Landmark,
   Loader2,
@@ -55,7 +56,7 @@ const navigationItems = [
   {
     href: "/expedientes",
     label: "Expedientes judiciales",
-    icon: Files,
+    icon: Folder,
     adminOnly: false,
   },
 ];
