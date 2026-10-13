@@ -217,7 +217,8 @@ export default function CasoFormFields({
       <section className="space-y-4 border-t pt-5" aria-label="Datos administrativos">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-medium">Datos administrativos</h3>
-          <Link href="/catalogos" target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">Administrar catálogos (otra pestaña)</Link>
+          {/* rel="opener": la sesión vive en sessionStorage y solo se copia a la pestaña nueva si conserva el opener. */}
+          <Link href="/catalogos" target="_blank" rel="opener" className="text-xs text-primary underline">Administrar catálogos (otra pestaña)</Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
