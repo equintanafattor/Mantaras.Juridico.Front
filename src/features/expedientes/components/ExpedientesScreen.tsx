@@ -242,17 +242,9 @@ export default function ExpedientesScreen() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <section className="flex flex-col justify-between gap-4 rounded-lg border border-sky-800/15 border-l-4 border-l-sky-700 bg-sky-50/45 p-5 sm:flex-row sm:items-end dark:bg-sky-950/10">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-            Gestión
-          </p>
-
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Expedientes judiciales
           </h1>
-
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Consultá expedientes judiciales, sus relaciones y datos procesales.
-          </p>
         </div>
 
         <Button onClick={() => setNuevoExpedienteOpen(true)}>

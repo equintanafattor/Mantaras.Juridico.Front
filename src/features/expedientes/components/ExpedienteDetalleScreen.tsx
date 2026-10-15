@@ -468,11 +468,7 @@ export default function ExpedienteDetalleScreen({
           </span>
 
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-              Expediente judicial
-            </p>
-
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               {expediente.caratula}
             </h1>
 

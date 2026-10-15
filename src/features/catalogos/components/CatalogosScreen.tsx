@@ -267,11 +267,7 @@ export default function CatalogosScreen() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <header className="border-b pb-6">
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary">Configuración</p>
-        <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Catálogos administrativos</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Opciones para clasificar los expedientes administrativos del estudio.
-        </p>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Catálogos administrativos</h1>
       </header>
       <CatalogoPanel tipo="beneficios" />
       <CatalogoPanel tipo="administrativos" />

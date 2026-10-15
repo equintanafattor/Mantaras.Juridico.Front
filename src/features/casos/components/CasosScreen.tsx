@@ -191,17 +191,9 @@ export default function CasosScreen() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <section className="flex flex-col justify-between gap-4 rounded-lg border border-amber-700/15 border-l-4 border-l-amber-600 bg-amber-50/40 p-5 sm:flex-row sm:items-end dark:bg-amber-950/10">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-            Gestión
-          </p>
-
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Expedientes administrativos
           </h1>
-
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Seguimiento de los asuntos jurídicos gestionados por el estudio.
-          </p>
         </div>
 
         <Button onClick={() => setNuevoCasoOpen(true)}>
