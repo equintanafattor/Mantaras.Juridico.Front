@@ -29,10 +29,6 @@ import NuevoCasoDialog from "./NuevoCasoDialog";
 
 const PAGE_SIZE = 10;
 
-function mostrarValor(value: string | null) {
-  return value?.trim() || "—";
-}
-
 function obtenerClientePrincipal(caso: CasoResponse) {
   return caso.clientes.find((cliente) => cliente.esPrincipal);
 }
@@ -139,10 +135,7 @@ function CasoMobileCard({
           </dd>
         </div>
 
-        <div>
-          <dt className="text-xs text-muted-foreground">Tipo de trámite</dt>
-          <dd className="mt-1">{mostrarValor(caso.tipoTramite)}</dd>
-        </div>
+
       </dl>
       <div className="mt-4 border-t pt-3"><DatosAdministrativosResumen datos={caso} /></div>
     </button>
@@ -350,7 +343,6 @@ export default function CasosScreen() {
                         Cliente principal
                       </th>
                       <th className="px-5 py-3 font-medium">Fase</th>
-                      <th className="px-5 py-3 font-medium">Trámite</th>
                       <th className="px-5 py-3 text-right font-medium">
                         Estado
                       </th>
@@ -407,11 +399,6 @@ export default function CasosScreen() {
                             <FaseStatus fase={caso.faseInterna} />
                           </td>
 
-                          <td className="max-w-56 px-5 py-4">
-                            <span className="block truncate text-muted-foreground">
-                              {mostrarValor(caso.tipoTramite)}
-                            </span>
-                          </td>
 
                           <td className="px-5 py-4 text-right">
                             <CasoStatus activo={caso.activo} />

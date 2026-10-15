@@ -209,7 +209,7 @@ function CasoRelacionado({
               )}
             </div>
 
-            <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
               <Dato
                 label="Participación"
                 value={mostrarValor(caso.tipoParticipacion)}
@@ -220,10 +220,7 @@ function CasoRelacionado({
                 value={mostrarValor(caso.faseInterna)}
               />
 
-              <Dato
-                label="Tipo de trámite"
-                value={mostrarValor(caso.tipoTramite)}
-              />
+
             </dl>
           </div>
         </div>
@@ -715,6 +712,15 @@ export default function ClienteDetalleScreen({
                       "No informado"
                     )
                   }
+                />
+
+                <Dato
+                  label="Celular"
+                  value={cliente.celular?.trim() ? (
+                    <a href={`tel:${cliente.celular}`} className="break-words hover:text-primary hover:underline">
+                      {cliente.celular}
+                    </a>
+                  ) : "No informado"}
                 />
 
                 <Dato

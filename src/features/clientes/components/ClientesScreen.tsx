@@ -142,6 +142,11 @@ function ClienteMobileCard({
           <dd className="mt-1">{mostrarValor(cliente.telefono)}</dd>
         </div>
 
+        <div>
+          <dt className="text-xs text-muted-foreground">Celular</dt>
+          <dd className="mt-1">{mostrarValor(cliente.celular)}</dd>
+        </div>
+
         <div className="min-w-0">
           <dt className="text-xs text-muted-foreground">Email</dt>
           <dd className="mt-1 truncate">{mostrarValor(cliente.email)}</dd>
@@ -372,7 +377,8 @@ export default function ClientesScreen() {
                         </td>
 
                         <td className="px-5 py-4">
-                          <div>{mostrarValor(cliente.telefono)}</div>
+                          <div>Tel.: {mostrarValor(cliente.telefono)}</div>
+                          <div className="mt-1">Cel.: {mostrarValor(cliente.celular)}</div>
 
                           <div className="mt-1 max-w-64 truncate text-xs text-muted-foreground">
                             {mostrarValor(cliente.email)}

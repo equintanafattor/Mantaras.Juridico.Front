@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { crearObservacion } from "../api/observacionesApi";
-import type { EntidadObservacion, ObservacionResponse } from "../types/types";
+import type { CrearObservacionRequest, EntidadObservacion, ObservacionResponse } from "../types/types";
 import { observacionesQueryKey } from "./useObservaciones";
 
 export function useCrearObservacion(
@@ -14,8 +14,8 @@ export function useCrearObservacion(
   const queryKey = observacionesQueryKey(entidad, propietarioId);
 
   return useMutation({
-    mutationFn: (texto: string) =>
-      crearObservacion(entidad, propietarioId, { texto }),
+    mutationFn: (request: CrearObservacionRequest) =>
+      crearObservacion(entidad, propietarioId, request),
 
     onSuccess: async (nuevaObservacion) => {
       await queryClient.cancelQueries({ queryKey, exact: true });

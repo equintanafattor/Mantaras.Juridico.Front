@@ -696,6 +696,11 @@ export default function ExpedienteDetalleScreen({
                   />
 
                   <Dato
+                    label="Tipo de trámite"
+                    value={mostrarValor(expediente.tipoTramite)}
+                  />
+
+                  <Dato
                     label="Estado legal"
                     value={mostrarValor(expediente.estadoLegal)}
                   />

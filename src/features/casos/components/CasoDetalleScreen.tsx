@@ -426,9 +426,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
               {caso.titulo}
             </h1>
 
-            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              {mostrarValor(caso.tipoTramite)}
-            </p>
+
 
             <div className="mt-4 flex flex-wrap gap-2">
               <FaseBadge fase={caso.faseInterna} />
@@ -642,10 +640,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                     value={caso.faseInterna}
                   />
 
-                  <Dato
-                    label="Tipo de trámite"
-                    value={mostrarValor(caso.tipoTramite)}
-                  />
+
                 </dl>
               </section>
 

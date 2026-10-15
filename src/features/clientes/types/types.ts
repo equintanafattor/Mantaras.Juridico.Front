@@ -12,6 +12,7 @@ export type ClienteResponse = {
   derivadoPorEmail: string | null;
   fechaNacimiento: string | null;
   telefono: string | null;
+  celular: string | null;
   email: string | null;
   domicilio: string | null;
   localidad: string | null;
@@ -75,6 +76,7 @@ export type CrearClienteRequest = {
   derivadoPorEmail: string | null;
   fechaNacimiento: string | null;
   telefono: string | null;
+  celular: string | null;
   email: string | null;
   domicilio: string | null;
   localidad: string | null;

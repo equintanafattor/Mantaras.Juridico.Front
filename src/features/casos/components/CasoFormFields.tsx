@@ -219,13 +219,7 @@ export default function CasoFormFields({
           onChange={(value) => actualizarCampo("faseInterna", value as FaseCaso)}
         />
 
-        <CatalogoNombreSelect
-          tipo="tramites"
-          label="Tipo de trámite"
-          value={form.tipoTramite}
-          disabled={disabled}
-          onChange={(value) => actualizarCampo("tipoTramite", value)}
-        />
+
       </section>
 
       <section className="space-y-4 border-t pt-5" aria-label="Datos administrativos">
