@@ -39,6 +39,8 @@ export type CasoClienteDetalleResponse = DatosAdministrativos & {
   tipoTramite: string | null;
   tipoParticipacion: string | number;
   esPrincipal: boolean;
+  clientePrincipalId?: number | null;
+  clientePrincipalNombre?: string | null;
   activo: boolean;
   expedientes: ExpedienteClienteDetalleResponse[];
 };

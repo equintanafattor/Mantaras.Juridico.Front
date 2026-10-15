@@ -278,6 +278,39 @@ function CasoRelacionado({
   );
 }
 
+function ParticipacionEnCaso({ caso }: { caso: CasoClienteDetalleResponse }) {
+  const tipoParticipacion = String(caso.tipoParticipacion);
+  const etiquetasParticipacion: Record<string, string> = {
+    "1": "Titular",
+    "2": "Cónyuge",
+    Conyuge: "Cónyuge",
+    "3": "Continuador",
+    "4": "Heredero",
+    "5": "Otro",
+  };
+  const participacion = etiquetasParticipacion[tipoParticipacion] ?? tipoParticipacion;
+
+  return (
+    <li className="flex flex-wrap items-center gap-x-3 gap-y-1 py-3">
+      <Link
+        href={`/casos/${caso.casoId}`}
+        className="min-w-0 flex-1 basis-48 break-words text-sm font-medium hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {caso.titulo}
+      </Link>
+      <EstadoBadge activo={caso.activo} />
+      <p className="w-full break-words text-xs text-muted-foreground">
+        Cliente principal: {caso.clientePrincipalId && caso.clientePrincipalNombre?.trim() ? (
+          <Link href={`/clientes/${caso.clientePrincipalId}`} className="hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            {caso.clientePrincipalNombre}
+          </Link>
+        ) : caso.clientePrincipalNombre?.trim() || "No informado"}
+        {" · Participación: "}{participacion || "No informada"}
+      </p>
+    </li>
+  );
+}
+
 function DetalleSkeleton() {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
@@ -454,7 +487,9 @@ export default function ClienteDetalleScreen({
   }
 
   const cliente = clienteQuery.data;
-  const totalExpedientes = cliente.casos.reduce(
+  const casosPropios = cliente.casos.filter((caso) => caso.esPrincipal);
+  const participaciones = cliente.casos.filter((caso) => !caso.esPrincipal);
+  const totalExpedientes = casosPropios.reduce(
     (total, caso) => total + caso.expedientes.length,
     0,
   );
@@ -724,8 +759,17 @@ export default function ClienteDetalleScreen({
                 />
 
                 <Dato
-                  label="Expedientes relacionados"
-                  value={`${cliente.casos.length} administrativos · ${totalExpedientes} judiciales`}
+                  label="Expedientes propios"
+                  value={
+                    <>
+                      {casosPropios.length} administrativos · {totalExpedientes} judiciales
+                      {participaciones.length > 0 && (
+                        <span className="block text-xs text-muted-foreground">
+                          Participa en otros {participaciones.length} administrativos
+                        </span>
+                      )}
+                    </>
+                  }
                 />
               </dl>
               <div className="border-t px-5 py-4 print:hidden">
@@ -894,13 +938,13 @@ export default function ClienteDetalleScreen({
 
                   <div>
                     <h2 className="text-sm font-semibold">
-                      Expedientes administrativos relacionados
+                      Expedientes administrativos propios
                     </h2>
                   </div>
                 </div>
 
                 <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
-                  <Badge variant="outline">{cliente.casos.length}</Badge>
+                  <Badge variant="outline">{casosPropios.length}</Badge>
 
                   <Button
                     type="button"
@@ -943,20 +987,20 @@ export default function ClienteDetalleScreen({
                 </div>
               </header>
 
-              {cliente.casos.length === 0 ? (
+              {casosPropios.length === 0 ? (
                 <div className="p-8 text-center">
                   <p className="text-sm font-medium">
-                    Sin expedientes administrativos relacionados
+                    Sin expedientes administrativos propios
                   </p>
 
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Este cliente todavía no participa en ningún expediente
+                    Este cliente todavía no figura como principal en ningún expediente
                     administrativo.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3 p-5">
-                  {cliente.casos.map((caso) => (
+                  {casosPropios.map((caso) => (
                     <CasoRelacionado
                       key={caso.casoId}
                       caso={caso}
@@ -969,6 +1013,24 @@ export default function ClienteDetalleScreen({
                 </div>
               )}
             </section>
+
+            {participaciones.length > 0 && (
+              <details key={clienteId} className="rounded-lg border bg-card">
+                <summary className="cursor-pointer rounded-lg px-5 py-3 text-sm font-medium text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  Participa en otros expedientes ({participaciones.length})
+                </summary>
+                <div className="border-t px-5 pb-2">
+                  <p className="pt-3 text-xs text-muted-foreground">
+                    Expedientes administrativos donde otra persona figura como cliente principal.
+                  </p>
+                  <ul className="divide-y">
+                    {participaciones.map((caso) => (
+                      <ParticipacionEnCaso key={caso.casoId} caso={caso} />
+                    ))}
+                  </ul>
+                </div>
+              </details>
+            )}
 
             <HistorialObservaciones
               key={clienteId}
