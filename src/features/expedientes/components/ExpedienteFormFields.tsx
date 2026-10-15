@@ -220,6 +220,10 @@ export default function ExpedienteFormFields({
             <div className="max-h-60 space-y-2 overflow-y-auto rounded-lg border p-2">
               {casosQuery.data?.items.map((caso) => {
                 const seleccionado = form.casoIds.includes(caso.casoId);
+                const clientePrincipal =
+                  caso.clientes.find((cliente) => cliente.esPrincipal) ??
+                  caso.clientes[0];
+                const otrosClientes = caso.clientes.length - 1;
 
                 return (
                   <label
@@ -238,6 +242,12 @@ export default function ExpedienteFormFields({
                       <span className="block text-sm font-medium">
                         {caso.titulo}
                       </span>
+                      {clientePrincipal && (
+                        <span className="mt-0.5 block text-xs">
+                          {clientePrincipal.nombreCompleto}
+                          {otrosClientes > 0 && ` y ${otrosClientes} más`}
+                        </span>
+                      )}
                       <span className="mt-0.5 block text-xs text-muted-foreground">
                         {caso.numeroExpedienteAnses
                           ? `ANSES ${caso.numeroExpedienteAnses}`

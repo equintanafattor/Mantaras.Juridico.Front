@@ -633,9 +633,9 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                       Información del expediente administrativo
                     </h2>
 
-                    <p className="mt-0.5 text-xs text-muted-foreground">
+{/*                     <p className="mt-0.5 text-xs text-muted-foreground">
                       Clasificación y seguimiento interno.
-                    </p>
+                    </p> */}
                   </div>
                 </header>
 
@@ -690,10 +690,6 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
 
                     <div>
                       <h2 className="text-sm font-semibold">Expedientes judiciales</h2>
-
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        Piezas judiciales relacionadas con el expediente administrativo.
-                      </p>
                     </div>
                   </div>
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import CatalogoSelect from "@/features/catalogos/components/CatalogoSelect";
 import CatalogoNombreSelect from "@/features/catalogos/components/CatalogoNombreSelect";
+import type { ReferenciaCatalogo } from "@/features/catalogos/types/types";
 import type { CasoFormState } from "../lib/casoForm";
 export { crearFormDesdeCaso, crearRequestDesdeForm, FORM_CASO_INICIAL } from "../lib/casoForm";
 export type { CasoFormState, CasoParticipanteForm } from "../lib/casoForm";
@@ -121,7 +122,20 @@ export default function CasoFormFields({
     });
   };
 
-  const agregarCliente = (cliente: ClienteResponse) => {
+  // Precarga el título con el nombre del tipo, sin pisar uno escrito a mano.
+  const cambiarTipoAdministrativo = (item: ReferenciaCatalogo | null) => {
+    const tituloActual = form.titulo.trim();
+    const tituloAutocompletado =
+      tituloActual === "" || tituloActual === form.tipoAdministrativo?.nombre.trim();
+
+    onChange({
+      ...form,
+      tipoAdministrativo: item,
+      titulo: item && tituloAutocompletado ? item.nombre : form.titulo,
+    });
+  };
+
+  const agregarCliente =(cliente: ClienteResponse) => {
     if (clientesSeleccionadosIds.has(cliente.clienteId)) {
       return;
     }
@@ -217,7 +231,8 @@ export default function CasoFormFields({
       <section className="space-y-4 border-t pt-5" aria-label="Datos administrativos">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-medium">Datos administrativos</h3>
-          <Link href="/catalogos" target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">Administrar catálogos (otra pestaña)</Link>
+          {/* rel="opener": la sesión vive en sessionStorage y solo se copia a la pestaña nueva si conserva el opener. */}
+          <Link href="/catalogos" target="_blank" rel="opener" className="text-xs text-primary underline">Administrar catálogos (otra pestaña)</Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
@@ -229,7 +244,7 @@ export default function CasoFormFields({
             <Input id="caso-numero-beneficio" value={form.numeroBeneficio} maxLength={100} disabled={disabled} placeholder="Opcional; conservá los ceros y separadores" onChange={(event) => actualizarCampo("numeroBeneficio", event.target.value)} />
           </div>
           <CatalogoSelect tipo="beneficios" label="Tipo de beneficio" value={form.tipoBeneficio?.id ?? null} original={form.tipoBeneficioOriginal} seleccionado={form.tipoBeneficio} disabled={disabled} onChange={(item) => actualizarCampo("tipoBeneficio", item)} />
-          <CatalogoSelect tipo="administrativos" label="Tipo de expediente administrativo" value={form.tipoAdministrativo?.id ?? null} original={form.tipoAdministrativoOriginal} seleccionado={form.tipoAdministrativo} disabled={disabled} onChange={(item) => actualizarCampo("tipoAdministrativo", item)} />
+          <CatalogoSelect tipo="administrativos" label="Tipo de expediente administrativo" value={form.tipoAdministrativo?.id ?? null} original={form.tipoAdministrativoOriginal} seleccionado={form.tipoAdministrativo} disabled={disabled} onChange={cambiarTipoAdministrativo} />
         </div>
         <p className="text-xs text-muted-foreground">Estos campos son opcionales. “Sin asignar” quita la relación al guardar; no elimina el catálogo.</p>
       </section>

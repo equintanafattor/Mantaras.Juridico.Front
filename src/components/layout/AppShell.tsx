@@ -7,6 +7,7 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   Files,
+  Folder,
   Home,
   Landmark,
   Loader2,
@@ -56,7 +57,7 @@ const navigationItems = [
   {
     href: "/expedientes",
     label: "Expedientes judiciales",
-    icon: Files,
+    icon: Folder,
     adminOnly: false,
   },
   { href: "/agenda", label: "Agenda", icon: CalendarDays, adminOnly: false },

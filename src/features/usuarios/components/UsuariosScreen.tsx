@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import {
   AlertCircle,
   Loader2,
+  Pencil,
   RotateCcw,
   Search,
   ShieldCheck,
@@ -28,7 +29,7 @@ import { useCambiarEstadoUsuario } from "../hooks/useCambiarEstadoUsuario";
 import { useUsuarios } from "../hooks/useUsuarios";
 import type { UsuarioResponse } from "../types/types";
 
-import NuevoUsuarioDialog from "./NuevoUsuarioDialog";
+import UsuarioFormDialog from "./UsuarioFormDialog";
 
 function formatearFecha(value: string) {
   const date = new Date(value);
@@ -110,6 +111,11 @@ export default function UsuariosScreen() {
   const [usuarioSeleccionado, setUsuarioSeleccionado] =
     useState<UsuarioResponse | null>(null);
 
+  // Se conserva al cerrar para no vaciar el diálogo durante la animación.
+  const [usuarioEnEdicion, setUsuarioEnEdicion] =
+    useState<UsuarioResponse | null>(null);
+  const [editarUsuarioOpen, setEditarUsuarioOpen] = useState(false);
+
   const usuariosQuery = useUsuarios();
   const cambiarEstadoMutation = useCambiarEstadoUsuario();
 
@@ -147,7 +153,12 @@ export default function UsuariosScreen() {
     setUsuarioSeleccionado(usuario);
   };
 
-  const cambiarAperturaConfirmacion = (open: boolean) => {
+  const editarUsuario = (usuario: UsuarioResponse) => {
+    setUsuarioEnEdicion(usuario);
+    setEditarUsuarioOpen(true);
+  };
+
+  const cambiarAperturaConfirmacion =(open: boolean) => {
     if (!open && cambiarEstadoMutation.isPending) {
       return;
     }
@@ -352,16 +363,28 @@ export default function UsuariosScreen() {
                           Creado el {formatearFecha(usuario.fechaCreacion)}
                         </p>
 
-                        {!esUsuarioActual && (
+                        <div className="flex shrink-0 gap-2">
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => seleccionarUsuario(usuario)}
+                            onClick={() => editarUsuario(usuario)}
                           >
-                            {usuario.activo ? "Dar de baja" : "Restaurar"}
+                            <Pencil />
+                            Editar
                           </Button>
-                        )}
+
+                          {!esUsuarioActual && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => seleccionarUsuario(usuario)}
+                            >
+                              {usuario.activo ? "Dar de baja" : "Restaurar"}
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </article>
@@ -379,7 +402,7 @@ export default function UsuariosScreen() {
                       <th className="px-5 py-3 font-medium">Creación</th>
                       <th className="px-5 py-3 font-medium">Estado</th>
                       <th className="px-5 py-3 text-right font-medium">
-                        Acción
+                        Acciones
                       </th>
                     </tr>
                   </thead>
@@ -449,20 +472,28 @@ export default function UsuariosScreen() {
                           </td>
 
                           <td className="px-5 py-4 text-right">
-                            {esUsuarioActual ? (
-                              <span className="text-xs text-muted-foreground">
-                                Cuenta actual
-                              </span>
-                            ) : (
+                            <div className="flex justify-end gap-2">
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                onClick={() => seleccionarUsuario(usuario)}
+                                onClick={() => editarUsuario(usuario)}
                               >
-                                {usuario.activo ? "Dar de baja" : "Restaurar"}
+                                <Pencil />
+                                Editar
                               </Button>
-                            )}
+
+                              {!esUsuarioActual && (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => seleccionarUsuario(usuario)}
+                                >
+                                  {usuario.activo ? "Dar de baja" : "Restaurar"}
+                                </Button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -483,10 +514,19 @@ export default function UsuariosScreen() {
         </>
       )}
 
-      <NuevoUsuarioDialog
+      <UsuarioFormDialog
         open={nuevoUsuarioOpen}
         onOpenChange={setNuevoUsuarioOpen}
       />
+
+      {usuarioEnEdicion && (
+        <UsuarioFormDialog
+          key={`${usuarioEnEdicion.usuarioId}-${usuarioEnEdicion.fechaModificacion}`}
+          open={editarUsuarioOpen}
+          onOpenChange={setEditarUsuarioOpen}
+          usuario={usuarioEnEdicion}
+        />
+      )}
 
       <Dialog
         open={usuarioSeleccionado !== null}
