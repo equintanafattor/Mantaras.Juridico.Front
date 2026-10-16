@@ -161,7 +161,10 @@ function ActividadItem({
 }) {
   const esCaso = actividad.tipo === "Caso";
   const Icon = esCaso ? BriefcaseBusiness : FileText;
-  const href = esCaso ? "/casos" : "/expedientes";
+  const href =
+    esCaso || actividad.expedienteId === null
+      ? `/casos/${actividad.casoId}`
+      : `/expedientes/${actividad.expedienteId}`;
 
   return (
     <article>
