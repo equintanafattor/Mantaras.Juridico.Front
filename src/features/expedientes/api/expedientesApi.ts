@@ -2,8 +2,10 @@ import { apiRequest } from "@/lib/api/apiClient";
 
 import type {
   ActualizarExpedienteRequest,
+  BuscarExpedientesCobroParams,
   BuscarExpedientesParams,
   CrearExpedienteRequest,
+  ExpedienteCobroResponse,
   ExpedienteDetalleResponse,
   ExpedienteResponse,
   PagedResponse,
@@ -33,6 +35,35 @@ export async function buscarExpedientes(
 
   return apiRequest<PagedResponse<ExpedienteResponse>>(
     `/api/expedientes?${query.toString()}`,
+    {
+      method: "GET",
+      signal,
+    },
+  );
+}
+
+export async function buscarExpedientesCobro(
+  params: BuscarExpedientesCobroParams,
+  signal?: AbortSignal,
+): Promise<PagedResponse<ExpedienteCobroResponse>> {
+  const query = new URLSearchParams({
+    page: params.page.toString(),
+    pageSize: params.pageSize.toString(),
+    soloActivos: params.soloActivos.toString(),
+  });
+
+  if (params.seguimientoVencido !== undefined) {
+    query.set("seguimientoVencido", params.seguimientoVencido.toString());
+  }
+
+  const busqueda = params.busqueda?.trim();
+
+  if (busqueda) {
+    query.set("busqueda", busqueda);
+  }
+
+  return apiRequest<PagedResponse<ExpedienteCobroResponse>>(
+    `/api/expedientes/cobro?${query.toString()}`,
     {
       method: "GET",
       signal,

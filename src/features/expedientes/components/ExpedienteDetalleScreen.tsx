@@ -36,6 +36,7 @@ import ExpedienteFormFields, {
   FORM_EXPEDIENTE_INICIAL,
   type ExpedienteFormState,
 } from "./ExpedienteFormFields";
+import SeguimientoCobroCard from "./SeguimientoCobroCard";
 
 import HistorialObservaciones from "@/features/observaciones/components/HistorialObservaciones";
 
@@ -711,6 +712,11 @@ export default function ExpedienteDetalleScreen({
                   />
                 </dl>
               </section>
+
+              <SeguimientoCobroCard
+                expediente={expediente}
+                disabled={operacionPendiente || accionEstado !== null}
+              />
 
               <HistorialObservaciones
                 entidad="expedientes"
