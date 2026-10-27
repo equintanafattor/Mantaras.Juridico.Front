@@ -190,17 +190,9 @@ export default function UsuariosScreen() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <section className="flex flex-col justify-between gap-4 border-b pb-6 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-            Administración
-          </p>
-
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Usuarios
           </h1>
-
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Gestioná las cuentas y los permisos de acceso al sistema.
-          </p>
         </div>
 
         <Button onClick={() => setNuevoUsuarioOpen(true)}>

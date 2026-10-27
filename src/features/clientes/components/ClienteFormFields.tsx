@@ -23,6 +23,7 @@ export type ClienteFormState = {
   derivadoPorEmail: string;
   fechaNacimiento: string;
   telefono: string;
+  celular: string;
   email: string;
   domicilio: string;
   localidad: string;
@@ -40,6 +41,7 @@ export const FORM_CLIENTE_INICIAL: ClienteFormState = {
   derivadoPorEmail: "",
   fechaNacimiento: "",
   telefono: "",
+  celular: "",
   email: "",
   domicilio: "",
   localidad: "",
@@ -65,6 +67,7 @@ export function crearFormDesdeCliente(
     derivadoPorEmail: cliente.derivadoPorEmail ?? "",
     fechaNacimiento: cliente.fechaNacimiento?.slice(0, 10) ?? "",
     telefono: cliente.telefono ?? "",
+    celular: cliente.celular ?? "",
     email: cliente.email ?? "",
     domicilio: cliente.domicilio ?? "",
     localidad: cliente.localidad ?? "",
@@ -86,6 +89,7 @@ export function crearRequestDesdeForm(
     derivadoPorEmail: nullable(form.derivadoPorEmail),
     fechaNacimiento: nullable(form.fechaNacimiento),
     telefono: nullable(form.telefono),
+    celular: nullable(form.celular),
     email: nullable(form.email),
     domicilio: nullable(form.domicilio),
     localidad: nullable(form.localidad),
@@ -237,6 +241,18 @@ export default function ClienteFormFields({
               type="tel"
               value={form.telefono}
               onChange={(event) => onChange("telefono", event.target.value)}
+              maxLength={50}
+              disabled={disabled}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`${prefijo}-celular`}>Celular</Label>
+            <Input
+              id={`${prefijo}-celular`}
+              type="tel"
+              value={form.celular}
+              onChange={(event) => onChange("celular", event.target.value)}
               maxLength={50}
               disabled={disabled}
             />

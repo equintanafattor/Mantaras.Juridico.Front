@@ -29,10 +29,6 @@ import NuevoCasoDialog from "./NuevoCasoDialog";
 
 const PAGE_SIZE = 10;
 
-function mostrarValor(value: string | null) {
-  return value?.trim() || "—";
-}
-
 function obtenerClientePrincipal(caso: CasoResponse) {
   return caso.clientes.find((cliente) => cliente.esPrincipal);
 }
@@ -139,10 +135,7 @@ function CasoMobileCard({
           </dd>
         </div>
 
-        <div>
-          <dt className="text-xs text-muted-foreground">Tipo de trámite</dt>
-          <dd className="mt-1">{mostrarValor(caso.tipoTramite)}</dd>
-        </div>
+
       </dl>
       <div className="mt-4 border-t pt-3"><DatosAdministrativosResumen datos={caso} /></div>
     </button>
@@ -198,17 +191,9 @@ export default function CasosScreen() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <section className="flex flex-col justify-between gap-4 rounded-lg border border-amber-700/15 border-l-4 border-l-amber-600 bg-amber-50/40 p-5 sm:flex-row sm:items-end dark:bg-amber-950/10">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-            Gestión
-          </p>
-
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Expedientes administrativos
           </h1>
-
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Seguimiento de los asuntos jurídicos gestionados por el estudio.
-          </p>
         </div>
 
         <Button onClick={() => setNuevoCasoOpen(true)}>
@@ -350,7 +335,6 @@ export default function CasosScreen() {
                         Cliente principal
                       </th>
                       <th className="px-5 py-3 font-medium">Fase</th>
-                      <th className="px-5 py-3 font-medium">Trámite</th>
                       <th className="px-5 py-3 text-right font-medium">
                         Estado
                       </th>
@@ -407,11 +391,6 @@ export default function CasosScreen() {
                             <FaseStatus fase={caso.faseInterna} />
                           </td>
 
-                          <td className="max-w-56 px-5 py-4">
-                            <span className="block truncate text-muted-foreground">
-                              {mostrarValor(caso.tipoTramite)}
-                            </span>
-                          </td>
 
                           <td className="px-5 py-4 text-right">
                             <CasoStatus activo={caso.activo} />

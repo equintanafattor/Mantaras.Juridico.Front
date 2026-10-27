@@ -37,6 +37,7 @@ export type ExpedienteResponse = {
   juzgado: string | null;
   fechaInicio: string | null;
   estadoLegal: string | null;
+  tipoTramite: string | null;
   fechaCreacion: string;
   fechaModificacion: string | null;
   activo: boolean;
@@ -74,6 +75,7 @@ export type CrearExpedienteRequest = {
   juzgado: string | null;
   fechaInicio: string | null;
   estadoLegal: string | null;
+  tipoTramite: string | null;
 };
 
 export type CrearExpedientePrincipalRequest = Omit<

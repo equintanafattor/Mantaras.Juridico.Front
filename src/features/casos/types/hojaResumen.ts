@@ -1,4 +1,7 @@
 export type DatosHojaResumen = {
+  fechaAdquisicionDerecho: string | null;
+  leyAplicada: string | null;
+  observacionesGenerales: string | null;
   tieneCalculoPrevio: boolean | null;
   haberInicialReajustadoCaracteristicas: string | null;
   haberInicialPbu: number | null;

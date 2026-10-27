@@ -91,6 +91,16 @@ export default function ExpedienteDatosFormFields({
 
       <div className="sm:col-span-2">
         <CatalogoNombreSelect
+          tipo="tramites"
+          label="Tipo de trámite"
+          value={form.tipoTramite}
+          disabled={disabled}
+          onChange={(value) => actualizarCampo("tipoTramite", value)}
+        />
+      </div>
+
+      <div className="sm:col-span-2">
+        <CatalogoNombreSelect
           tipo="estadosLegales"
           label="Estado legal"
           value={form.estadoLegal}

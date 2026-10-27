@@ -24,17 +24,7 @@ export const SECCIONES_HOJA: {
     campos: [
       {
         key: "haberInicialReajustadoCaracteristicas",
-        label: "Reajustado · características",
-        tipo: "texto",
-      },
-      {
-        key: "haberInicialPbu",
-        label: "PBU",
-        tipo: "importe",
-      },
-      {
-        key: "haberInicialObservacion",
-        label: "Observación",
+        label: "Reajustado",
         tipo: "texto",
       },
       {
@@ -53,11 +43,6 @@ export const SECCIONES_HOJA: {
         tipo: "periodo",
       },
       {
-        key: "movilidadObservaciones",
-        label: "Observaciones",
-        tipo: "texto",
-      },
-      {
         key: "movilidadMonto",
         label: "Monto",
         tipo: "importe",
@@ -69,18 +54,13 @@ export const SECCIONES_HOJA: {
     campos: [
       {
         key: "retroactivoFechaInicio",
-        label: "Fecha de inicio",
+        label: "Desde",
         tipo: "fecha",
       },
       {
         key: "retroactivoFechaActualizacion",
-        label: "Fecha de actualización",
+        label: "Hasta",
         tipo: "fecha",
-      },
-      {
-        key: "retroactivoObservacion",
-        label: "Observación",
-        tipo: "texto",
       },
       {
         key: "retroactivoMonto",
@@ -89,6 +69,11 @@ export const SECCIONES_HOJA: {
       },
     ],
   },
+];
+
+export const CAMPOS_GENERALES_HOJA: Campo[] = [
+  { key: "fechaAdquisicionDerecho", label: "Fecha de adquisición del derecho", tipo: "fecha" },
+  { key: "leyAplicada", label: "Ley aplicada", tipo: "texto" },
 ];
 
 // Margen conservador para conservar centavos al intercambiar números JSON.
@@ -133,11 +118,11 @@ function leerFecha(texto: string, label: string) {
   return texto;
 }
 
-function leerTexto(texto: string, label: string) {
+function leerTexto(texto: string, label: string, maximo = 2000) {
   const limpio = texto.trim();
 
-  if (limpio.length > 2000) {
-    throw new Error(`${label}: máximo 2000 caracteres.`);
+  if (limpio.length > maximo) {
+    throw new Error(`${label}: máximo ${maximo} caracteres.`);
   }
 
   return limpio || null;
@@ -145,6 +130,9 @@ function leerTexto(texto: string, label: string) {
 
 export function crearHojaForm(hoja: DatosHojaResumen): HojaForm {
   return {
+    fechaAdquisicionDerecho: hoja.fechaAdquisicionDerecho ?? "",
+    leyAplicada: hoja.leyAplicada ?? "",
+    observacionesGenerales: hoja.observacionesGenerales ?? "",
     tieneCalculoPrevio:
       hoja.tieneCalculoPrevio === null
         ? ""
@@ -194,7 +182,16 @@ export function crearHojaRequest(form: HojaForm): DatosHojaResumen {
     throw new Error("Seleccioná si tiene cálculo previo.");
   }
 
+  const desde = leerFecha(form.retroactivoFechaInicio, "Inicio del retroactivo");
+  const hasta = leerFecha(form.retroactivoFechaActualizacion, "Fin del retroactivo");
+  if (desde && hasta && desde > hasta) {
+    throw new Error("El inicio del período retroactivo no puede ser posterior a su fin.");
+  }
+
   return {
+    fechaAdquisicionDerecho: leerFecha(form.fechaAdquisicionDerecho, "Fecha de adquisición del derecho"),
+    leyAplicada: leerTexto(form.leyAplicada, "Ley aplicada", 200),
+    observacionesGenerales: leerTexto(form.observacionesGenerales, "Observaciones", 6500),
     tieneCalculoPrevio:
       form.tieneCalculoPrevio === "" ? null : form.tieneCalculoPrevio === "si",
 
@@ -226,7 +223,7 @@ export function crearHojaRequest(form: HojaForm): DatosHojaResumen {
     ),
     retroactivoFechaActualizacion: leerFecha(
       form.retroactivoFechaActualizacion,
-      "Actualización del retroactivo",
+      "Fin del retroactivo",
     ),
     retroactivoObservacion: leerTexto(
       form.retroactivoObservacion,

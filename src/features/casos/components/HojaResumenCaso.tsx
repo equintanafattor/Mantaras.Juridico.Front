@@ -23,6 +23,7 @@ import {
   crearHojaRequest,
   mostrarCampoHoja,
   SECCIONES_HOJA,
+  CAMPOS_GENERALES_HOJA,
   type HojaForm,
 } from "../lib/hojaResumenForm";
 
@@ -66,7 +67,7 @@ function EditorHoja({
 
     if (
       cambio &&
-      !window.confirm("¿Descartar los cambios sin guardar de esta hoja?")
+      !window.confirm("¿Descartar los cambios sin guardar de este resumen?")
     ) {
       return;
     }
@@ -117,7 +118,7 @@ function EditorHoja({
 
           {conflicto && (
             <p className="mt-2">
-              Cancelá la edición para consultar la hoja que se guardó. Tu
+              Cancelá la edición para consultar el resumen que se guardó. Tu
               borrador no se envió nuevamente.
             </p>
           )}
@@ -129,7 +130,7 @@ function EditorHoja({
         className="min-w-0 space-y-6"
       >
         <legend className="sr-only">
-          Editar hoja del expediente administrativo {inicial.casoId}
+          Editar resumen del expediente administrativo {inicial.casoId}
         </legend>
 
         <div className="max-w-sm space-y-2">
@@ -151,7 +152,27 @@ function EditorHoja({
           </select>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {CAMPOS_GENERALES_HOJA.map((campo) => (
+            <div key={campo.key} className="min-w-0 space-y-2">
+              <label htmlFor={`${prefijo}-${campo.key}`} className="text-sm font-medium">
+                {campo.label}
+              </label>
+              <Input
+                id={`${prefijo}-${campo.key}`}
+                type={campo.tipo === "fecha" ? "date" : "text"}
+                value={form[campo.key]}
+                min={campo.tipo === "fecha" ? "0001-01-01" : undefined}
+                max={campo.tipo === "fecha" ? "9999-12-31" : undefined}
+                maxLength={campo.tipo === "texto" ? 200 : undefined}
+                className="h-10 bg-background"
+                onChange={(event) => cambiar(campo.key, event.target.value)}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="grid gap-6 @xl:grid-cols-3">
           {SECCIONES_HOJA.map((seccion) => (
             <section key={seccion.titulo} className="min-w-0 space-y-4">
               <h4 className="border-b border-amber-900/15 pb-2 font-semibold dark:border-amber-100/15">
@@ -221,6 +242,19 @@ function EditorHoja({
             </section>
           ))}
         </div>
+        <div className="w-full space-y-2 border-t pt-4">
+          <label htmlFor={`${prefijo}-observaciones`} className="text-sm font-medium">
+            Observaciones
+          </label>
+          <Textarea
+            id={`${prefijo}-observaciones`}
+            value={form.observacionesGenerales}
+            maxLength={6500}
+            rows={5}
+            className="w-full bg-background"
+            onChange={(event) => cambiar("observacionesGenerales", event.target.value)}
+          />
+        </div>
       </fieldset>
 
       <footer className="flex flex-wrap justify-end gap-2 border-t pt-4">
@@ -240,7 +274,7 @@ function EditorHoja({
             <Save />
           )}
 
-          {guardarMutation.isPending ? "Guardando..." : "Guardar hoja"}
+          {guardarMutation.isPending ? "Guardando..." : "Guardar resumen"}
         </Button>
       </footer>
     </form>
@@ -258,7 +292,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
   if (!edicion && query.isPending) {
     return (
       <div role="status" className="space-y-3 p-5">
-        <span className="sr-only">Cargando hoja de resumen</span>
+        <span className="sr-only">Cargando resumen de la liquidación</span>
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-40 w-full" />
       </div>
@@ -270,7 +304,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
       <div role="alert" className="space-y-3 p-5">
         <p className="flex items-center gap-2 text-sm">
           <AlertCircle className="size-4 text-destructive" />
-          No pudimos cargar la hoja de resumen.
+          No pudimos cargar el resumen de la liquidación.
         </p>
 
         <p className="text-sm text-muted-foreground">{query.error?.message}</p>
@@ -296,10 +330,10 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
         <div>
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <FileText className="size-4" />
-            Hoja de resumen
+            Resumen de la liquidación
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Este expediente administrativo no tiene una hoja de resumen.
+            Este expediente administrativo no tiene un resumen de la liquidación.
           </p>
         </div>
         <Button
@@ -312,7 +346,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
           }}
         >
           <FilePlus2 />
-          Crear hoja de resumen
+          Crear resumen de la liquidación
         </Button>
       </section>
     );
@@ -330,12 +364,12 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
             className="flex items-center gap-2 font-semibold"
           >
             <FileText className="size-4" />
-            Hoja de resumen
+            Resumen de la liquidación
           </h3>
 
           <p className="mt-1 text-xs text-muted-foreground">
             Expediente administrativo #{casoId} ·{" "}
-            {actual.registrada ? "Registrada" : "Todavía sin completar"}
+            {actual.registrada ? "Registrado" : "Todavía sin completar"}
           </p>
         </div>
 
@@ -350,7 +384,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
             }}
           >
             <Pencil />
-            {actual.registrada ? "Editar hoja" : "Completar hoja"}
+            {actual.registrada ? "Editar resumen" : "Completar resumen"}
           </Button>
         )}
       </header>
@@ -374,7 +408,7 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
               role="status"
               className="mb-4 text-sm text-emerald-800 dark:text-emerald-300"
             >
-              La hoja se guardó correctamente.
+              El resumen se guardó correctamente.
             </p>
           )}
 
@@ -388,6 +422,17 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
                   : "No"}
             </strong>
           </p>
+
+          <dl className="mb-6 grid gap-4 sm:grid-cols-2">
+            {CAMPOS_GENERALES_HOJA.map((campo) => (
+              <div key={campo.key} className="min-w-0">
+                <dt className="text-xs font-medium text-muted-foreground">{campo.label}</dt>
+                <dd className="mt-1 whitespace-pre-wrap text-sm leading-6 [overflow-wrap:anywhere]">
+                  {mostrarCampoHoja(vista[campo.key], campo.tipo)}
+                </dd>
+              </div>
+            ))}
+          </dl>
 
           <div className="grid gap-6 @xl:grid-cols-3">
             {SECCIONES_HOJA.map((seccion) => (
@@ -418,6 +463,12 @@ function ContenidoHoja({ casoId }: { casoId: number }) {
               </section>
             ))}
           </div>
+          <section className="mt-6 w-full border-t border-amber-900/15 pt-4 dark:border-amber-100/15">
+            <h4 className="text-sm font-semibold">Observaciones</h4>
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-6 [overflow-wrap:anywhere]">
+              {vista.observacionesGenerales || "Sin informar"}
+            </p>
+          </section>
         </>
       )}
     </section>

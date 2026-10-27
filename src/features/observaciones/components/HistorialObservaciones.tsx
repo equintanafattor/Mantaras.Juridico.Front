@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { fechaHoyMovimiento, fechaMovimientoValida, fechaEfectivaMovimiento, ordenarHistorial, formatearFechaMovimiento } from "../lib/fechasMovimientos";
 
 import { useCrearObservacion } from "../hooks/useCrearObservacion";
 import { useObservaciones } from "../hooks/useObservaciones";
@@ -44,6 +46,8 @@ export default function HistorialObservaciones({
   mostrarTodos = false,
 }: HistorialObservacionesProps) {
   const [texto, setTexto] = useState("");
+  const [fechaMovimiento, setFechaMovimiento] = useState(fechaHoyMovimiento);
+  const esMovimiento = entidad !== "clientes";
 
   const observacionesQuery = useObservaciones(entidad, propietarioId);
   const crearObservacionMutation = useCrearObservacion(entidad, propietarioId);
@@ -53,6 +57,7 @@ export default function HistorialObservaciones({
   const puedeGuardar =
     textoNormalizado.length > 0 &&
     textoNormalizado.length <= 2000 &&
+    (!esMovimiento || fechaMovimientoValida(fechaMovimiento)) &&
     !crearObservacionMutation.isPending;
 
   const cambiarTexto = (value: string) => {
@@ -72,24 +77,22 @@ export default function HistorialObservaciones({
     if (!puedeGuardar) return;
 
     try {
-      await crearObservacionMutation.mutateAsync(textoNormalizado);
+      await crearObservacionMutation.mutateAsync({
+        texto: textoNormalizado,
+        ...(esMovimiento ? { fechaMovimiento } : {}),
+      });
       setTexto("");
     } catch {
       // El error se muestra mediante la mutation.
     }
   };
 
-  const esMovimiento = entidad !== "clientes";
   const esResumen = !mostrarTodos;
   const plural = esMovimiento ? "movimientos" : "observaciones";
 
   const datos = observacionesQuery.data ?? [];
 
-  const observaciones = [...datos].sort(
-    (a, b) =>
-      (Date.parse(b.fechaCreacion) || 0) - (Date.parse(a.fechaCreacion) || 0) ||
-      b.observacionId - a.observacionId,
-  );
+  const observaciones = ordenarHistorial(datos, esMovimiento);
 
   const visibles = esResumen ? observaciones.slice(0, 3) : observaciones;
 
@@ -113,7 +116,7 @@ export default function HistorialObservaciones({
                 ? esMovimiento
                   ? "Los últimos tres movimientos, del más reciente al más antiguo."
                   : "Las últimas tres observaciones, de la más reciente a la más antigua."
-                : "Historial completo, ordenado por fecha de más reciente a más antigua."}
+                : "Ordenado por fecha de más reciente a más antigua."}
             </p>
           </div>
         </div>
@@ -129,6 +132,21 @@ export default function HistorialObservaciones({
         }
         onSubmit={guardar}
       >
+        {esMovimiento && (
+          <div className="mb-3 max-w-xs space-y-2">
+            <label htmlFor={`fecha-movimiento-${entidad}-${propietarioId}`} className="text-sm font-medium">Fecha del movimiento</label>
+            <Input
+              id={`fecha-movimiento-${entidad}-${propietarioId}`}
+              type="date"
+              min="0001-01-02"
+              max="9999-12-31"
+              value={fechaMovimiento}
+              required
+              disabled={crearObservacionMutation.isPending}
+              onChange={(event) => { setFechaMovimiento(event.target.value); crearObservacionMutation.reset(); }}
+            />
+          </div>
+        )}
         <label
           htmlFor={`observacion-${entidad}-${propietarioId}`}
           className="text-sm font-medium"
@@ -157,9 +175,6 @@ export default function HistorialObservaciones({
             id={`observacion-ayuda-${entidad}-${propietarioId}`}
             className="text-xs text-muted-foreground"
           >
-            {esMovimiento
-              ? "El movimiento quedará registrado con tu usuario y no podrá modificarse."
-              : "La observación quedará registrada con tu usuario y no podrá modificarse."}
           </p>
 
           <div className="flex items-center justify-between gap-3 sm:justify-end">
@@ -265,28 +280,35 @@ export default function HistorialObservaciones({
           {visibles.map((observacion) => (
             <li
               key={observacion.observacionId}
-              className={esResumen ? "px-4 py-3" : "px-5 py-3.5"}
+              className={esResumen ? "px-4 py-2" : "px-5 py-2.5"}
             >
-              <article className="min-w-0 flex-1">
-                <header className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
-                  <Clock3 className="size-3.5 shrink-0" />
-
-                  <span>{formatearFechaHora(observacion.fechaCreacion)}</span>
-
-                  <span aria-hidden="true">·</span>
-
-                  <span className="min-w-0 truncate">
-                    {observacion.usuarioCreacion || "Usuario no informado"}
-                  </span>
-                </header>
-
+              {/* Texto y datos en una misma línea; si el texto es largo, crece hacia abajo. */}
+              <article className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:gap-4">
                 <p
                   className={`${
                     esResumen ? "line-clamp-3" : ""
-                  } mt-1 whitespace-pre-wrap break-words text-sm leading-6`}
+                  } min-w-0 flex-1 whitespace-pre-wrap break-words text-sm leading-6`}
                 >
                   {observacion.texto}
                 </p>
+
+                <div className="shrink-0 text-xs text-muted-foreground sm:pt-1 sm:text-right">
+                  <p className="flex flex-wrap items-center gap-x-1.5 sm:justify-end">
+                    <Clock3 className="size-3.5 shrink-0" />
+
+                    <span>{esMovimiento ? formatearFechaMovimiento(fechaEfectivaMovimiento(observacion)) : formatearFechaHora(observacion.fechaCreacion)}</span>
+
+                    <span aria-hidden="true">·</span>
+
+                    <span className="max-w-48 truncate">
+                      {observacion.usuarioCreacion || "Usuario no informado"}
+                    </span>
+                  </p>
+
+                  {esMovimiento && mostrarTodos && (
+                    <p className="mt-0.5">Cargado el {formatearFechaHora(observacion.fechaCreacion)}</p>
+                  )}
+                </div>
               </article>
             </li>
           ))}

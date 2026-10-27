@@ -165,7 +165,10 @@ function ActividadItem({
 }) {
   const esCaso = actividad.tipo === "Caso";
   const Icon = esCaso ? BriefcaseBusiness : FileText;
-  const href = esCaso ? "/casos" : "/expedientes";
+  const href =
+    esCaso || actividad.expedienteId === null
+      ? `/casos/${actividad.casoId}`
+      : `/expedientes/${actividad.expedienteId}`;
 
   return (
     <article>
@@ -261,18 +264,9 @@ export default function PanelScreen() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <section className="border-b pb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-          Panel principal
-        </p>
-
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Gestión del estudio jurídico
         </h1>
-
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-          Consultá el estado general del estudio y accedé a la actividad más
-          reciente.
-        </p>
         <Button className="mt-4" variant="outline" disabled={panelQuery.isFetching} onClick={() => void panelQuery.refetch()}><RotateCcw className={panelQuery.isFetching ? "animate-spin" : undefined} />Actualizar resumen</Button>
       </section>
       {mensaje ? <p role="status" className="text-sm text-muted-foreground">{mensaje}</p> : null}

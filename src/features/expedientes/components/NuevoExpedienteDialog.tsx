@@ -132,6 +132,7 @@ function crearExpedientePrincipalRequestDesdeForm(
     juzgado: normalizarOpcional(form.juzgado),
     fechaInicio: normalizarOpcional(form.fechaInicio),
     estadoLegal: normalizarOpcional(form.estadoLegal),
+    tipoTramite: normalizarOpcional(form.tipoTramite),
   };
 }
 
@@ -245,10 +246,7 @@ function ResumenCreacion({
             <dd className="mt-1">{caso.faseInterna}</dd>
           </div>
 
-          <div>
-            <dt className="text-xs text-muted-foreground">Tipo de trámite</dt>
-            <dd className="mt-1">{mostrarResumen(caso.tipoTramite)}</dd>
-          </div>
+
         </dl>
 
         <div className="border-t px-4 py-4 sm:px-5"><DatosAdministrativosResumen datos={datosAdministrativosDesdeForm(caso)} /></div>

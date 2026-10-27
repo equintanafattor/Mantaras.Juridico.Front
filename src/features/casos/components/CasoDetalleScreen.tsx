@@ -419,17 +419,11 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
           </span>
 
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">
-              Expediente administrativo
-            </p>
-
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               {caso.titulo}
             </h1>
 
-            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              {mostrarValor(caso.tipoTramite)}
-            </p>
+
 
             <div className="mt-4 flex flex-wrap gap-2">
               <FaseBadge fase={caso.faseInterna} />
@@ -645,10 +639,7 @@ export default function CasoDetalleScreen({ casoId }: CasoDetalleScreenProps) {
                     value={caso.faseInterna}
                   />
 
-                  <Dato
-                    label="Tipo de trámite"
-                    value={mostrarValor(caso.tipoTramite)}
-                  />
+
                 </dl>
               </section>
 
