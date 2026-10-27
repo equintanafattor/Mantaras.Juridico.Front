@@ -116,7 +116,7 @@ export default function HistorialObservaciones({
                 ? esMovimiento
                   ? "Los últimos tres movimientos, del más reciente al más antiguo."
                   : "Las últimas tres observaciones, de la más reciente a la más antigua."
-                : "Historial completo, ordenado por fecha de más reciente a más antigua."}
+                : "Ordenado por fecha de más reciente a más antigua."}
             </p>
           </div>
         </div>
@@ -145,7 +145,6 @@ export default function HistorialObservaciones({
               disabled={crearObservacionMutation.isPending}
               onChange={(event) => { setFechaMovimiento(event.target.value); crearObservacionMutation.reset(); }}
             />
-            <p className="text-xs text-muted-foreground">Podés registrar movimientos de fechas anteriores. La fecha de carga se conserva.</p>
           </div>
         )}
         <label
@@ -176,9 +175,6 @@ export default function HistorialObservaciones({
             id={`observacion-ayuda-${entidad}-${propietarioId}`}
             className="text-xs text-muted-foreground"
           >
-            {esMovimiento
-              ? "El movimiento quedará registrado con tu usuario y no podrá modificarse."
-              : "La observación quedará registrada con tu usuario y no podrá modificarse."}
           </p>
 
           <div className="flex items-center justify-between gap-3 sm:justify-end">
