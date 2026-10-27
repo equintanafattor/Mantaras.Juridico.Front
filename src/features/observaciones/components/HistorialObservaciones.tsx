@@ -280,31 +280,35 @@ export default function HistorialObservaciones({
           {visibles.map((observacion) => (
             <li
               key={observacion.observacionId}
-              className={esResumen ? "px-4 py-3" : "px-5 py-3.5"}
+              className={esResumen ? "px-4 py-2" : "px-5 py-2.5"}
             >
-              <article className="min-w-0 flex-1">
-                <header className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
-                  <Clock3 className="size-3.5 shrink-0" />
-
-                  <span>{esMovimiento ? formatearFechaMovimiento(fechaEfectivaMovimiento(observacion)) : formatearFechaHora(observacion.fechaCreacion)}</span>
-
-                  <span aria-hidden="true">·</span>
-
-                  <span className="min-w-0 truncate">
-                    {observacion.usuarioCreacion || "Usuario no informado"}
-                  </span>
-                </header>
-                {esMovimiento && mostrarTodos && (
-                  <p className="mt-1 text-right text-xs text-muted-foreground">Cargado el {formatearFechaHora(observacion.fechaCreacion)}</p>
-                )}
-
+              {/* Texto y datos en una misma línea; si el texto es largo, crece hacia abajo. */}
+              <article className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:gap-4">
                 <p
                   className={`${
                     esResumen ? "line-clamp-3" : ""
-                  } mt-1 whitespace-pre-wrap break-words text-sm leading-6`}
+                  } min-w-0 flex-1 whitespace-pre-wrap break-words text-sm leading-6`}
                 >
                   {observacion.texto}
                 </p>
+
+                <div className="shrink-0 text-xs text-muted-foreground sm:pt-1 sm:text-right">
+                  <p className="flex flex-wrap items-center gap-x-1.5 sm:justify-end">
+                    <Clock3 className="size-3.5 shrink-0" />
+
+                    <span>{esMovimiento ? formatearFechaMovimiento(fechaEfectivaMovimiento(observacion)) : formatearFechaHora(observacion.fechaCreacion)}</span>
+
+                    <span aria-hidden="true">·</span>
+
+                    <span className="max-w-48 truncate">
+                      {observacion.usuarioCreacion || "Usuario no informado"}
+                    </span>
+                  </p>
+
+                  {esMovimiento && mostrarTodos && (
+                    <p className="mt-0.5">Cargado el {formatearFechaHora(observacion.fechaCreacion)}</p>
+                  )}
+                </div>
               </article>
             </li>
           ))}
