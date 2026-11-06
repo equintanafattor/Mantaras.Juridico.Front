@@ -43,7 +43,7 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
   const hoy = fechaHoyAgenda();
 
   async function cambiar(estado: EstadoEntradaAgenda) {
-    if (bloqueado || !data || !accionesEstadoAgenda(data.estado).some(item => item.estado === estado)) return;
+    if (bloqueado || !data || !data.transicionesPermitidas.includes(estado)) return;
     setMensaje(undefined); setError(undefined); setObjetivo(estado);
     try {
       await cambiarEstado.mutateAsync({ id: entrada.entradaAgendaId, request: { estado } });
@@ -54,11 +54,11 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
     finally { setObjetivo(undefined); }
   }
 
-  const acciones = data ? accionesEstadoAgenda(data.estado) : [];
+  const acciones = data ? accionesEstadoAgenda(data.estado, data.transicionesPermitidas ?? []) : [];
   const principal = acciones.find(item => item.estado === "Completada") ?? acciones.find(item => item.estado === "Pendiente");
   const otras = acciones.filter(item => item !== principal);
   const situacion = data ? situacionAgenda(data, hoy) : null;
-  const nombreResponsable = (id: number) => opciones.data?.responsables.find(item => item.id === id)?.nombre ?? entrada.responsables.find(item => item.id === id)?.nombre ?? "Usuario no disponible";
+  const nombreResponsable = (id: number) => data?.responsables?.find(item => item.id === id)?.nombre ?? opciones.data?.responsables.find(item => item.id === id)?.nombre ?? entrada.responsables.find(item => item.id === id)?.nombre ?? "Usuario no disponible";
 
   return <Dialog open onOpenChange={open => { if (!open && !ocupado) onClose(); }}>
     <DialogContent showCloseButton={!ocupado} className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
@@ -80,7 +80,7 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
           {principal ? <Button disabled={bloqueado} variant={principal.estado === "Completada" ? "default" : "outline"} onClick={() => void cambiar(principal.estado)}>
             {principal.estado === "Completada" ? <Check /> : <RotateCcw />}{cambiarEstado.isPending && objetivo === principal.estado ? "Guardando…" : principal.label}
           </Button> : null}
-          <Button variant="outline" disabled={bloqueado} onClick={() => onEdit(entrada)}><Pencil />Editar</Button>
+          <Button variant="outline" disabled={bloqueado} onClick={() => onEdit({ ...entrada, titulo: data.titulo, tipoEntradaNombre: data.tipoEntradaNombre, clientes: data.clientes ?? entrada.clientes, casos: data.casos ?? entrada.casos, expedientes: data.expedientes ?? entrada.expedientes, responsables: data.responsables ?? entrada.responsables })}><Pencil />Editar</Button>
           {otras.length > 0 ? <Button variant="ghost" aria-expanded={masAcciones} aria-controls="agenda-detalle-mas" disabled={bloqueado} onClick={() => setMasAcciones(!masAcciones)}>Más acciones<ChevronDown className={cn("transition-transform", masAcciones && "rotate-180")} /></Button> : null}
           {masAcciones ? <div id="agenda-detalle-mas" className="flex w-full flex-wrap gap-2 rounded-md border bg-muted/30 p-2">
             {otras.map(item => <Button key={item.estado} size="sm" variant={item.estado === "Cancelada" ? "destructive" : "outline"} disabled={bloqueado} onClick={() => void cambiar(item.estado)}>{cambiarEstado.isPending && objetivo === item.estado ? "Guardando…" : item.label}</Button>)}
@@ -99,9 +99,9 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
         <div className="grid gap-5 sm:grid-cols-2">
           <section className="space-y-2"><h3 className="text-sm font-medium">Relacionado con</h3>
             <Relaciones disabled={ocupado} grupos={[
-              { titulo: "Cliente", ruta: "/clientes", items: relacionesDetalleAgenda(data.clienteIds, entrada.clientes) },
-              { titulo: "Expediente administrativo", ruta: "/casos", items: relacionesDetalleAgenda(data.casoIds, entrada.casos) },
-              { titulo: "Expediente judicial", ruta: "/expedientes", items: relacionesDetalleAgenda(data.expedienteIds, entrada.expedientes) },
+              { titulo: "Cliente", ruta: "/clientes", items: data.clientes ?? relacionesDetalleAgenda(data.clienteIds, entrada.clientes) },
+              { titulo: "Expediente administrativo", ruta: "/casos", items: data.casos ?? relacionesDetalleAgenda(data.casoIds, entrada.casos) },
+              { titulo: "Expediente judicial", ruta: "/expedientes", items: data.expedientes ?? relacionesDetalleAgenda(data.expedienteIds, entrada.expedientes) },
             ]} />
           </section>
           <section className="space-y-2"><h3 className="text-sm font-medium">Responsables</h3>{data.responsableIds.length === 0 ? <p className="text-sm text-muted-foreground">Sin asignar</p> : <ul className="space-y-0.5 text-sm">{data.responsableIds.map(id => <li key={id}>{nombreResponsable(id)}</li>)}</ul>}</section>

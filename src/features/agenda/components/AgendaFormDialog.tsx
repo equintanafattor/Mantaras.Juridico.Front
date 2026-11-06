@@ -23,7 +23,7 @@ import AgendaRecordatoriosAlta from "./AgendaRecordatoriosAlta";
 
 export type EditorAgenda = { modo: "entrada" | "vencimiento"; contexto?: ContextoAgenda } | { modo: "editar"; entrada: ResumenEntradaAgenda };
 export type ResultadoGuardadoAgenda = { texto: string; entrada: ResumenEntradaAgenda };
-type FormEvents = { onClose: () => void; onPending: (value: boolean) => void; onSaved: (resultado?: ResultadoGuardadoAgenda) => void; onChanges: (dirty: boolean, entradaCreada: boolean) => void; onUsarRegla?: () => void };
+type FormEvents = { onClose: () => void; onPending: (value: boolean) => void; onSaved: (resultado?: ResultadoGuardadoAgenda) => void; onChanges: (dirty: boolean, entradaCreada: boolean) => void; onUsarRegla?: (conDatos: boolean) => void };
 
 function resultadoGuardado(form: AgendaForm, entradaAgendaId: number, editada: boolean, tipoNombre: string): ResultadoGuardadoAgenda {
   const relaciones = (items: AgendaForm["clientes"]) => items.map(item => ({ id: item.id, nombre: item.nombre, referencia: null }));
@@ -106,7 +106,11 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
 
   return <form className="space-y-4" onSubmit={guardar}>
     <fieldset disabled={pending || entradaGuardada} className="min-w-0 space-y-4">
-      <AgendaFormFields form={form} claseFija={vencimientoManual} abrirMasOpciones={cambianFechas} onUsarRegla={id === undefined && onUsarRegla ? () => onUsarRegla() : undefined} masOpciones={masOpciones} onChange={actualizar} />
+      <AgendaFormFields form={form} claseFija={vencimientoManual} abrirMasOpciones={cambianFechas} onUsarRegla={id === undefined && onUsarRegla ? () => {
+        // Elegir la clase o la categoría no cuenta como datos cargados.
+        const neutro = (f: AgendaForm) => JSON.stringify({ ...f, clase: null, tipoEntradaAgendaId: null });
+        onUsarRegla(neutro(form) !== neutro(original) || recordatorios.length > 0 || draftDirty);
+      } : undefined} masOpciones={masOpciones} onChange={actualizar} />
       {cambianFechas ? <div className="space-y-2 rounded-md border border-amber-600/40 bg-amber-50/50 p-3 dark:bg-amber-950/10"><p className="text-sm">Cambiaste fechas u horas. Los avisos ya programados <strong>no se mueven solos</strong>: después de guardar, revisalos en el detalle y usá Reprogramar o Quitar.</p><label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1 size-4 accent-primary" checked={fechasConfirmadas === firmaFechas} onChange={e => setFechasConfirmadas(e.target.checked ? firmaFechas : undefined)} />Entendido, voy a revisar los avisos.</label></div> : null}
     </fieldset>
     {entradaGuardada && progreso.pendientes.length > 0 ? <p role="status" className="rounded-md border p-3 text-sm">Ya se guardó, pero faltan {progreso.pendientes.length === 1 ? "1 aviso" : `${progreso.pendientes.length} avisos`}. Tocá «Reintentar» para agregarlos o «Cerrar» para seguir sin ellos.</p> : null}
@@ -141,7 +145,7 @@ export default function AgendaFormDialog({ editor, onClose, onSaved, onUsarRegla
     else if (cambios.current.entradaCreada) onSaved();
     else onClose();
   }
-  const props: FormEvents = { onClose: pedirCierre, onSaved, onUsarRegla: onUsarRegla ? () => { if (!cambios.current.dirty || window.confirm("Se descartará lo que cargaste en este formulario. ¿Seguir?")) onUsarRegla(); } : undefined, onPending: value => { ocupado.current = value; setPending(value); }, onChanges: (value, creada) => { cambios.current = { dirty: value, entradaCreada: creada }; setDirty(value); setEntradaCreada(creada); } };
+  const props: FormEvents = { onClose: pedirCierre, onSaved, onUsarRegla: onUsarRegla ? (conDatos) => { if (!conDatos || window.confirm("Se descartará lo que cargaste en este formulario. ¿Seguir?")) onUsarRegla(); } : undefined, onPending: value => { ocupado.current = value; setPending(value); }, onChanges: (value, creada) => { cambios.current = { dirty: value, entradaCreada: creada }; setDirty(value); setEntradaCreada(creada); } };
   return <Dialog open onOpenChange={(open, details) => { if (!open) { if (ocupado.current || cambios.current.dirty) details.cancel(); pedirCierre(); } }}>
     <DialogContent showCloseButton={!pending} className="max-h-[92dvh] overflow-y-auto sm:max-w-3xl">
       <DialogHeader><DialogTitle>{editor.modo === "editar" ? "Editar" : editor.modo === "vencimiento" ? "Agregar vencimiento" : "Agregar a la agenda"}</DialogTitle><DialogDescription>Los campos con * son obligatorios.</DialogDescription></DialogHeader>

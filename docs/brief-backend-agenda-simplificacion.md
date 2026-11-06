@@ -77,3 +77,20 @@ No se tocaron:
 - cierre o salida del listado
 
 El front no calcula el plazo de 120 días hábiles ni genera alertas: muestra lo que informa la API.
+
+## Estado de la integración (front, 06/11/2026)
+
+Backend respondió en el commit `73fce85`. El front ya consume:
+
+- Pendientes y fichas: una sola consulta con `soloAbiertas=true&orden=Referencia`.
+- `estaAtrasada` y `transicionesPermitidas`. El front ya no tiene su propia tabla de transiciones.
+- Relaciones con nombre en el detalle.
+- `soloEntradasAbiertas=true` en "Alertas sin atender", que además muestra `entradaEstado`.
+- Panel con `vencidos` y `atrasados` por separado.
+- `seguimientoVencido` según el criterio de la API.
+- Rechazo `Agenda.ReglaDeSistema`, con un mensaje que indica dónde registrar el envío.
+- Mensajes claros para `General.RegistroConcurrente` y `General.ErrorInterno`.
+
+Se probó en el navegador (Chrome, escritorio y Pixel 7) contra `http://localhost:5099`, con la base aislada `MantarasJuridico_cobro_test`.
+
+Pendientes: decisiones 1 a 11 del brief de backend.

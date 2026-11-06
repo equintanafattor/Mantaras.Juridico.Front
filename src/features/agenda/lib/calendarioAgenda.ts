@@ -33,9 +33,11 @@ export function rangoCalendario(mes: string) {
 export function agruparEntradasCalendario(dias: DiaCalendario[], entradas: EntradaAgendaListadoResponse[]) {
   const porDia = new Map<string, ElementoCalendario[]>();
   for (const dia of dias) {
+    // Lo que tiene vencimiento se muestra sólo el día en que vence; el resto, en sus días.
     const elementos = entradas.filter((entrada) => {
-      const enEvento = entrada.fechaInicio <= dia.fecha && (entrada.fechaFin ?? entrada.fechaInicio) >= dia.fecha;
-      return dia.valido && (enEvento || entrada.fechaVencimiento === dia.fecha);
+      if (!dia.valido) return false;
+      if (entrada.fechaVencimiento) return entrada.fechaVencimiento === dia.fecha;
+      return entrada.fechaInicio <= dia.fecha && (entrada.fechaFin ?? entrada.fechaInicio) >= dia.fecha;
     }).map((entrada) => ({ entrada, esVencimiento: entrada.fechaVencimiento === dia.fecha }));
     elementos.sort((a, b) => {
       const horaA = (a.esVencimiento ? a.entrada.horaVencimiento : a.entrada.horaInicio) ?? "";

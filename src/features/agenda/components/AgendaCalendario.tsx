@@ -20,10 +20,10 @@ function Elemento({ elemento, onSelect }: { elemento: ElementoCalendario; onSele
   const { entrada, esVencimiento } = elemento;
   const hora = esVencimiento ? entrada.horaVencimiento : entrada.horaInicio;
   const cerrada = !estaAbierta(entrada.estado);
-  const Icono = cerrada ? CheckCircle2 : entrada.estaVencida && esVencimiento ? AlertTriangle : esVencimiento ? CalendarClock : null;
-  const etiqueta = cerrada ? (entrada.estado === "Completada" ? "Completada" : "Cancelada") : esVencimiento ? (entrada.estaVencida ? "Vencida" : "Vence") : null;
+  const Icono = cerrada ? CheckCircle2 : (entrada.estaVencida && esVencimiento) || entrada.estaAtrasada ? AlertTriangle : esVencimiento ? CalendarClock : null;
+  const etiqueta = cerrada ? (entrada.estado === "Completada" ? "Completada" : "Cancelada") : esVencimiento ? (entrada.estaVencida ? "Vencida" : "Vence") : entrada.estaAtrasada ? "Atrasada" : null;
   return (
-    <button type="button" onClick={onSelect} title={`${etiqueta ? `${etiqueta}: ` : ""}${entrada.titulo}`} className={cn("w-full min-w-0 rounded-md border-l-2 px-2 py-1 text-left text-xs focus-visible:outline-2 focus-visible:outline-ring", cerrada ? "border-muted-foreground/40 bg-muted text-muted-foreground" : esVencimiento ? "border-destructive bg-destructive/10 text-foreground" : "border-primary bg-primary/10 text-foreground")}>
+    <button type="button" onClick={onSelect} title={`${etiqueta ? `${etiqueta}: ` : ""}${entrada.titulo}`} className={cn("w-full min-w-0 rounded-md border-l-2 px-2 py-1 text-left text-xs focus-visible:outline-2 focus-visible:outline-ring", cerrada ? "border-muted-foreground/40 bg-muted text-muted-foreground" : esVencimiento || entrada.estaAtrasada ? "border-destructive bg-destructive/10 text-foreground" : "border-primary bg-primary/10 text-foreground")}>
       {etiqueta || hora ? <span className="flex items-center gap-1 text-[10px] font-medium">{Icono ? <Icono className="size-3" aria-hidden="true" /> : null}{etiqueta}{etiqueta && hora ? " · " : ""}{hora ? hora.slice(0, 5) : ""}</span> : null}
       <span className={cn("block truncate", cerrada && "line-through")}>{entrada.titulo}</span>
     </button>

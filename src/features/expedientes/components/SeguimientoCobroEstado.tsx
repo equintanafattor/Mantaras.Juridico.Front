@@ -2,11 +2,7 @@ import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { NOMBRES_ESTADO_AGENDA } from "@/features/agenda/lib/estadosAgenda";
 
-import {
-  describirPlazoSeguimiento,
-  formatearFechaCobro,
-  seguimientoCerrado,
-} from "../lib/cobro";
+import { describirPlazoSeguimiento, formatearFechaCobro } from "../lib/cobro";
 import type { EnvioCobroResponse } from "../types/types";
 
 export default function SeguimientoCobroEstado({
@@ -17,7 +13,8 @@ export default function SeguimientoCobroEstado({
   compacto?: boolean;
 }) {
   const plazo = describirPlazoSeguimiento(envio);
-  const vencido = envio.seguimientoVencido && !seguimientoCerrado(envio);
+  // La API ya devuelve false si el seguimiento está Completado o Cancelado.
+  const vencido = envio.seguimientoVencido;
 
   return (
     <div className="min-w-0">

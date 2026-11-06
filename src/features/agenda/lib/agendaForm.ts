@@ -24,7 +24,7 @@ export function agendaFormDesdeEntrada(entrada: EntradaAgendaResponse, listado: 
   const clase: ClaseAgenda = entrada.fechaVencimiento ? "vencimiento" : entrada.horaInicio || entrada.fechaFin ? "evento" : "tarea";
   return { clase, tipoEntradaAgendaId: entrada.tipoEntradaAgendaId, titulo: entrada.titulo, descripcion: entrada.descripcion ?? "", prioridad: entrada.prioridad, recurrenciaFrecuencia: "", recurrenciaIntervalo: 1, recurrenciaCantidad: 2,
     fechaInicio: entrada.fechaInicio, horaInicio: entrada.horaInicio ?? "", fechaFin: entrada.fechaFin ?? "", horaFin: entrada.horaFin ?? "", fechaVencimiento: entrada.fechaVencimiento ?? "", horaVencimiento: entrada.horaVencimiento ?? "",
-    clientes: relaciones(entrada.clienteIds, listado.clientes), casos: relaciones(entrada.casoIds, listado.casos), expedientes: relaciones(entrada.expedienteIds, listado.expedientes), responsableIds: [...entrada.responsableIds] };
+    clientes: relaciones(entrada.clienteIds, entrada.clientes ?? listado.clientes), casos: relaciones(entrada.casoIds, entrada.casos ?? listado.casos), expedientes: relaciones(entrada.expedienteIds, entrada.expedientes ?? listado.expedientes), responsableIds: [...entrada.responsableIds] };
 }
 function fechaValida(valor: string) {
   if (!/^\d{4}-(0[1-9]|1[0-2])-\d{2}$/.test(valor) || valor.startsWith("0000")) return false;

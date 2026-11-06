@@ -11,6 +11,7 @@ import type { FiltrosAgenda } from "../lib/filtrosAgenda";
 import { agruparPendientes } from "../lib/situacionAgenda";
 import type { EntradaAgendaListadoResponse, ResumenEntradaAgenda } from "../types/types";
 import AgendaEntradaItem, { useCompletarAgenda } from "./AgendaEntradaItem";
+import { EstadoEtiqueta } from "./AgendaEtiquetas";
 
 function resumenDesdeAlerta(id: number, titulo: string, tipo: string, conocidas: EntradaAgendaListadoResponse[]): ResumenEntradaAgenda {
   return conocidas.find(item => item.entradaAgendaId === id) ?? { entradaAgendaId: id, titulo, tipoEntradaNombre: tipo, clientes: [], casos: [], expedientes: [], responsables: [] };
@@ -18,7 +19,7 @@ function resumenDesdeAlerta(id: number, titulo: string, tipo: string, conocidas:
 
 // Avisos cuyo horario ya pasó y que nadie marcó como atendidos.
 function AlertasSinAtender({ conocidas, onDetail }: { conocidas: EntradaAgendaListadoResponse[]; onDetail: (entrada: ResumenEntradaAgenda) => void }) {
-  const consulta = useRecordatoriosAgenda({ estado: "Vencido", page: 1, pageSize: 10 }, 60_000);
+  const consulta = useRecordatoriosAgenda({ estado: "Vencido", soloEntradasAbiertas: true, page: 1, pageSize: 10 }, 60_000);
   const atender = useAtenderRecordatorioAgenda();
   const [error, setError] = useState<string>();
   if (!consulta.data || consulta.data.totalItems === 0) return null;
@@ -28,7 +29,7 @@ function AlertasSinAtender({ conocidas, onDetail }: { conocidas: EntradaAgendaLi
       {consulta.data.items.map(item => <li key={item.recordatorioAgendaId} className="flex flex-wrap items-center gap-2 p-3">
         <div className="min-w-0 flex-1">
           <button type="button" className="break-words text-left text-sm font-medium underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring" onClick={() => onDetail(resumenDesdeAlerta(item.entradaAgendaId, item.entradaTitulo, item.tipoEntradaNombre, conocidas))}>{item.entradaTitulo}</button>
-          <p className="text-xs text-muted-foreground">Aviso del {mostrarFechaAuditoriaAgenda(item.fechaProgramadaUtc)} · {item.tipoEntradaNombre}</p>
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground"><span>Aviso del {mostrarFechaAuditoriaAgenda(item.fechaProgramadaUtc)} · {item.tipoEntradaNombre}</span>{item.entradaEstado ? <EstadoEtiqueta estado={item.entradaEstado} /> : null}</p>
         </div>
         <Button type="button" variant="outline" size="sm" disabled={atender.isPending} onClick={() => { setError(undefined); atender.mutate(item.recordatorioAgendaId, { onError: err => setError(err instanceof Error ? err.message : "No pudimos marcar la alerta como atendida.") }); }}>
           {atender.isPending && atender.variables === item.recordatorioAgendaId ? "Guardando…" : "Marcar atendida"}

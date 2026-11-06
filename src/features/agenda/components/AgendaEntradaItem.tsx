@@ -29,7 +29,7 @@ export default function AgendaEntradaItem({ entrada, hoy, onDetail, onCompletar,
   entrada: EntradaAgendaListadoResponse; hoy: string; onDetail: () => void; onCompletar?: () => void; completando?: boolean; mostrarFecha?: boolean;
 }) {
   const situacion = situacionAgenda(entrada, hoy);
-  const abierta = estaAbierta(entrada.estado);
+  const puedeCompletar = estaAbierta(entrada.estado) && (entrada.transicionesPermitidas?.includes("Completada") ?? true);
   return <article className="flex min-w-0 flex-col gap-3 bg-card p-4 sm:flex-row sm:items-start sm:gap-4">
     <div className="min-w-0 flex-1 space-y-1.5">
       <div className="flex flex-wrap items-center gap-1.5">
@@ -49,7 +49,7 @@ export default function AgendaEntradaItem({ entrada, hoy, onDetail, onCompletar,
       </p>
       <RelacionesAgenda entrada={entrada} />
     </div>
-    {abierta && onCompletar ? <Button type="button" variant="outline" size="sm" className="self-start" disabled={completando} onClick={onCompletar} aria-label={`Completar: ${entrada.titulo}`}>
+    {puedeCompletar && onCompletar ? <Button type="button" variant="outline" size="sm" className="self-start" disabled={completando} onClick={onCompletar} aria-label={`Completar: ${entrada.titulo}`}>
       <Check />{completando ? "Guardando…" : "Completar"}
     </Button> : null}
   </article>;

@@ -102,7 +102,7 @@ export default function AgendaScreen() {
         {conMes ? <div className="flex items-center gap-1">
           <Button variant="outline" size="icon" aria-label="Mes anterior" disabled={mes === "0001-01"} onClick={() => cambiarMes(desplazarMes(mes, -1))}><ChevronLeft /></Button>
           <label className="sr-only" htmlFor="agenda-periodo">Mes</label>
-          <input id="agenda-periodo" type="month" min="0001-01" max="9999-12" value={mes} onChange={(event) => cambiarMes(event.target.value)} className="h-8 max-w-40 rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" />
+          <input id="agenda-periodo" type="month" min="0001-01" max="9999-12" value={mes} onChange={(event) => cambiarMes(event.target.value)} className="h-8 w-44 rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" />
           <Button variant="outline" size="icon" aria-label="Mes siguiente" disabled={mes === "9999-12"} onClick={() => cambiarMes(desplazarMes(mes, 1))}><ChevronRight /></Button>
           {mes !== mesActualArgentina() ? <Button variant="ghost" onClick={() => cambiarMes(mesActualArgentina())}>Hoy</Button> : null}
         </div> : null}
@@ -110,7 +110,7 @@ export default function AgendaScreen() {
 
       <AgendaFiltros key={vista} value={filtros} campos={{ estado: vista !== "pendientes", fechas: vista === "todas" }} onApply={(next) => { setFiltros(next); setPage(1); }} />
 
-      {conMes ? <h2 className="text-lg font-semibold capitalize">{vista === "todas" && (filtros.desde || filtros.hasta) ? "Rango de fechas elegido" : nombreMes(mes)}</h2> : null}
+      {conMes ? <h2 className="text-lg font-semibold first-letter:uppercase">{vista === "todas" && (filtros.desde || filtros.hasta) ? "Rango de fechas elegido" : nombreMes(mes)}</h2> : null}
 
       {vista === "pendientes" ? <AgendaPendientes filtros={{ ...filtros, estado: "", desde: "", hasta: "" }}onDetail={setDetalle} onAgregar={agregar} />
         : vista === "calendario" ? <AgendaCalendario key={`${mes}-${JSON.stringify(filtros)}`} mes={mes} filtros={{ ...filtros, desde: "", hasta: "" }} onDetail={setDetalle} />

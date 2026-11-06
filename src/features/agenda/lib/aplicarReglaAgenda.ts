@@ -13,7 +13,7 @@ export function prepararAplicacionAgenda(form: AplicarReglaAgendaForm, contexto:
   if (!form.reglaId || !Number.isSafeInteger(form.reglaId) || form.reglaId < 1) throw new Error("Seleccioná una regla de vencimiento.");
   if (contexto && (!Number.isSafeInteger(contexto.id) || contexto.id < 1)) throw new Error("La ficha de origen no es válida.");
   const conservarOrigen = (tipo: ContextoAgenda["tipo"], items: SeleccionAgenda[]) => contexto?.tipo === tipo && !items.some(item => item.id === contexto.id) ? [...items, { id: contexto.id, nombre: contexto.nombre }] : items;
-  const base = requestDesdeAgendaForm({ ...agendaFormInicial(false, contexto), tipoEntradaAgendaId: 1, titulo: "Aplicación de regla", fechaInicio: form.fechaBase, clientes: conservarOrigen("cliente", form.clientes), casos: conservarOrigen("caso", form.casos), expedientes: conservarOrigen("expediente", form.expedientes), responsableIds: form.responsableIds });
+  const base = requestDesdeAgendaForm({ ...agendaFormInicial(false, contexto), clase: "tarea", tipoEntradaAgendaId: 1, titulo: "Aplicación de regla", fechaInicio: form.fechaBase, clientes: conservarOrigen("cliente", form.clientes), casos: conservarOrigen("caso", form.casos), expedientes: conservarOrigen("expediente", form.expedientes), responsableIds: form.responsableIds });
   const request = {
     fechaBase: base.fechaInicio,
     origenFechaBase: contexto?.tipo === "caso" ? "ExpedienteAdministrativo" as const : contexto?.tipo === "expediente" ? "ExpedienteJudicial" as const : "Manual" as const,

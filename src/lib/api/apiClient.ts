@@ -87,6 +87,13 @@ export async function apiRequest<T>(
       );
     }
 
+    // Mensajes claros para errores generales del servidor.
+    const MENSAJES_GENERALES: Record<string, string> = {
+      "General.RegistroConcurrente": "Otra operación guardó lo mismo al mismo tiempo. Actualizá la pantalla y probá de nuevo.",
+      "General.ErrorInterno": "Ocurrió un error en el servidor. Probá de nuevo en unos minutos; si sigue, avisá al equipo técnico.",
+    };
+    errors = errors.map((error) => MENSAJES_GENERALES[error.code] ? { ...error, message: MENSAJES_GENERALES[error.code] } : error);
+
     const message =
       errors.map((error) => error.message).join(" ") ||
       errorResponse?.title ||

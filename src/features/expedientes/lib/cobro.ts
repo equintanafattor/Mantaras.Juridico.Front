@@ -33,7 +33,7 @@ export function seguimientoCerrado(envio: EnvioCobroResponse) {
   );
 }
 
-// Los días los calcula backend; acá solo se redactan.
+// Los días los calcula backend (días corridos hasta la fecha de seguimiento); acá solo se redactan.
 export function describirPlazoSeguimiento(envio: EnvioCobroResponse) {
   if (seguimientoCerrado(envio)) {
     return null;

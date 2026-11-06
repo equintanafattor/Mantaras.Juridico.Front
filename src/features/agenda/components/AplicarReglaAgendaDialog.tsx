@@ -24,7 +24,7 @@ function Asociaciones({ form, contexto, onChange }: { form: AplicarReglaAgendaFo
   return <div className="space-y-4">{RELACIONES.map(({ campo, tipo, label }) => <section key={campo} className="space-y-2" aria-label={label}>
     <h3 className="text-sm font-medium">{label} ({form[campo].length}/100)</h3>
     <ul className="space-y-1">{form[campo].map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-2 text-sm"><span className="break-words">{item.nombre}</span>{contexto?.tipo === tipo && contexto.id === item.id ? <span className="text-xs text-muted-foreground">Ficha de origen</span> : <Button type="button" variant="ghost" size="sm" aria-label={`Quitar ${item.nombre}`} onClick={() => onChange(campo, form[campo].filter(x => x.id !== item.id))}>Quitar</Button>}</li>)}</ul>
-    {form[campo].length < 100 ? <AgendaRelacionFiltro tipo={tipo} label={`Agregar ${label.toLowerCase()}`} value={null} soloActivos onChange={item => { if (item && !form[campo].some(x => x.id === item.id)) onChange(campo, [...form[campo], item]); }} /> : null}
+    {form[campo].length < 100 ? <AgendaRelacionFiltro tipo={tipo} label={`Agregar ${label.toLowerCase()}`} modo="agregar" value={null} soloActivos onChange={item => { if (item && !form[campo].some(x => x.id === item.id)) onChange(campo, [...form[campo], item]); }} /> : null}
   </section>)}</div>;
 }
 
@@ -59,8 +59,11 @@ function Formulario({ contexto, onSaved, onUncertain }: { contexto?: ContextoAge
       let aplicacion: AplicacionReglaVencimientoResponse;
       try { aplicacion = await aplicarReglaVencimiento(solicitud.reglaId, solicitud.request); }
       catch (err) {
-        const desconocido = !(err instanceof ApiError && [400, 404, 422].includes(err.status));
+        const desconocido = !(err instanceof ApiError && [400, 404, 409, 422].includes(err.status));
         setIncierto(desconocido); onUncertain(desconocido);
+        if (err instanceof ApiError && err.errors.some(item => item.code === "Agenda.ReglaDeSistema")) {
+          throw new Error("Esta regla la usa el sistema para el seguimiento de cobro. Registrá el envío de cédula u oficio desde el expediente judicial.");
+        }
         throw err;
       }
       const next = { aplicacion, resumen: resumenAplicacionAgenda(aplicacion.entrada, form) };

@@ -44,11 +44,19 @@ export type BuscarAgendaRequest = {
   busqueda?: string | null;
   incluirVencimientos?: boolean;
   soloActivos?: boolean;
+  // Sólo Pendiente, EnCurso y Pospuesta.
+  soloAbiertas?: boolean;
+  // Referencia: FechaVencimiento ?? FechaFin ?? FechaInicio, hora y prioridad.
+  orden?: OrdenAgenda;
 };
+
+export type OrdenAgenda = "Inicio" | "Referencia";
 
 export type BuscarRecordatoriosAgendaRequest = {
   entradaAgendaId?: number | null;
   estado?: EstadoRecordatorioAgenda | null;
+  // Excluye avisos de entradas Completada o Cancelada.
+  soloEntradasAbiertas?: boolean;
   page?: number;
   pageSize?: number;
 };
@@ -135,6 +143,9 @@ export type EntradaAgendaListadoResponse = {
   diasParaVencimiento: number | null;
   estaVencida: boolean;
   proximaAVencer: boolean;
+  // Abierta, sin vencimiento y con (fechaFin ?? fechaInicio) anterior a hoy.
+  estaAtrasada: boolean;
+  transicionesPermitidas: EstadoEntradaAgenda[];
   clientes: RelacionAgendaResponse[];
   casos: RelacionAgendaResponse[];
   expedientes: RelacionAgendaResponse[];
@@ -167,11 +178,17 @@ export type EntradaAgendaResponse = {
   diasParaVencimiento: number | null;
   estaVencida: boolean;
   proximaAVencer: boolean;
+  estaAtrasada: boolean;
+  transicionesPermitidas: EstadoEntradaAgenda[];
   zonaHoraria: string;
   clienteIds: number[];
   casoIds: number[];
   expedienteIds: number[];
   responsableIds: number[];
+  clientes: RelacionAgendaResponse[];
+  casos: RelacionAgendaResponse[];
+  expedientes: RelacionAgendaResponse[];
+  responsables: RelacionAgendaResponse[];
   fechaCreacion: string;
   fechaModificacion: string | null;
   activo: boolean;
@@ -181,6 +198,7 @@ export type RecordatorioAgendaResponse = {
   recordatorioAgendaId: number;
   entradaAgendaId: number;
   entradaTitulo: string;
+  entradaEstado: EstadoEntradaAgenda;
   tipoEntradaNombre: string;
   tipoEntradaColor: string | null;
   canal: CanalRecordatorioAgenda;

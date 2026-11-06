@@ -30,7 +30,10 @@ export type PanelAlertasResponse = {
 export type PanelAgendaResponse = {
   hoy: number;
   proximos: number;
+  // Con vencimiento pasado.
   vencidos: number;
+  // Sin vencimiento y con la fecha pasada.
+  atrasados: number;
   elementosProximos: PanelAgendaItemResponse[];
 };
 

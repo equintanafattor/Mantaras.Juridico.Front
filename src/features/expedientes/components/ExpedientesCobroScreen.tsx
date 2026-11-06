@@ -185,7 +185,7 @@ export default function ExpedientesCobroScreen() {
             aria-label="Filtrar por estado del seguimiento"
           >
             <option value="todos">Todos los seguimientos</option>
-            <option value="pendientes">Plazo sin vencer</option>
+            <option value="pendientes">Sin vencer o cerrados</option>
             <option value="vencidos">Plazo vencido</option>
           </select>
 

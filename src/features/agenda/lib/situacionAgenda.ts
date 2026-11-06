@@ -2,13 +2,13 @@ import type { EntradaAgendaListadoResponse, EstadoEntradaAgenda, PrioridadAgenda
 import { mostrarFechaAgenda } from "./periodoAgenda";
 
 // Lo que la persona ve, separado del estado de trabajo:
-// - Vencida: tiene fecha de vencimiento, ya pasó y la entrada sigue abierta (lo informa backend).
-// - Atrasada: no tiene vencimiento, su fecha ya pasó y sigue abierta.
+// - Vencida: tiene vencimiento, ya pasó y sigue abierta (estaVencida, backend).
+// - Atrasada: sin vencimiento, su fecha ya pasó y sigue abierta (estaAtrasada, backend).
 // Completada o Cancelada nunca se muestran como vencidas ni atrasadas.
 export type CondicionAgenda = "vencida" | "atrasada" | "hoy" | "pronto" | "futura";
 
 type EntradaFechas = Pick<EntradaAgendaListadoResponse,
-  "estado" | "fechaInicio" | "horaInicio" | "fechaFin" | "horaFin" | "fechaVencimiento" | "horaVencimiento" | "diasParaVencimiento" | "estaVencida"
+  "estado" | "fechaInicio" | "horaInicio" | "fechaFin" | "horaFin" | "fechaVencimiento" | "horaVencimiento" | "diasParaVencimiento" | "estaVencida" | "estaAtrasada"
 >;
 
 export const ESTADOS_ABIERTOS: readonly EstadoEntradaAgenda[] = ["Pendiente", "EnCurso", "Pospuesta"];
@@ -75,13 +75,13 @@ export function situacionAgenda(entrada: EntradaFechas, hoy: string): SituacionA
   if (ref.esVencimiento) {
     if (!abierta) return { condicion: null, texto: `Vencimiento: ${fecha}`, dias };
     if (entrada.estaVencida) return { condicion: "vencida", texto: dias === -1 ? "Venció ayer" : `Venció ${haceDias(-dias)}`, dias };
-    if (dias === 0) return { condicion: "hoy", texto: "Vence hoy", dias };
+    if (dias <= 0) return { condicion: "hoy", texto: "Vence hoy", dias };
     if (dias > 0 && dias <= DIAS_PROXIMOS) return { condicion: "pronto", texto: `Vence ${enDias(dias)}`, dias };
     return { condicion: "futura", texto: `Vence el ${fecha}`, dias };
   }
   if (!abierta) return { condicion: null, texto: fecha, dias };
-  if (dias < 0) return { condicion: "atrasada", texto: `Atrasada: era para el ${fecha}`, dias };
-  if (dias === 0) return { condicion: "hoy", texto: entrada.fechaInicio < hoy ? `Hoy (sigue hasta el ${mostrarFechaCorta(entrada.fechaFin ?? hoy, hoy)})` : "Hoy", dias };
+  if (entrada.estaAtrasada) return { condicion: "atrasada", texto: `Atrasada: era para el ${fecha}`, dias };
+  if (dias <= 0) return { condicion: "hoy", texto: entrada.fechaInicio < hoy ? `Hoy (sigue hasta el ${mostrarFechaCorta(entrada.fechaFin ?? hoy, hoy)})` : "Hoy", dias };
   if (dias <= DIAS_PROXIMOS) return { condicion: "pronto", texto: dias === 1 ? "Mañana" : `En ${dias} días`, dias };
   return { condicion: "futura", texto: fecha, dias };
 }
@@ -105,10 +105,10 @@ export function fechaHoraLarga(fecha: string | null, hora: string | null) {
 }
 
 export const NOMBRES_PRIORIDAD: Record<PrioridadAgenda, string> = { Baja: "Baja", Normal: "Normal", Alta: "Alta", Urgente: "Urgente" };
-const PESO_PRIORIDAD: Record<PrioridadAgenda, number> = { Urgente: 0, Alta: 1, Normal: 2, Baja: 3 };
 
 export type GrupoPendientes = { id: "atrasadas" | "hoy" | "proximos" | "despues"; titulo: string; entradas: EntradaAgendaListadoResponse[] };
 
+// Respeta el orden recibido (orden=Referencia en la API).
 export function agruparPendientes(entradas: EntradaAgendaListadoResponse[], hoy: string): GrupoPendientes[] {
   const grupos: GrupoPendientes[] = [
     { id: "atrasadas", titulo: "Vencidas y atrasadas", entradas: [] },
@@ -116,10 +116,7 @@ export function agruparPendientes(entradas: EntradaAgendaListadoResponse[], hoy:
     { id: "proximos", titulo: `Próximos ${DIAS_PROXIMOS} días`, entradas: [] },
     { id: "despues", titulo: "Más adelante", entradas: [] },
   ];
-  const ordenadas = [...entradas].filter(entrada => entrada.activo && estaAbierta(entrada.estado)).sort((a, b) => {
-    const x = fechaReferencia(a, hoy), y = fechaReferencia(b, hoy);
-    return x.fecha.localeCompare(y.fecha) || (x.hora ?? "99").localeCompare(y.hora ?? "99") || PESO_PRIORIDAD[a.prioridad] - PESO_PRIORIDAD[b.prioridad] || a.entradaAgendaId - b.entradaAgendaId;
-  });
+  const ordenadas = entradas.filter(entrada => entrada.activo && estaAbierta(entrada.estado));
   for (const entrada of ordenadas) {
     const { condicion } = situacionAgenda(entrada, hoy);
     const grupo = condicion === "vencida" || condicion === "atrasada" ? 0 : condicion === "hoy" ? 1 : condicion === "pronto" ? 2 : 3;
