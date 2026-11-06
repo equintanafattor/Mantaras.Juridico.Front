@@ -106,7 +106,7 @@ export default function SeguimientoCobroCard({
               onClick={() => setAlertaOpen(true)}
             >
               <BellRing />
-              Ver alerta
+              Ver seguimiento
             </Button>
           </div>
         </div>

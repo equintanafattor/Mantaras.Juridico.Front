@@ -19,8 +19,8 @@ export default function TiposEntradaAgendaPanel() {
   useEffect(() => { const timer = window.setTimeout(() => { setTermino(busqueda.trim()); setPage(1); }, 350); return () => window.clearTimeout(timer); }, [busqueda]);
   const consulta = useTiposEntradaAgenda({ busqueda: termino, soloActivos, page, pageSize: 20 });
   const total = consulta.data?.totalItems ?? 0, paginas = Math.max(1, Math.ceil(total / 20));
-  return <section className="space-y-4 rounded-lg border bg-card p-5 sm:p-6" aria-label="Tipos de entrada de Agenda">
-    <header className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-semibold">Tipos de entrada</h2><p className="mt-1 text-sm text-muted-foreground">Administrá nombre, descripción, color y disponibilidad.</p></div><div className="flex flex-wrap gap-2"><Button variant="outline" disabled={consulta.isFetching} onClick={() => void consulta.refetch()}>Actualizar</Button><Button onClick={() => { setMensaje(undefined); setEditor({}); }}>Nuevo tipo</Button></div></header>
+  return <section className="space-y-4 rounded-lg border bg-card p-5 sm:p-6" aria-label="Categorías de Agenda">
+    <header className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-semibold">Categorías</h2><p className="mt-1 text-sm text-muted-foreground">Clasifican lo agendado (audiencia, tarea, vencimiento procesal…).</p></div><div className="flex flex-wrap gap-2"><Button variant="outline" disabled={consulta.isFetching} onClick={() => void consulta.refetch()}>Actualizar</Button><Button onClick={() => { setMensaje(undefined); setEditor({}); }}>Nueva categoría</Button></div></header>
     {mensaje ? <p role="status" className="text-sm">{mensaje}</p> : null}
     <div className="space-y-2"><Label htmlFor="tipos-agenda-buscar">Buscar por nombre</Label><Input id="tipos-agenda-buscar" maxLength={150} value={busqueda} onChange={e => setBusqueda(e.target.value)} /></div>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={soloActivos} onChange={e => { setSoloActivos(e.target.checked); setPage(1); }} />Mostrar sólo tipos activos</label>

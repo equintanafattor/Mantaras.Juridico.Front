@@ -34,18 +34,18 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
   async function marcarAtendido(id: number) {
     if (bloqueado || lock.current) return;
     lock.current = true; setError(undefined); setMensaje(undefined); setAtendiendoId(id); onPending(true);
-    try { await atender.mutateAsync(id); setPage(1); setMensaje("Recordatorio marcado como atendido."); }
-    catch (err) { setError(err instanceof Error ? err.message : "No pudimos atender el recordatorio."); }
+    try { await atender.mutateAsync(id); setPage(1); setMensaje("Aviso marcado como atendido."); }
+    catch (err) { setError(err instanceof Error ? err.message : "No pudimos marcar el aviso como atendido."); }
     finally { lock.current = false; setAtendiendoId(undefined); onPending(false); }
   }
 
-  return <section className="space-y-4 border-t pt-4" aria-label="Recordatorios internos">
-    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-semibold">Recordatorios internos</h3><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void consulta.refetch()}>Actualizar avisos</Button></div>
-    <div className="space-y-2"><Label htmlFor="agenda-recordatorios-estado">Estado del recordatorio</Label><select id="agenda-recordatorios-estado" value={estado} disabled={bloqueado} className={SELECT_CLASS} onChange={e => { setEstado(e.target.value as EstadoRecordatorioAgenda | ""); setPage(1); }}><option value="">Todos</option><option value="Pendiente">Pendientes</option><option value="Vencido">Vencidos</option><option value="Atendido">Atendidos</option></select></div>
+  return <section className="space-y-4" aria-label="Avisos">
+    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="sr-only">Avisos</h3><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void consulta.refetch()}>Actualizar avisos</Button></div>
+    <div className="space-y-2"><Label htmlFor="agenda-recordatorios-estado">Mostrar</Label><select id="agenda-recordatorios-estado" value={estado} disabled={bloqueado} className={SELECT_CLASS} onChange={e => { setEstado(e.target.value as EstadoRecordatorioAgenda | ""); setPage(1); }}><option value="">Todos</option><option value="Pendiente">Programados</option><option value="Vencido">Sin atender (ya llegaron)</option><option value="Atendido">Atendidos</option></select></div>
     {consulta.isPending ? <p role="status" className="text-sm text-muted-foreground">Cargando recordatorios…</p> : consulta.isError ? <div role="alert" className="space-y-2 text-sm"><p>{consulta.error.message}</p><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void consulta.refetch()}>Reintentar</Button></div> : <div className="space-y-3" aria-busy={consulta.isFetching}>
-      <p className="text-xs text-muted-foreground" role="status">{consulta.data.totalItems} {consulta.data.totalItems === 1 ? "recordatorio" : "recordatorios"} en esta consulta</p>
-      {consulta.data.items.length === 0 ? <p className="text-sm text-muted-foreground">No hay recordatorios para este filtro.</p> : <ul className="space-y-2">{consulta.data.items.map(item => <li key={item.recordatorioAgendaId} className="space-y-2 rounded-md border p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2"><time dateTime={item.fechaProgramadaUtc} className="text-sm font-medium">{mostrarFechaAuditoriaAgenda(item.fechaProgramadaUtc)}</time><Badge variant={item.estado === "Vencido" ? "destructive" : "outline"}>{item.estado}</Badge></div>
+      <p className="text-xs text-muted-foreground" role="status">{consulta.data.totalItems === 1 ? "1 aviso" : `${consulta.data.totalItems} avisos`}</p>
+      {consulta.data.items.length === 0 ? <p className="text-sm text-muted-foreground">No hay avisos para mostrar.</p> : <ul className="space-y-2">{consulta.data.items.map(item => <li key={item.recordatorioAgendaId} className="space-y-2 rounded-md border p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2"><time dateTime={item.fechaProgramadaUtc} className="text-sm font-medium">{mostrarFechaAuditoriaAgenda(item.fechaProgramadaUtc)}</time><Badge variant={item.estado === "Vencido" ? "destructive" : "outline"}>{item.estado === "Vencido" ? "Sin atender" : item.estado === "Pendiente" ? "Programado" : "Atendido"}</Badge></div>
         {item.fechaAtendidoUtc ? <p className="text-xs text-muted-foreground">Atendido el {mostrarFechaAuditoriaAgenda(item.fechaAtendidoUtc)}{item.usuarioAtendioId ? ` por ${nombresUsuarios?.find(x => x.id === item.usuarioAtendioId)?.nombre ?? `usuario #${item.usuarioAtendioId}`}` : ""}.</p> : null}
         {!item.atendido ? <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void marcarAtendido(item.recordatorioAgendaId)}>{atender.isPending && atendiendoId === item.recordatorioAgendaId ? "Actualizando…" : "Marcar atendido"}</Button><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => { onPending(true); setMensaje(undefined); setError(undefined); setAccion({ modo: "reprogramar", recordatorio: item }); }}>Reprogramar</Button><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => { onPending(true); setMensaje(undefined); setError(undefined); setAccion({ modo: "quitar", recordatorio: item }); }}>Quitar</Button></div> : null}
       </li>)}</ul>}
@@ -57,21 +57,21 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
         const request = requestDesdeRecordatorioForm(base, cantidad, unidad, entrada.fechaVencimiento !== null);
         lock.current = true; onPending(true);
         await crear.mutateAsync({ id: entrada.entradaAgendaId, request });
-        setPage(1); setEstado(""); setMensaje("Recordatorio creado.");
-      } catch (err) { setError(err instanceof Error ? err.message : "No pudimos crear el recordatorio."); }
+        setPage(1); setEstado(""); setMensaje("Aviso agregado.");
+      } catch (err) { setError(err instanceof Error ? err.message : "No pudimos agregar el aviso."); }
       finally { lock.current = false; onPending(false); }
     }}>
-      <h4 className="text-sm font-medium">Agregar recordatorio</h4>
+      <h4 className="text-sm font-medium">Agregar aviso</h4>
       <fieldset disabled={bloqueado || !entrada.activo} className="grid min-w-0 gap-3 sm:grid-cols-3">
         <div className="space-y-2"><Label htmlFor="agenda-recordatorio-base">Antes de</Label><select id="agenda-recordatorio-base" className={SELECT_CLASS} value={base} onChange={e => { setBase(e.target.value as BaseCalculoRecordatorioAgenda); setError(undefined); }}><option value="Inicio">Inicio</option><option value="Vencimiento" disabled={!entrada.fechaVencimiento}>Vencimiento</option></select></div>
         <div className="space-y-2"><Label htmlFor="agenda-recordatorio-cantidad">Anticipación</Label><Input id="agenda-recordatorio-cantidad" type="number" min={0} max={maxCantidad} step={1} required value={cantidad} onChange={e => { setCantidad(e.target.value); setError(undefined); }} /></div>
         <div className="space-y-2"><Label htmlFor="agenda-recordatorio-unidad">Unidad</Label><select id="agenda-recordatorio-unidad" className={SELECT_CLASS} value={unidad} onChange={e => { setUnidad(e.target.value as UnidadAnticipacionAgenda); setError(undefined); }}><option value="Minutos">Minutos</option><option value="Horas">Horas</option><option value="Dias">Días</option></select></div>
       </fieldset>
-      <p className="text-xs text-muted-foreground">Cero avisa en el momento indicado. Si la entrada no tiene hora, se toman las 09:00 de Argentina. Máximo: 365 días de anticipación.</p>
-      <Button type="submit" disabled={bloqueado || !entrada.activo}>{crear.isPending ? "Creando…" : "Agregar recordatorio"}</Button>
+      <p className="text-xs text-muted-foreground">Con 0 avisa en el momento. Si no hay hora, se toman las 9:00. Hasta 365 días antes.</p>
+      <Button type="submit" disabled={bloqueado || !entrada.activo}>{crear.isPending ? "Guardando…" : "Agregar aviso"}</Button>
     </form>
-    <p className="text-xs text-muted-foreground">Al editar fechas u horas de la entrada, los avisos conservan su horario. Usá Reprogramar para recalcularlos con las fechas actuales. Los atendidos se conservan como historial.</p>
-    {accion ? <RecordatorioAgendaAccionDialog key={`${accion.modo}-${accion.recordatorio.recordatorioAgendaId}`} accion={accion} entrada={entrada} onClose={() => { setAccion(undefined); onPending(false); }} onSaved={() => { setAccion(undefined); setPage(1); setEstado(""); setMensaje(accion.modo === "quitar" ? "Recordatorio quitado." : "Recordatorio reprogramado."); onPending(false); }} /> : null}
+    <p className="text-xs text-muted-foreground">Si cambiás las fechas, los avisos no se mueven solos: usá Reprogramar. Los atendidos quedan como historial.</p>
+    {accion ? <RecordatorioAgendaAccionDialog key={`${accion.modo}-${accion.recordatorio.recordatorioAgendaId}`} accion={accion} entrada={entrada} onClose={() => { setAccion(undefined); onPending(false); }} onSaved={() => { setAccion(undefined); setPage(1); setEstado(""); setMensaje(accion.modo === "quitar" ? "Aviso quitado." : "Aviso reprogramado."); onPending(false); }} /> : null}
     {mensaje ? <p role="status" className="text-sm">{mensaje}</p> : null}{error ? <p role="alert" className="whitespace-pre-wrap text-sm text-destructive">{error}</p> : null}
   </section>;
 }

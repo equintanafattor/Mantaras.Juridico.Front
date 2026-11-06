@@ -77,14 +77,14 @@ function BotonAlerta({ onClick }: { onClick: () => void }) {
       variant="outline"
       size="sm"
       onClick={(event) => {
-        // No abrir el judicial al hacer clic en la alerta.
+        // No abrir el judicial al hacer clic en el seguimiento.
         event.stopPropagation();
         onClick();
       }}
       onKeyDown={(event) => event.stopPropagation()}
     >
       <BellRing />
-      Ver alerta
+      Ver seguimiento
     </Button>
   );
 }
@@ -185,8 +185,8 @@ export default function ExpedientesCobroScreen() {
             aria-label="Filtrar por estado del seguimiento"
           >
             <option value="todos">Todos los seguimientos</option>
-            <option value="pendientes">Sin vencer</option>
-            <option value="vencidos">Vencidos</option>
+            <option value="pendientes">Plazo sin vencer</option>
+            <option value="vencidos">Plazo vencido</option>
           </select>
 
           <label className="flex h-10 cursor-pointer items-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-3 text-sm">
@@ -343,7 +343,7 @@ export default function ExpedientesCobroScreen() {
                       <th className="px-5 py-3 font-medium">Envío</th>
                       <th className="px-5 py-3 font-medium">Seguimiento</th>
                       <th className="px-5 py-3 text-right font-medium">
-                        <span className="sr-only">Alerta</span>
+                        <span className="sr-only">Seguimiento</span>
                       </th>
                     </tr>
                   </thead>

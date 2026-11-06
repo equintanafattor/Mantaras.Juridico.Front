@@ -50,7 +50,7 @@ function Edicion({ id, onSaved }: { id: number; onSaved: () => void }) {
   return <Formulario tipo={consulta.data} onSaved={onSaved} />;
 }
 export default function TipoEntradaAgendaDialog({ id, onClose, onSaved }: { id?: number; onClose: () => void; onSaved: () => void }) {
-  return <AgendaConfiguracionDialog titulo={id ? "Editar tipo de entrada" : "Nuevo tipo de entrada"} descripcion="Definí nombre, descripción y color. El nombre es obligatorio." onClose={onClose}>{id ? <Edicion id={id} onSaved={onSaved} /> : <Formulario onSaved={onSaved} />}</AgendaConfiguracionDialog>;
+  return <AgendaConfiguracionDialog titulo={id ? "Editar categoría" : "Nueva categoría"} descripcion="Definí nombre, descripción y color. El nombre es obligatorio." onClose={onClose}>{id ? <Edicion id={id} onSaved={onSaved} /> : <Formulario onSaved={onSaved} />}</AgendaConfiguracionDialog>;
 }
 function ConfirmacionEstado({ tipo, onSaved }: { tipo: TipoEntradaAgendaResponse; onSaved: () => void }) {
   const { onClose, onPending } = useEventosConfiguracionAgenda();
@@ -64,5 +64,5 @@ function ConfirmacionEstado({ tipo, onSaved }: { tipo: TipoEntradaAgendaResponse
   }}>{mutacion.isPending ? "Guardando…" : tipo.activo ? "Desactivar tipo" : "Reactivar tipo"}</Button></div></div>;
 }
 export function EstadoTipoEntradaAgendaDialog({ tipo, onClose, onSaved }: { tipo: TipoEntradaAgendaResponse; onClose: () => void; onSaved: () => void }) {
-  return <AgendaConfiguracionDialog titulo={tipo.activo ? "Desactivar tipo de entrada" : "Reactivar tipo de entrada"} descripcion="Confirmá el cambio de disponibilidad." onClose={onClose}><ConfirmacionEstado tipo={tipo} onSaved={onSaved} /></AgendaConfiguracionDialog>;
+  return <AgendaConfiguracionDialog titulo={tipo.activo ? "Desactivar categoría" : "Reactivar categoría"} descripcion="Confirmá el cambio de disponibilidad." onClose={onClose}><ConfirmacionEstado tipo={tipo} onSaved={onSaved} /></AgendaConfiguracionDialog>;
 }

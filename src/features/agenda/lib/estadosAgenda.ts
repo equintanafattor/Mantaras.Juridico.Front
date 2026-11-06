@@ -11,8 +11,8 @@ const TRANSICIONES: Record<EstadoEntradaAgenda, readonly EstadoEntradaAgenda[]> 
 };
 export function accionesEstadoAgenda(actual: EstadoEntradaAgenda) {
   const etiquetas: Record<EstadoEntradaAgenda, string> = {
-    Pendiente: actual === "Completada" || actual === "Cancelada" ? "Reabrir como pendiente" : "Volver a pendiente",
-    EnCurso: actual === "Pospuesta" ? "Retomar" : "Iniciar", Pospuesta: "Posponer", Completada: "Completar", Cancelada: "Cancelar entrada",
+    Pendiente: actual === "Completada" || actual === "Cancelada" ? "Reabrir" : "Volver a pendiente",
+    EnCurso: actual === "Pospuesta" ? "Retomar" : "Iniciar", Pospuesta: "Posponer", Completada: "Completar", Cancelada: "Cancelar (ya no corresponde)",
   };
   return (TRANSICIONES[actual] ?? []).map(estado => ({ estado, label: etiquetas[estado] }));
 }

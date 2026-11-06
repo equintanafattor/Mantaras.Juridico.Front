@@ -271,7 +271,7 @@ export default function PanelScreen() {
       </section>
       {mensaje ? <p role="status" className="text-sm text-muted-foreground">{mensaje}</p> : null}
       {detalle ? <AgendaDetalleDialog key={detalle.entradaAgendaId} entrada={detalle} onClose={() => setDetalle(undefined)} onEdit={(entrada) => { setDetalle(undefined); setEditor({ modo: "editar", entrada }); }} /> : null}
-      {editor ? <AgendaFormDialog editor={editor} onClose={() => setEditor(undefined)} onSaved={() => { setEditor(undefined); setMensaje("Entrada de agenda guardada."); }} /> : null}
+      {editor ? <AgendaFormDialog editor={editor} onClose={() => setEditor(undefined)} onSaved={(resultado) => { setEditor(undefined); setMensaje(resultado?.texto ?? "Cambios guardados."); }} /> : null}
 
       {panelQuery.isLoading ? (
         <PanelSkeleton />

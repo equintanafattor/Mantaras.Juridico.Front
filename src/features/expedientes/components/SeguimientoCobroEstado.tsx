@@ -1,3 +1,4 @@
+import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { NOMBRES_ESTADO_AGENDA } from "@/features/agenda/lib/estadosAgenda";
 
@@ -32,6 +33,7 @@ export default function SeguimientoCobroEstado({
 
         {vencido && (
           <Badge variant="destructive" className="rounded-sm">
+            <AlertTriangle aria-hidden="true" />
             Vencido
           </Badge>
         )}

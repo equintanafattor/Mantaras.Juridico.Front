@@ -202,6 +202,8 @@ export type RecordatorioPredeterminadoResponse = {
 
 export type ReglaVencimientoResponse = {
   reglaVencimientoId: number;
+  // Reglas de sistema (ej. SEGUIMIENTO_COBRO_JUDICIAL). null en las cargadas por usuarios.
+  codigo?: string | null;
   tipoEntradaAgendaId: number;
   tipoEntradaNombre: string;
   tipoEntradaColor: string | null;
