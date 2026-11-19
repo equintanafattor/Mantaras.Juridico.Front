@@ -254,13 +254,13 @@ function CampoClave({ clienteId, disabled = false }: Props) {
         </Button>
       </div>
 
-      <p
+{/*       <p
         id={`clave-ayuda-${clienteId}`}
         className="text-xs text-muted-foreground"
       >
         Se consulta al mostrar o copiar. Si la mostrás, se ocultará a los 30
         segundos o al cambiar de pestaña.
-      </p>
+      </p> */}
 
       {aviso && (
         <p

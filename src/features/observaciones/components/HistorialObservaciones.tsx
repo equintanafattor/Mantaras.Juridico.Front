@@ -114,8 +114,8 @@ export default function HistorialObservaciones({
             <p className="mt-0.5 text-xs text-muted-foreground">
               {esResumen
                 ? esMovimiento
-                  ? "Los últimos tres movimientos, del más reciente al más antiguo."
-                  : "Las últimas tres observaciones, de la más reciente a la más antigua."
+                  ? "Últimos tres movimientos."
+                  : "Últimas tres observaciones."
                 : "Ordenado por fecha de más reciente a más antigua."}
             </p>
           </div>

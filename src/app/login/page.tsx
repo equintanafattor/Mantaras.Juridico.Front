@@ -98,11 +98,6 @@ export default function LoginPage() {
           <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">
             La gestión del estudio, en un solo lugar.
           </h1>
-
-          <p className="mt-5 max-w-md text-base leading-7 text-primary-foreground/65">
-            Clientes, casos y expedientes organizados para acompañar el trabajo
-            cotidiano.
-          </p>
         </div>
 
         <footer className="text-xs text-primary-foreground/45">
@@ -136,10 +131,6 @@ export default function LoginPage() {
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
               Iniciar sesión
             </h2>
-
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Ingresá tus credenciales para acceder a la gestión del estudio.
-            </p>
           </header>
 
           <form className="mt-7 space-y-5" onSubmit={enviar}>
