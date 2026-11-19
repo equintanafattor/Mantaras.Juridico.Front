@@ -5,7 +5,11 @@ import { AlertCircle, Info, Loader2, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  DIALOG_PANEL,
+  DIALOG_PANEL_ENCABEZADO,
+  DIALOG_PIE,
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -81,9 +85,9 @@ export default function RegistrarEnvioCobroDialog({
     <Dialog open onOpenChange={cambiarApertura} disablePointerDismissal>
       <DialogContent
         showCloseButton={!registrarMutation.isPending}
-        className={cn(TACTIL, "sm:max-w-lg")}
+        className={cn(DIALOG_PANEL, TACTIL, "sm:max-w-lg")}
       >
-        <DialogHeader className="pr-8 text-left">
+        <DialogHeader className={cn(DIALOG_PANEL_ENCABEZADO, "text-left")}>
           <DialogTitle className="leading-snug">Registrar envío de cobro</DialogTitle>
 
           <DialogDescription className="break-words">
@@ -94,95 +98,97 @@ export default function RegistrarEnvioCobroDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-5" onSubmit={guardar}>
-          <fieldset className="space-y-2" disabled={registrarMutation.isPending}>
-            <legend className="text-sm font-medium">
-              Documento enviado <span className="text-destructive">*</span>
-            </legend>
+        <form className="flex min-h-0 flex-1 flex-col" onSubmit={guardar}>
+          <DialogBody className="gap-5 pb-4">
+            <fieldset className="space-y-2" disabled={registrarMutation.isPending}>
+              <legend className="text-sm font-medium">
+                Documento enviado <span className="text-destructive">*</span>
+              </legend>
 
-            <div className="grid grid-cols-2 gap-2">
-              {TIPOS_DOCUMENTO_COBRO.map((tipo) => (
-                <Button
-                  key={tipo}
-                  type="button"
-                  variant={tipoDocumento === tipo ? "secondary" : "outline"}
-                  aria-pressed={tipoDocumento === tipo}
-                  onClick={() => {
-                    setTipoDocumento(tipo);
-                    resetearError();
-                  }}
-                >
-                  {TIPO_DOCUMENTO_COBRO_LABELS[tipo]}
-                </Button>
-              ))}
+              <div className="grid grid-cols-2 gap-2">
+                {TIPOS_DOCUMENTO_COBRO.map((tipo) => (
+                  <Button
+                    key={tipo}
+                    type="button"
+                    variant={tipoDocumento === tipo ? "secondary" : "outline"}
+                    aria-pressed={tipoDocumento === tipo}
+                    onClick={() => {
+                      setTipoDocumento(tipo);
+                      resetearError();
+                    }}
+                  >
+                    {TIPO_DOCUMENTO_COBRO_LABELS[tipo]}
+                  </Button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="space-y-2">
+              <Label htmlFor="envio-cobro-fecha">
+                Fecha de envío <span className="text-destructive">*</span>
+              </Label>
+
+              <Input
+                id="envio-cobro-fecha"
+                type="date"
+                value={fechaEnvio}
+                max={hoy}
+                required
+                disabled={registrarMutation.isPending}
+                onChange={(event) => {
+                  setFechaEnvio(event.target.value);
+                  resetearError();
+                }}
+              />
+
+              {fechaEnvio > hoy && (
+                <p className="text-xs text-destructive">
+                  La fecha de envío no puede ser posterior a hoy.
+                </p>
+              )}
             </div>
-          </fieldset>
 
-          <div className="space-y-2">
-            <Label htmlFor="envio-cobro-fecha">
-              Fecha de envío <span className="text-destructive">*</span>
-            </Label>
+            <div className="flex gap-3 rounded-lg border bg-muted/30 p-4 text-sm">
+              <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 
-            <Input
-              id="envio-cobro-fecha"
-              type="date"
-              value={fechaEnvio}
-              max={hoy}
-              required
-              disabled={registrarMutation.isPending}
-              onChange={(event) => {
-                setFechaEnvio(event.target.value);
-                resetearError();
-              }}
-            />
-
-            {fechaEnvio > hoy && (
-              <p className="text-xs text-destructive">
-                La fecha de envío no puede ser posterior a hoy.
-              </p>
-            )}
-          </div>
-
-          <div className="flex gap-3 rounded-lg border bg-muted/30 p-4 text-sm">
-            <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                Se agregará el expediente al listado de cobro y se generará una
-                alerta interna a los 120 días hábiles desde la fecha de envío.
-                Si la fecha es antigua y ese plazo ya pasó, el seguimiento
-                quedará vencido desde el registro.
-              </p>
-
-              <p>
-                Por ahora el envío no se puede corregir ni anular una vez
-                registrado.
-              </p>
-            </div>
-          </div>
-
-          {registrarMutation.isError && (
-            <div
-              role="alert"
-              className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
-            >
-              <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
-
-              <div>
-                <p className="font-medium text-destructive">
-                  No pudimos registrar el envío
+              <div className="space-y-2 text-muted-foreground">
+                <p>
+                  Se agregará el expediente al listado de cobro y se generará una
+                  alerta interna a los 120 días hábiles desde la fecha de envío.
+                  Si la fecha es antigua y ese plazo ya pasó, el seguimiento
+                  quedará vencido desde el registro.
                 </p>
 
-                <p className="mt-1 text-muted-foreground">
-                  {registrarMutation.error instanceof Error
-                    ? registrarMutation.error.message
-                    : "Revisá los datos e intentá nuevamente."}
+                <p>
+                  Por ahora el envío no se puede corregir ni anular una vez
+                  registrado.
                 </p>
               </div>
             </div>
-          )}
 
-          <footer className="flex flex-col-reverse gap-2 border-t pt-4 sm:flex-row sm:justify-end">
+            {registrarMutation.isError && (
+              <div
+                role="alert"
+                className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm"
+              >
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+
+                <div>
+                  <p className="font-medium text-destructive">
+                    No pudimos registrar el envío
+                  </p>
+
+                  <p className="mt-1 text-muted-foreground">
+                    {registrarMutation.error instanceof Error
+                      ? registrarMutation.error.message
+                      : "Revisá los datos e intentá nuevamente."}
+                  </p>
+                </div>
+              </div>
+            )}
+          </DialogBody>
+
+          <footer className={DIALOG_PIE}>
             <Button
               type="button"
               variant="outline"

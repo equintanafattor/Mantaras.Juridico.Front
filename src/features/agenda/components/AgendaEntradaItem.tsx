@@ -22,7 +22,7 @@ export function RelacionesAgenda({ entrada, className }: { entrada: Pick<Entrada
   ];
   if (items.length === 0) return null;
   return <ul className={cn("flex flex-wrap gap-x-3 gap-y-1 text-xs", className)} aria-label="Relacionado con">
-    {items.map(({ ruta, item, tipo }) => <li key={`${ruta}-${item.id}`} className="min-w-0"><Link href={`${ruta}/${item.id}`} className={cn(ENLACE, "break-words pointer-coarse:inline-block pointer-coarse:py-1")} title={tipo}><span className="sr-only">{tipo}: </span>{item.nombre}</Link></li>)}
+    {items.map(({ ruta, item, tipo }) => <li key={`${ruta}-${item.id}`} className="min-w-0"><Link href={`${ruta}/${item.id}`} className={cn(ENLACE, "break-words pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:items-center")} title={tipo}><span className="sr-only">{tipo}: </span>{item.nombre}</Link></li>)}
   </ul>;
 }
 
@@ -40,7 +40,7 @@ export default function AgendaEntradaItem({ entrada, hoy, onDetail, onCompletar,
         <PrioridadEtiqueta prioridad={entrada.prioridad} />
       </div>
       <h3 className="break-words font-medium leading-6">
-        <button type="button" onClick={onDetail} className="block w-full rounded-sm text-left underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:py-1">{entrada.titulo}</button>
+        <button type="button" onClick={onDetail} className="block w-full rounded-sm text-left underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:min-h-11 pointer-coarse:py-2">{entrada.titulo}</button>
       </h3>
       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
         {mostrarFecha ? <span>{cuandoAgenda(entrada, hoy)}</span> : null}

@@ -27,7 +27,7 @@ function Formulario({ regla, onSaved }: { regla?: ReglaVencimientoResponse; onSa
   function cambiar<K extends keyof ReglaAgendaForm>(key: K, value: ReglaAgendaForm[K]) {
     const next = { ...form, [key]: value }; setForm(next); setError(undefined); onDirty(JSON.stringify(next) !== JSON.stringify(inicial));
   }
-  return <form className="space-y-4" onSubmit={async event => {
+  return <form className="flex flex-1 flex-col gap-4" onSubmit={async event => {
     event.preventDefault(); if (lock.current) return; setError(undefined);
     try {
       const request = requestDesdeReglaAgenda(form);

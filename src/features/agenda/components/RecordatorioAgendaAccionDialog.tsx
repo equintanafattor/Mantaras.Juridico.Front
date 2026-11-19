@@ -19,7 +19,7 @@ function Formulario({ accion, entrada, onSaved }: { accion: AccionRecordatorioAg
   const [error, setError] = useState<string>();
   const reprogramar = useReprogramarRecordatorioAgenda(), quitar = useQuitarRecordatorioAgenda(), lock = useRef(false);
   const pending = reprogramar.isPending || quitar.isPending;
-  return <form className="space-y-4" onSubmit={async event => {
+  return <form className="flex flex-1 flex-col gap-4" onSubmit={async event => {
     event.preventDefault(); if (lock.current) return; setError(undefined);
     try {
       if (accion.recordatorio.atendido) throw new Error("Los avisos atendidos quedan como historial.");

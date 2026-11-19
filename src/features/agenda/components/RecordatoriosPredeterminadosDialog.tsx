@@ -19,7 +19,7 @@ function Formulario({ destino, inicial, onSaved }: { destino: DestinoPredetermin
   const [original] = useState(() => inicial.filter(item => item.activo).map(({ baseCalculo, minutosAnticipacion }) => ({ baseCalculo, minutosAnticipacion })));
   const [items, setItems] = useState<CrearRecordatorioAgendaRequest[]>(original), [draft, setDraft] = useState(false), [error, setError] = useState<string>();
   const guardar = useGuardarRecordatoriosPredeterminados(), lock = useRef(false);
-  return <form className="space-y-4" onSubmit={async event => {
+  return <form className="flex flex-1 flex-col gap-4" onSubmit={async event => {
     event.preventDefault(); if (lock.current) return; setError(undefined);
     try {
       if (draft) throw new Error("Agregá el aviso a la lista o restablecé su borrador antes de guardar.");

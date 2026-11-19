@@ -1,0 +1,74 @@
+[
+  {
+    "tamano": "390",
+    "paso": "agenda-alta",
+    "ok": true,
+    "entradaId": 33,
+    "fechaInicio": "2026-11-19",
+    "alerta": [],
+    "errores": []
+  },
+  {
+    "tamano": "390",
+    "paso": "agenda-edicion",
+    "ok": true,
+    "tituloFinal": "QA Alta por UI 390 1795103291225 editada",
+    "conTecladoSimulado": true,
+    "errores": []
+  },
+  {
+    "tamano": "390",
+    "paso": "cobro-fecha-futura-bloqueada",
+    "ok": true,
+    "deshabilitado": true,
+    "aviso": true,
+    "sigueSinEnvio": true,
+    "errores": []
+  },
+  {
+    "tamano": "390",
+    "paso": "cobro-registro",
+    "ok": true,
+    "botonVisibleConTeclado": true,
+    "tipoDocumento": "Oficio",
+    "fechaEnvio": "2026-11-19",
+    "enListado": true,
+    "errores": []
+  },
+  {
+    "tamano": "1440",
+    "paso": "agenda-alta",
+    "ok": true,
+    "entradaId": 35,
+    "fechaInicio": "2026-11-19",
+    "alerta": [],
+    "errores": []
+  },
+  {
+    "tamano": "1440",
+    "paso": "agenda-edicion",
+    "ok": true,
+    "tituloFinal": "QA Alta por UI 1440 1795103299768 editada",
+    "conTecladoSimulado": false,
+    "errores": []
+  },
+  {
+    "tamano": "1440",
+    "paso": "cobro-fecha-futura-bloqueada",
+    "ok": true,
+    "deshabilitado": true,
+    "aviso": true,
+    "sigueSinEnvio": true,
+    "errores": []
+  },
+  {
+    "tamano": "1440",
+    "paso": "cobro-registro",
+    "ok": true,
+    "botonVisibleConTeclado": "n/a",
+    "tipoDocumento": "Cedula",
+    "fechaEnvio": "2026-11-19",
+    "enListado": true,
+    "errores": []
+  }
+]

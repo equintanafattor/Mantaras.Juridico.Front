@@ -93,7 +93,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 // Diálogo de pantalla completa en celular, con encabezado y acciones fijos.
 // Se usa con DialogHeader + DialogBody (+ acciones con DIALOG_ACCIONES).
 const DIALOG_PANEL =
-  "flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[min(92dvh,60rem)] sm:max-w-[calc(100%-2rem)] sm:rounded-xl"
+  "flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[min(92dvh,60rem)] sm:w-[calc(100%-2rem)] sm:max-w-none sm:rounded-xl"
 const DIALOG_PANEL_ENCABEZADO = "shrink-0 border-b px-4 py-3 pr-14 sm:px-6 sm:py-4"
 // Pie fijo fuera del cuerpo desplazable.
 const DIALOG_PIE =
