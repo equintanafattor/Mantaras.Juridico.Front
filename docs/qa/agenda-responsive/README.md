@@ -81,6 +81,49 @@ QA_EMAIL=qa@local.test QA_PASSWORD=... node scripts/audit.mjs salida   # QA_SOLO
 
 `seed-qa.mjs` se niega a correr si la base tiene clientes que no son de QA.
 
+## Probar desde un celular o tablet en la misma red
+
+Desde el teléfono, `localhost` es el propio teléfono, así que hay que usar la IP de la PC en la red local, por ejemplo `192.168.10.117`. La IP se consulta con `ipconfig` y puede cambiar.
+
+**Problemas de la configuración actual:**
+
+- **Dirección de escucha:** `next start`/`next dev` y la API con `--urls http://localhost:5099` solo escuchan en la propia PC.
+- **URL de la API:** `NEXT_PUBLIC_API_URL` se fija al compilar. Con `http://localhost:5099`, el teléfono busca la API en sí mismo.
+- **CORS:** la política `Frontend` de la API (`Program.cs`) admite solo `http://localhost:3000` y el dominio de Vercel, escritos en el código, sin configuración por entorno. Una página abierta en `http://192.168.x.x:3000` que llama a la API por otro puerto es de otro origen y la API la rechaza.
+- **`next dev`** además bloquea recursos de desarrollo pedidos desde otro origen si no están en `allowedDevOrigins`.
+
+**Solución sin tocar código:** un proxy (`scripts/proxy-lan.mjs`, sin dependencias) expone un único origen `http://<IP>:8080`: `/api/*` va a la API y el resto al frontend. Como página y API comparten origen, no se aplica CORS. API y frontend siguen escuchando solo en `127.0.0.1`; solo el proxy queda expuesto a la red. Se usa `next start`, así que no influye `allowedDevOrigins`.
+
+Este recorrido se verificó el 2026-11-19 desde la PC por su IP de red: login y `/cobro` con datos, sin errores de CORS ni HTTP. No se probó desde un teléfono.
+
+```bash
+# 1. API contra la base de QA (no la borres: ya tiene los datos ficticios)
+cd Mantaras.Juridico.Back/src/Mantaras.Juridico.Api
+ASPNETCORE_ENVIRONMENT=Development \
+ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=mantaras_juridico_qa_responsive;Username=...;Password=..." \
+BootstrapAdmin__Email=qa@local.test BootstrapAdmin__Password=... \
+dotnet run --no-launch-profile --urls http://127.0.0.1:5099
+
+# 2. Frontend compilado con la URL que verá el teléfono (la IP de la PC y el puerto del proxy)
+cd Mantaras.Juridico.Front
+NEXT_PUBLIC_API_URL=http://192.168.10.117:8080 npm run build
+npx next start -H 127.0.0.1 -p 3000
+
+# 3. Proxy en la red local
+node docs/qa/agenda-responsive/scripts/proxy-lan.mjs
+```
+
+En PowerShell, las variables se definen antes con `$env:NOMBRE = "valor"`.
+
+**Pasos finales:**
+
+1. **Firewall de Windows:** la primera vez, permití Node en redes privadas cuando lo pregunte, o abrí el puerto desde una consola de administrador: `netsh advfirewall firewall add rule name="QA proxy 8080" dir=in action=allow protocol=TCP localport=8080 profile=private`. La red Wi-Fi tiene que estar marcada como privada.
+2. **Desde el teléfono**, conectado a la misma Wi-Fi, abrí `http://192.168.10.117:8080` e ingresá con `qa@local.test`. Algunas redes de invitados aíslan los dispositivos entre sí.
+3. **Si cambia la IP**, volvé a compilar el paso 2.
+4. **Al terminar**, `npm run build` sin la variable vuelve a usar `.env.local`.
+
+**Alternativa a futuro:** permitir que la API lea los orígenes de CORS desde la configuración. Es un cambio en el backend que no se hizo en este trabajo.
+
 ## Pendiente: pruebas en dispositivos reales
 
 La simulación del teclado (foco en un campo y alto de ventana al 55 %) aproxima `interactive-widget=resizes-content`, pero **no reemplaza** estas pruebas, que no se ejecutaron:
@@ -95,4 +138,4 @@ La simulación del teclado (foco en un campo y alto de ventana al 55 %) aproxima
 - `resultados-auditoria.json`: un registro por caso (tamaño × recorrido) con mediciones y problemas.
 - `resultados-guardados.json`: los 8 pasos de guardado con lo verificado en la API.
 - `capturas/`: selección de capturas de los cambios (calendario, vista Todas, diálogos con teclado simulado, cobro y guardados).
-- `scripts/`: carga de datos, auditoría y guardados.
+- `scripts/`: carga de datos, auditoría, guardados y `proxy-lan.mjs` para probar desde la red local.
