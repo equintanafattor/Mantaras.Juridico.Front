@@ -16,6 +16,7 @@ Fecha: 2026-11-19 · Rama: `feat/agenda-responsive` · Base: commit `e11011f` (a
 | Objetivos táctiles de Agenda ≥ 44×44 px, sin superposición | 152 objetivos en 8 casos: 0 chicos, 0 superpuestos |
 | Errores de consola o respuestas HTTP ≥ 400 | 0 |
 | Guardados por interfaz verificados contra la API | 8 de 8 |
+| Validación manual en Android real (Samsung A55, por red local) | Sin problemas |
 
 ## Alcance del commit `e11011f`
 
@@ -124,14 +125,17 @@ En PowerShell, las variables se definen antes con `$env:NOMBRE = "valor"`.
 
 **Alternativa a futuro:** permitir que la API lea los orígenes de CORS desde la configuración. Es un cambio en el backend que no se hizo en este trabajo.
 
+## Validación manual en Android
+
+2026-11-19. Un Samsung A55 entró por la red local con el proxy de la sección anterior, contra la base de QA, y la revisión manual no mostró problemas. Cubre el celular Android con teclado real. No cubre iOS ni tablets.
+
 ## Pendiente: pruebas en dispositivos reales
 
 La simulación del teclado (foco en un campo y alto de ventana al 55 %) aproxima `interactive-widget=resizes-content`, pero **no reemplaza** estas pruebas, que no se ejecutaron:
 
-- **Android Chrome, con teclado real:** que el encabezado y las acciones queden visibles en el alta y la edición de Agenda, el día inhábil, la categoría, la regla y el registro de envío de cobro.
 - **iOS Safari, con teclado real:** Safari no soporta `interactive-widget`, porque el teclado se superpone sin redimensionar la página. Hay que verificar que el pie fijo no quede tapado y probar la zona segura inferior (`safe-area-inset-bottom`).
 - **Tablet real (Android e iPad):** que active el puntero grueso (`pointer-coarse`) y los tamaños de 44 px. También el calendario en grilla y en lista según la orientación.
-- **Selectores nativos de fecha y hora** dentro de los diálogos de pantalla completa, en ambos sistemas.
+- **Selectores nativos de fecha y hora** dentro de los diálogos de pantalla completa, en iOS y en tablets.
 
 ## Archivos
 
