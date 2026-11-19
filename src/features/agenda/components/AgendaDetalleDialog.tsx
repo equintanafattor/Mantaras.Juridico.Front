@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Check, ChevronDown, Pencil, Repeat, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DIALOG_PANEL, DIALOG_PANEL_ENCABEZADO, DIALOG_PIE, Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TACTIL } from "@/lib/tactil";
 import { cn } from "@/lib/utils";
 import { useCambiarEstadoAgenda, useEntradaAgenda } from "../hooks/useAgenda";
 import { fechaHoyAgenda } from "../lib/agendaForm";
@@ -61,14 +62,15 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
   const nombreResponsable = (id: number) => data?.responsables?.find(item => item.id === id)?.nombre ?? opciones.data?.responsables.find(item => item.id === id)?.nombre ?? entrada.responsables.find(item => item.id === id)?.nombre ?? "Usuario no disponible";
 
   return <Dialog open onOpenChange={open => { if (!open && !ocupado) onClose(); }}>
-    <DialogContent showCloseButton={!ocupado} className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
-      <DialogHeader>
-        <DialogTitle className="pr-6 break-words">{data?.titulo ?? entrada.titulo}</DialogTitle>
-        <DialogDescription className="flex flex-wrap items-center gap-x-2">
+    <DialogContent showCloseButton={!ocupado} className={cn(DIALOG_PANEL, TACTIL, "sm:max-w-2xl")}>
+      <DialogHeader className={DIALOG_PANEL_ENCABEZADO}>
+        <DialogTitle className="break-words leading-snug">{data?.titulo ?? entrada.titulo}</DialogTitle>
+        <DialogDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span>{data?.tipoEntradaNombre ?? entrada.tipoEntradaNombre}</span>
           {(data?.recurrenciaAgendaId ?? entrada.recurrenciaAgendaId) ? <span className="inline-flex items-center gap-1"><Repeat className="size-3.5" aria-hidden="true" />Se repite (los cambios aplican sólo a esta)</span> : null}
         </DialogDescription>
       </DialogHeader>
+      <DialogBody className="pb-4">
       {detalle.isPending ? <Skeleton className="h-60 w-full" aria-label="Cargando detalle" /> : detalle.isError ? <div role="alert" className="space-y-3"><p>No pudimos abrir el detalle. {detalle.error.message}</p><Button variant="outline" disabled={detalle.isFetching || ocupado} onClick={() => void detalle.refetch()}>Reintentar</Button></div> : data && situacion ? <div className="space-y-5" aria-busy={bloqueado}>
         <div className="flex flex-wrap items-center gap-1.5">
           {situacion.condicion ? <SituacionEtiqueta situacion={situacion} /> : null}
@@ -90,13 +92,13 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
         {mensaje ? <p role="status" className="rounded-md border border-emerald-600/30 bg-emerald-50/60 px-3 py-2 text-sm dark:bg-emerald-950/20">{mensaje}</p> : null}
         {error ? <div role="alert" className="space-y-2 rounded-md border border-destructive/40 px-3 py-2 text-sm text-destructive"><p className="whitespace-pre-wrap">{error}</p><Button variant="outline" size="sm" disabled={bloqueado} onClick={() => void detalle.refetch()}>Actualizar detalle</Button></div> : null}
 
-        <dl className="grid gap-3 text-sm sm:grid-cols-3">
+        <dl className="grid gap-3 text-sm @lg:grid-cols-3">
           {data.fechaVencimiento ? <div><dt className="text-xs text-muted-foreground">Vence</dt><dd className="font-medium"><time dateTime={data.fechaVencimiento}>{fechaHoraLarga(data.fechaVencimiento, data.horaVencimiento)}</time></dd></div> : null}
           <div><dt className="text-xs text-muted-foreground">{data.fechaVencimiento ? "Inicio" : "Fecha"}</dt><dd><time dateTime={data.fechaInicio}>{fechaHoraLarga(data.fechaInicio, data.horaInicio)}</time></dd></div>
           {data.fechaFin || data.horaFin ? <div><dt className="text-xs text-muted-foreground">Termina</dt><dd>{data.fechaFin && data.fechaFin !== data.fechaInicio ? fechaHoraLarga(data.fechaFin, data.horaFin) : data.horaFin ? data.horaFin.slice(0, 5) : "—"}</dd></div> : null}
         </dl>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 @lg:grid-cols-2">
           <section className="space-y-2"><h3 className="text-sm font-medium">Relacionado con</h3>
             <Relaciones disabled={ocupado} grupos={[
               { titulo: "Cliente", ruta: "/clientes", items: data.clientes ?? relacionesDetalleAgenda(data.clienteIds, entrada.clientes) },
@@ -120,7 +122,8 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
 
         <p className="text-xs text-muted-foreground">N.º {data.entradaAgendaId} · Creada el {mostrarFechaAuditoriaAgenda(data.fechaCreacion)}{data.fechaModificacion ? ` · Última modificación: ${mostrarFechaAuditoriaAgenda(data.fechaModificacion)}` : ""} · Horarios de Argentina{estaAbierta(data.estado) ? "" : ` · ${NOMBRES_ESTADO_AGENDA[data.estado]}`}</p>
       </div> : null}
-      <div className="flex justify-end"><Button variant="outline" disabled={ocupado} onClick={onClose}>Cerrar</Button></div>
+      </DialogBody>
+      <div className={DIALOG_PIE}><Button variant="outline" disabled={ocupado} onClick={onClose}>Cerrar</Button></div>
     </DialogContent>
   </Dialog>;
 }

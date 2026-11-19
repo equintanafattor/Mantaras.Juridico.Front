@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DIALOG_PANEL, DIALOG_PANEL_ENCABEZADO, DIALOG_PIE, Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { actualizarEntradaAgenda, crearEntradaAgenda, crearVencimientoManual, obtenerEntradaAgenda } from "../api/agendaApi";
 import { crearRecordatorioAgenda } from "../api/recordatoriosApi";
@@ -45,6 +47,7 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
   const [pending, setPending] = useState(false);
   const [fechasConfirmadas, setFechasConfirmadas] = useState<string>();
   const lock = useRef(false);
+  const errorRef = useRef<HTMLParagraphElement>(null);
   const opciones = useOpcionesAgenda();
   const invalidar = useInvalidarAgenda();
   const queryClient = useQueryClient();
@@ -88,14 +91,17 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
     else if (completo) onSaved();
   }
 
+  // El error se muestra al final del cuerpo: se lleva a la vista para que no quede oculto al desplazar.
+  useEffect(() => { if (error) errorRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }, [error]);
+
   const actualizar = (next: AgendaForm) => { setForm(next); setError(undefined); informar(next, recordatorios, draftDirty); };
   const masOpciones = id === undefined ? <>
     <div className="space-y-2 border-t pt-4">
       <label className="block text-sm font-medium" htmlFor="agenda-recurrencia">Repetir</label>
-      <select id="agenda-recurrencia" className="h-9 w-full rounded-md border bg-background px-2 text-sm sm:max-w-56" value={form.recurrenciaFrecuencia} onChange={e => actualizar({ ...form, recurrenciaFrecuencia: e.target.value as AgendaForm["recurrenciaFrecuencia"] })}>
+      <select id="agenda-recurrencia" className="h-9 w-full rounded-md border bg-background px-2 text-sm @lg:max-w-56" value={form.recurrenciaFrecuencia} onChange={e => actualizar({ ...form, recurrenciaFrecuencia: e.target.value as AgendaForm["recurrenciaFrecuencia"] })}>
         <option value="">No se repite</option><option value="Diaria">Cada día</option><option value="Semanal">Cada semana</option><option value="Mensual">Cada mes</option><option value="Anual">Cada año</option>
       </select>
-      {form.recurrenciaFrecuencia ? <div className="grid gap-3 sm:grid-cols-2">
+      {form.recurrenciaFrecuencia ? <div className="grid gap-3 @lg:grid-cols-2">
         <label className="text-sm">Cada cuántos {form.recurrenciaFrecuencia === "Diaria" ? "días" : form.recurrenciaFrecuencia === "Semanal" ? "semanas" : form.recurrenciaFrecuencia === "Mensual" ? "meses" : "años"}<input className="mt-1 h-9 w-full rounded-md border bg-background px-2" type="number" min={1} max={365} required value={form.recurrenciaIntervalo} onChange={e => actualizar({ ...form, recurrenciaIntervalo: Number(e.target.value) })} /></label>
         <label className="text-sm">Cantidad total (incluye la primera)<input className="mt-1 h-9 w-full rounded-md border bg-background px-2" type="number" min={2} max={100} required value={form.recurrenciaCantidad} onChange={e => actualizar({ ...form, recurrenciaCantidad: Number(e.target.value) })} /></label>
       </div> : null}
@@ -104,7 +110,8 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
     <AgendaRecordatoriosAlta items={recordatorios} tieneVencimiento={!!form.fechaVencimiento} onChange={(next, resetDraft) => { setRecordatorios(next); if (resetDraft) setDraftDirty(false); setError(undefined); informar(form, next, resetDraft ? false : draftDirty); }} onDraftChange={dirty => { setDraftDirty(dirty); informar(form, recordatorios, dirty); }} />
   </> : <p className="border-t pt-4 text-sm text-muted-foreground">Los avisos de esta entrada se agregan, reprograman o quitan desde su detalle.</p>;
 
-  return <form className="space-y-4" onSubmit={guardar}>
+  return <form className="flex min-h-0 flex-1 flex-col" onSubmit={guardar}>
+    <DialogBody className="pb-4">
     <fieldset disabled={pending || entradaGuardada} className="min-w-0 space-y-4">
       <AgendaFormFields form={form} claseFija={vencimientoManual} abrirMasOpciones={cambianFechas} onUsarRegla={id === undefined && onUsarRegla ? () => {
         // Elegir la clase o la categoría no cuenta como datos cargados.
@@ -114,15 +121,16 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
       {cambianFechas ? <div className="space-y-2 rounded-md border border-amber-600/40 bg-amber-50/50 p-3 dark:bg-amber-950/10"><p className="text-sm">Cambiaste fechas u horas. Los avisos ya programados <strong>no se mueven solos</strong>: después de guardar, revisalos en el detalle y usá Reprogramar o Quitar.</p><label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1 size-4 accent-primary" checked={fechasConfirmadas === firmaFechas} onChange={e => setFechasConfirmadas(e.target.checked ? firmaFechas : undefined)} />Entendido, voy a revisar los avisos.</label></div> : null}
     </fieldset>
     {entradaGuardada && progreso.pendientes.length > 0 ? <p role="status" className="rounded-md border p-3 text-sm">Ya se guardó, pero faltan {progreso.pendientes.length === 1 ? "1 aviso" : `${progreso.pendientes.length} avisos`}. Tocá «Reintentar» para agregarlos o «Cerrar» para seguir sin ellos.</p> : null}
-    {error ? <p role="alert" className="whitespace-pre-wrap text-sm text-destructive">{error}</p> : null}
-    <div className="sticky bottom-0 flex flex-wrap justify-end gap-2 border-t bg-popover py-3"><Button type="button" variant="outline" disabled={pending} onClick={onClose}>{entradaGuardada ? "Cerrar" : "Cancelar"}</Button><Button type="submit" disabled={pending || !entradaGuardada && !opciones.data}>{pending ? "Guardando…" : entradaGuardada ? "Reintentar" : id !== undefined ? "Guardar cambios" : "Guardar"}</Button></div>
+    {error ? <p ref={errorRef} role="alert" className="whitespace-pre-wrap break-words rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p> : null}
+    </DialogBody>
+    <div className={DIALOG_PIE}><Button type="button" variant="outline" disabled={pending} onClick={onClose}>{entradaGuardada ? "Cerrar" : "Cancelar"}</Button><Button type="submit" disabled={pending || !entradaGuardada && !opciones.data}>{pending ? "Guardando…" : entradaGuardada ? "Reintentar" : id !== undefined ? "Guardar cambios" : "Guardar"}</Button></div>
   </form>;
 }
 
 function Edicion({ entrada, ...props }: FormEvents & { entrada: ResumenEntradaAgenda }) {
   const detalle = useQuery({ queryKey: agendaKeys.entrada(entrada.entradaAgendaId), queryFn: ({ signal }) => obtenerEntradaAgenda(entrada.entradaAgendaId, signal), refetchOnMount: "always", refetchOnWindowFocus: false, refetchOnReconnect: false });
-  if (detalle.isPending || detalle.isFetching && !detalle.isFetchedAfterMount) return <Skeleton className="h-64 w-full" aria-label="Cargando entrada para editar" />;
-  if (!detalle.data) return <div role="alert"><p>{detalle.error?.message ?? "No pudimos cargar la entrada."}</p><Button variant="outline" onClick={() => void detalle.refetch()}>Reintentar</Button></div>;
+  if (detalle.isPending || detalle.isFetching && !detalle.isFetchedAfterMount) return <DialogBody className="pb-4"><Skeleton className="h-64 w-full" aria-label="Cargando entrada para editar" /></DialogBody>;
+  if (!detalle.data) return <DialogBody className="pb-4"><div role="alert" className="space-y-3"><p className="break-words">{detalle.error?.message ?? "No pudimos cargar la entrada."}</p><Button variant="outline" onClick={() => void detalle.refetch()}>Reintentar</Button></div></DialogBody>;
   return <Formulario inicial={agendaFormDesdeEntrada(detalle.data, entrada)} id={entrada.entradaAgendaId} vencimientoManual={false} {...props} />;
 }
 
@@ -147,13 +155,13 @@ export default function AgendaFormDialog({ editor, onClose, onSaved, onUsarRegla
   }
   const props: FormEvents = { onClose: pedirCierre, onSaved, onUsarRegla: onUsarRegla ? (conDatos) => { if (!conDatos || window.confirm("Se descartará lo que cargaste en este formulario. ¿Seguir?")) onUsarRegla(); } : undefined, onPending: value => { ocupado.current = value; setPending(value); }, onChanges: (value, creada) => { cambios.current = { dirty: value, entradaCreada: creada }; setDirty(value); setEntradaCreada(creada); } };
   return <Dialog open onOpenChange={(open, details) => { if (!open) { if (ocupado.current || cambios.current.dirty) details.cancel(); pedirCierre(); } }}>
-    <DialogContent showCloseButton={!pending} className="max-h-[92dvh] overflow-y-auto sm:max-w-3xl">
-      <DialogHeader><DialogTitle>{editor.modo === "editar" ? "Editar" : editor.modo === "vencimiento" ? "Agregar vencimiento" : "Agregar a la agenda"}</DialogTitle><DialogDescription>Los campos con * son obligatorios.</DialogDescription></DialogHeader>
+    <DialogContent showCloseButton={!pending} className={cn(DIALOG_PANEL, TACTIL, "sm:max-w-3xl")}>
+      <DialogHeader className={DIALOG_PANEL_ENCABEZADO}><DialogTitle>{editor.modo === "editar" ? "Editar" : editor.modo === "vencimiento" ? "Agregar vencimiento" : "Agregar a la agenda"}</DialogTitle><DialogDescription>Los campos con * son obligatorios.</DialogDescription></DialogHeader>
       {editor.modo === "editar" ? <Edicion entrada={editor.entrada} {...props} /> : <Formulario inicial={agendaFormInicial(editor.modo === "vencimiento", editor.contexto)} vencimientoManual={editor.modo === "vencimiento"} {...props} />}
       <Dialog open={confirmar} onOpenChange={setConfirmar}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader><DialogTitle>{entradaCreada ? "¿Cerrar con avisos pendientes?" : "¿Descartar los cambios?"}</DialogTitle><DialogDescription>{entradaCreada ? "Lo guardado se conserva. Los avisos que faltan no se agregarán si cerrás ahora." : "Tenés cambios sin guardar. Si cerrás ahora, se perderán."}</DialogDescription></DialogHeader>
-          <div className="flex flex-wrap justify-end gap-2"><Button type="button" variant="outline" onClick={() => setConfirmar(false)}>Seguir en el formulario</Button><Button type="button" variant="destructive" onClick={() => { if (entradaCreada) onSaved(); else onClose(); }}>{entradaCreada ? "Cerrar" : "Descartar cambios"}</Button></div>
+        <DialogContent className={cn(TACTIL, "sm:max-w-md")}>
+          <DialogHeader className="pr-8"><DialogTitle className="leading-snug">{entradaCreada ? "¿Cerrar con avisos pendientes?" : "¿Descartar los cambios?"}</DialogTitle><DialogDescription>{entradaCreada ? "Lo guardado se conserva. Los avisos que faltan no se agregarán si cerrás ahora." : "Tenés cambios sin guardar. Si cerrás ahora, se perderán."}</DialogDescription></DialogHeader>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end"><Button type="button" variant="outline" onClick={() => setConfirmar(false)}>Seguir en el formulario</Button><Button type="button" variant="destructive" onClick={() => { if (entradaCreada) onSaved(); else onClose(); }}>{entradaCreada ? "Cerrar" : "Descartar cambios"}</Button></div>
         </DialogContent>
       </Dialog>
     </DialogContent>

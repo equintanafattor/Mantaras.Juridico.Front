@@ -53,7 +53,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
@@ -65,14 +65,14 @@ function DialogContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-2 right-2"
+                className="absolute top-2 right-2 z-10 pointer-coarse:size-10"
                 size="icon-sm"
               />
             }
           >
             <XIcon
             />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Cerrar</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
@@ -85,6 +85,31 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-header"
       className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  )
+}
+
+// Diálogo de pantalla completa en celular, con encabezado y acciones fijos.
+// Se usa con DialogHeader + DialogBody (+ acciones con DIALOG_ACCIONES).
+const DIALOG_PANEL =
+  "flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[min(92dvh,60rem)] sm:max-w-[calc(100%-2rem)] sm:rounded-xl"
+const DIALOG_PANEL_ENCABEZADO = "shrink-0 border-b px-4 py-3 pr-14 sm:px-6 sm:py-4"
+// Pie fijo fuera del cuerpo desplazable.
+const DIALOG_PIE =
+  "flex shrink-0 flex-wrap justify-end gap-2 border-t bg-popover px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] max-sm:[&>*]:flex-1 sm:px-6"
+// Acciones al final de un DialogBody: quedan pegadas abajo al desplazar.
+const DIALOG_ACCIONES =
+  "sticky bottom-0 z-10 -mx-4 mt-auto flex flex-wrap justify-end gap-2 border-t bg-popover px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] max-sm:[&>*]:flex-1 sm:-mx-6 sm:px-6"
+
+function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn(
+        "@container flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-4 pt-4 sm:px-6",
+        className
+      )}
       {...props}
     />
   )
@@ -147,7 +172,12 @@ function DialogDescription({
 }
 
 export {
+  DIALOG_ACCIONES,
+  DIALOG_PANEL,
+  DIALOG_PANEL_ENCABEZADO,
+  DIALOG_PIE,
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,

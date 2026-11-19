@@ -62,7 +62,7 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
       finally { lock.current = false; onPending(false); }
     }}>
       <h4 className="text-sm font-medium">Agregar aviso</h4>
-      <fieldset disabled={bloqueado || !entrada.activo} className="grid min-w-0 gap-3 sm:grid-cols-3">
+      <fieldset disabled={bloqueado || !entrada.activo} className="grid min-w-0 gap-3 @lg:grid-cols-3">
         <div className="space-y-2"><Label htmlFor="agenda-recordatorio-base">Antes de</Label><select id="agenda-recordatorio-base" className={SELECT_CLASS} value={base} onChange={e => { setBase(e.target.value as BaseCalculoRecordatorioAgenda); setError(undefined); }}><option value="Inicio">Inicio</option><option value="Vencimiento" disabled={!entrada.fechaVencimiento}>Vencimiento</option></select></div>
         <div className="space-y-2"><Label htmlFor="agenda-recordatorio-cantidad">Anticipación</Label><Input id="agenda-recordatorio-cantidad" type="number" min={0} max={maxCantidad} step={1} required value={cantidad} onChange={e => { setCantidad(e.target.value); setError(undefined); }} /></div>
         <div className="space-y-2"><Label htmlFor="agenda-recordatorio-unidad">Unidad</Label><select id="agenda-recordatorio-unidad" className={SELECT_CLASS} value={unidad} onChange={e => { setUnidad(e.target.value as UnidadAnticipacionAgenda); setError(undefined); }}><option value="Minutos">Minutos</option><option value="Horas">Horas</option><option value="Dias">Días</option></select></div>

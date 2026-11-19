@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { DIALOG_ACCIONES } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,7 +39,7 @@ function Formulario({ dia, onSaved }: { dia?: DiaInhabilResponse; onSaved: () =>
       <p className="text-xs text-muted-foreground">Cada fecha tiene un único registro, incluso si está inactivo. Los cambios afectan las nuevas generaciones por días hábiles; los vencimientos ya creados conservan su fecha.</p>
     </fieldset>
     {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
-    <div className="flex justify-end gap-2"><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar día inhábil"}</Button></div>
+    <div className={DIALOG_ACCIONES}><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar día inhábil"}</Button></div>
   </form>;
 }
 function Edicion({ id, onSaved }: { id: number; onSaved: () => void }) {
@@ -54,7 +55,7 @@ function ConfirmacionEstado({ dia, onSaved }: { dia: DiaInhabilResponse; onSaved
   const { onClose, onPending } = useEventosConfiguracionAgenda();
   const mutacion = useCambiarActivoDiaInhabil(), lock = useRef(false);
   const [error, setError] = useState<string>();
-  return <div className="space-y-4"><p className="break-words font-medium">{dia.fecha.split("-").reverse().join("/")} · {dia.descripcion}</p><p className="text-sm">{dia.activo ? "La fecha dejará de excluirse del cómputo de días hábiles. Los vencimientos ya creados conservan su fecha. Sábados y domingos seguirán excluyéndose." : "La fecha volverá a excluirse de las nuevas generaciones por días hábiles. Los vencimientos ya creados conservan su fecha."}</p>{error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}<div className="flex justify-end gap-2"><Button variant="outline" disabled={mutacion.isPending} onClick={onClose}>Cancelar</Button><Button variant={dia.activo ? "destructive" : "default"} disabled={mutacion.isPending} onClick={async () => {
+  return <div className="space-y-4"><p className="break-words font-medium">{dia.fecha.split("-").reverse().join("/")} · {dia.descripcion}</p><p className="text-sm">{dia.activo ? "La fecha dejará de excluirse del cómputo de días hábiles. Los vencimientos ya creados conservan su fecha. Sábados y domingos seguirán excluyéndose." : "La fecha volverá a excluirse de las nuevas generaciones por días hábiles. Los vencimientos ya creados conservan su fecha."}</p>{error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}<div className={DIALOG_ACCIONES}><Button variant="outline" disabled={mutacion.isPending} onClick={onClose}>Cancelar</Button><Button variant={dia.activo ? "destructive" : "default"} disabled={mutacion.isPending} onClick={async () => {
     if (lock.current) return; lock.current = true; onPending(true); setError(undefined);
     try { await mutacion.mutateAsync({ id: dia.diaInhabilId, activo: !dia.activo }); onSaved(); }
     catch (err) { setError(err instanceof Error ? err.message : "No pudimos cambiar el estado."); }

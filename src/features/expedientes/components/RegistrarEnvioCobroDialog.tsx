@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 
 import { useRegistrarEnvioCobro } from "../hooks/useRegistrarEnvioCobro";
 import {
@@ -79,10 +81,10 @@ export default function RegistrarEnvioCobroDialog({
     <Dialog open onOpenChange={cambiarApertura} disablePointerDismissal>
       <DialogContent
         showCloseButton={!registrarMutation.isPending}
-        className="max-h-[92dvh] overflow-y-auto sm:max-w-lg"
+        className={cn(TACTIL, "sm:max-w-lg")}
       >
-        <DialogHeader className="text-left">
-          <DialogTitle>Registrar envío de cobro</DialogTitle>
+        <DialogHeader className="pr-8 text-left">
+          <DialogTitle className="leading-snug">Registrar envío de cobro</DialogTitle>
 
           <DialogDescription className="break-words">
             {expediente.caratula}

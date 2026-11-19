@@ -289,7 +289,7 @@ function DetalleSkeleton() {
         <Skeleton className="h-5 w-64" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-6">
           <Skeleton className="h-80 w-full" />
           <Skeleton className="h-52 w-full" />
@@ -666,7 +666,7 @@ export default function ExpedienteDetalleScreen({
             </div>
           )}
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
             <div className="space-y-6">
               <section className="overflow-hidden rounded-lg border bg-card">
                 <header className="flex items-center gap-3 border-b bg-muted/30 px-5 py-4">

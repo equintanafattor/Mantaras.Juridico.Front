@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Repeat, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { TACTIL } from "@/lib/tactil";
 import { useCambiarEstadoAgenda } from "../hooks/useAgenda";
 import { cuandoAgenda, estaAbierta, situacionAgenda } from "../lib/situacionAgenda";
 import type { EntradaAgendaListadoResponse, EstadoEntradaAgenda, RelacionAgendaResponse } from "../types/types";
@@ -21,7 +22,7 @@ export function RelacionesAgenda({ entrada, className }: { entrada: Pick<Entrada
   ];
   if (items.length === 0) return null;
   return <ul className={cn("flex flex-wrap gap-x-3 gap-y-1 text-xs", className)} aria-label="Relacionado con">
-    {items.map(({ ruta, item, tipo }) => <li key={`${ruta}-${item.id}`} className="min-w-0"><Link href={`${ruta}/${item.id}`} className={cn(ENLACE, "break-words")} title={tipo}><span className="sr-only">{tipo}: </span>{item.nombre}</Link></li>)}
+    {items.map(({ ruta, item, tipo }) => <li key={`${ruta}-${item.id}`} className="min-w-0"><Link href={`${ruta}/${item.id}`} className={cn(ENLACE, "break-words pointer-coarse:inline-block pointer-coarse:py-1")} title={tipo}><span className="sr-only">{tipo}: </span>{item.nombre}</Link></li>)}
   </ul>;
 }
 
@@ -30,7 +31,8 @@ export default function AgendaEntradaItem({ entrada, hoy, onDetail, onCompletar,
 }) {
   const situacion = situacionAgenda(entrada, hoy);
   const puedeCompletar = estaAbierta(entrada.estado) && (entrada.transicionesPermitidas?.includes("Completada") ?? true);
-  return <article className="flex min-w-0 flex-col gap-3 bg-card p-4 sm:flex-row sm:items-start sm:gap-4">
+  // Se adapta al ancho de su propio contenedor (Agenda, ficha o panel), no al de la pantalla.
+  return <article className={cn("@container min-w-0 bg-card", TACTIL)}><div className="flex min-w-0 flex-col gap-3 p-4 @md:flex-row @md:items-start @md:gap-4">
     <div className="min-w-0 flex-1 space-y-1.5">
       <div className="flex flex-wrap items-center gap-1.5">
         {situacion.condicion ? <SituacionEtiqueta situacion={situacion} /> : null}
@@ -38,7 +40,7 @@ export default function AgendaEntradaItem({ entrada, hoy, onDetail, onCompletar,
         <PrioridadEtiqueta prioridad={entrada.prioridad} />
       </div>
       <h3 className="break-words font-medium leading-6">
-        <button type="button" onClick={onDetail} className="rounded-sm text-left underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring">{entrada.titulo}</button>
+        <button type="button" onClick={onDetail} className="block w-full rounded-sm text-left underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:py-1">{entrada.titulo}</button>
       </h3>
       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
         {mostrarFecha ? <span>{cuandoAgenda(entrada, hoy)}</span> : null}
@@ -49,10 +51,10 @@ export default function AgendaEntradaItem({ entrada, hoy, onDetail, onCompletar,
       </p>
       <RelacionesAgenda entrada={entrada} />
     </div>
-    {puedeCompletar && onCompletar ? <Button type="button" variant="outline" size="sm" className="self-start" disabled={completando} onClick={onCompletar} aria-label={`Completar: ${entrada.titulo}`}>
+    {puedeCompletar && onCompletar ? <Button type="button" variant="outline" size="sm" className="shrink-0 self-start" disabled={completando} onClick={onCompletar} aria-label={`Completar: ${entrada.titulo}`}>
       <Check />{completando ? "Guardando…" : "Completar"}
     </Button> : null}
-  </article>;
+  </div></article>;
 }
 
 type AvisoAccion = { tipo: "ok" | "error"; texto: string; deshacer?: { id: number; estado: EstadoEntradaAgenda } };
@@ -86,7 +88,7 @@ export function useCompletarAgenda() {
     } finally { setPendienteId(undefined); }
   }
 
-  const elemento = aviso ? <div role={aviso.tipo === "error" ? "alert" : "status"} className={cn("flex flex-wrap items-center gap-2 rounded-md border px-3 py-2 text-sm", aviso.tipo === "error" ? "border-destructive/40 text-destructive" : "bg-muted/40")}>
+  const elemento = aviso ? <div role={aviso.tipo === "error" ? "alert" : "status"} className={cn("flex flex-wrap items-center gap-2 rounded-md border px-3 py-2 text-sm", TACTIL, aviso.tipo === "error" ? "border-destructive/40 text-destructive" : "bg-muted/40")}>
     <span className="min-w-0 flex-1 break-words">{aviso.texto}</span>
     {aviso.deshacer ? <Button type="button" variant="outline" size="sm" disabled={pendienteId !== undefined} onClick={() => void deshacer()}>Deshacer</Button> : null}
     <Button type="button" variant="ghost" size="icon-sm" aria-label="Cerrar mensaje" onClick={() => setAviso(undefined)}><X /></Button>

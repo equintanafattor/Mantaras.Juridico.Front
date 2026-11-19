@@ -39,11 +39,11 @@ export default function AgendaFiltros({ value, onApply, campos }: { value: Filtr
     setDraft(FILTROS_AGENDA_INICIALES); setError(null); setRevision((prev) => prev + 1); onApply(FILTROS_AGENDA_INICIALES);
   }
   return (
-    <form aria-label="Filtros de Agenda" className="space-y-3 rounded-lg border bg-card p-3 sm:p-4" onSubmit={(e) => {
+    <form aria-label="Filtros de Agenda" className="@container space-y-3 rounded-lg border bg-card p-3 sm:p-4" onSubmit={(e) => {
       e.preventDefault(); const mensaje = campos.fechas ? validarFechasFiltros(draft) : null; setError(mensaje);
       if (!mensaje) { const next = { ...draft, busqueda: draft.busqueda.trim() }; setDraft(next); onApply(next); }
     }}>
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+      <div className="flex flex-col gap-2 @xl:flex-row @xl:items-end">
         <div className="min-w-0 flex-1 space-y-1">
           <Label htmlFor="agenda-busqueda" className="sr-only">Buscar en Agenda</Label>
           <div className="relative">
@@ -51,21 +51,21 @@ export default function AgendaFiltros({ value, onApply, campos }: { value: Filtr
             <Input id="agenda-busqueda" maxLength={150} placeholder="Buscar por título o descripción" className="h-9 pl-8" value={draft.busqueda} onChange={(e) => cambiar("busqueda", e.target.value)} />
           </div>
         </div>
-        <div className="space-y-1 sm:w-56">
+        <div className="space-y-1 @xl:w-56">
           <Label htmlFor="agenda-responsable" className="sr-only">Responsable</Label>
           <select id="agenda-responsable" className={SELECT_CLASS} value={draft.responsableId ?? ""} disabled={!opciones.data} onChange={(e) => cambiar("responsableId", e.target.value ? Number(e.target.value) : null)}>
             <option value="">Todos los responsables</option>{opciones.data?.responsables.map((item) => <option key={item.id} value={item.id}>{item.nombre}{!item.activo ? " (inactivo)" : ""}</option>)}
           </select>
         </div>
         <div className="flex gap-2">
-          <Button type="submit" variant={pendientes ? "default" : "outline"} className="h-9">Buscar</Button>
-          <Button type="button" variant="ghost" className="h-9" aria-expanded={abierto} aria-controls="agenda-filtros-mas" onClick={() => setAbierto(!abierto)}>
+          <Button type="submit" variant={pendientes ? "default" : "outline"} className="h-9 flex-1 @xl:flex-none">Buscar</Button>
+          <Button type="button" variant="ghost" className="h-9 flex-1 @xl:flex-none" aria-expanded={abierto} aria-controls="agenda-filtros-mas" onClick={() => setAbierto(!abierto)}>
             <SlidersHorizontal />Más filtros{avanzados > 0 ? ` (${avanzados})` : ""}
           </Button>
         </div>
       </div>
       {abierto ? <div id="agenda-filtros-mas" className="space-y-3 border-t pt-3">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 @md:grid-cols-2 @3xl:grid-cols-4">
           {campos.estado ? <div className="space-y-1"><Label htmlFor="agenda-estado">Estado</Label><select id="agenda-estado" className={SELECT_CLASS} value={draft.estado} onChange={(e) => cambiar("estado", e.target.value as EstadoEntradaAgenda | "")}><option value="">Todos</option>{ESTADOS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div> : null}
           <div className="space-y-1"><Label htmlFor="agenda-tipo">Categoría</Label><select id="agenda-tipo" className={SELECT_CLASS} value={draft.tipoEntradaAgendaId ?? ""} disabled={!opciones.data} onChange={(e) => cambiar("tipoEntradaAgendaId", e.target.value ? Number(e.target.value) : null)}><option value="">Todas</option>{opciones.data?.tiposEntrada.map((item) => <option key={item.id} value={item.id}>{item.nombre}{!item.activo ? " (inactiva)" : ""}</option>)}</select></div>
           {campos.fechas ? <>
@@ -74,7 +74,7 @@ export default function AgendaFiltros({ value, onApply, campos }: { value: Filtr
           </> : null}
         </div>
         {campos.fechas ? <p id="agenda-fechas-ayuda" className="text-xs text-muted-foreground">Sin fechas se muestra el mes elegido.</p> : null}
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid gap-3 @3xl:grid-cols-3">
           <AgendaRelacionFiltro key={`cliente-${revision}`} tipo="cliente" label="Cliente" value={draft.cliente} onChange={(item) => cambiar("cliente", item)} />
           <AgendaRelacionFiltro key={`caso-${revision}`} tipo="caso" label="Expediente administrativo" value={draft.caso} onChange={(item) => cambiar("caso", item)} />
           <AgendaRelacionFiltro key={`expediente-${revision}`} tipo="expediente" label="Expediente judicial" value={draft.expediente} onChange={(item) => cambiar("expediente", item)} />

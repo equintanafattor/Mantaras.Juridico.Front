@@ -87,7 +87,7 @@ function PanelSkeleton() {
         ))}
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+      <section className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <div className="rounded-lg border bg-card">
           <div className="border-b p-5">
             <Skeleton className="h-5 w-40" />

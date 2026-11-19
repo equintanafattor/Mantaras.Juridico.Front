@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 
 import AppShell from "@/components/layout/AppShell";
@@ -21,6 +21,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mántaras Quintana Jurídico",
   description: "Sistema de gestión para el estudio jurídico Mántaras Quintana",
+};
+
+// Con el teclado virtual abierto (Android), el contenido se redimensiona en
+// lugar de quedar tapado: los diálogos de pantalla completa (100dvh) conservan
+// visibles su encabezado y sus acciones sobre el teclado.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

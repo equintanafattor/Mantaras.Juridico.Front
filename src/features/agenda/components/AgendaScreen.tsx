@@ -6,6 +6,7 @@ import { AlertCircle, CalendarDays, ChevronLeft, ChevronRight, ListChecks, List,
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { TACTIL } from "@/lib/tactil";
 import { useAgenda } from "../hooks/useAgenda";
 import { fechaHoyAgenda } from "../lib/agendaForm";
 import { desplazarMes, mesActualArgentina, mostrarFechaAgenda, nombreMes } from "../lib/periodoAgenda";
@@ -79,11 +80,11 @@ export default function AgendaScreen() {
   const conMes = vista !== "pendientes";
 
   return (
-    <div className="mx-auto max-w-5xl space-y-5">
+    <div className={cn("mx-auto max-w-5xl space-y-5", TACTIL)}>
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Agenda</h1>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/agenda/configuracion" className="inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"><Settings className="size-4" aria-hidden="true" />Configuración</Link>
+          <Link href="/agenda/configuracion" className="inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:h-10"><Settings className="size-4" aria-hidden="true" />Configuración</Link>
           <Button size="lg" onClick={agregar}><Plus />Agregar</Button>
         </div>
       </header>
@@ -96,13 +97,13 @@ export default function AgendaScreen() {
       {detalle ? <AgendaDetalleDialog key={detalle.entradaAgendaId} entrada={detalle} onClose={() => setDetalle(undefined)} onEdit={(entrada) => { setDetalle(undefined); setEditor({ modo: "editar", entrada }); }} /> : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-lg border bg-muted/40 p-0.5" role="group" aria-label="Vista de Agenda">
-          {VISTAS.map(({ id, label, icono: Icono }) => <Button key={id} variant={vista === id ? "secondary" : "ghost"} className={cn("h-8", vista === id && "bg-background shadow-sm")} aria-pressed={vista === id} onClick={() => { setVista(id); setPage(1); }}><Icono />{label}</Button>)}
+        <div className="flex w-full rounded-lg border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto" role="group" aria-label="Vista de Agenda">
+          {VISTAS.map(({ id, label, icono: Icono }) => <Button key={id} variant={vista === id ? "secondary" : "ghost"} className={cn("h-8 flex-1 sm:flex-none", vista === id && "bg-background shadow-sm")} aria-pressed={vista === id} onClick={() => { setVista(id); setPage(1); }}><Icono />{label}</Button>)}
         </div>
-        {conMes ? <div className="flex items-center gap-1">
+        {conMes ? <div className="flex w-full items-center gap-1 sm:w-auto">
           <Button variant="outline" size="icon" aria-label="Mes anterior" disabled={mes === "0001-01"} onClick={() => cambiarMes(desplazarMes(mes, -1))}><ChevronLeft /></Button>
           <label className="sr-only" htmlFor="agenda-periodo">Mes</label>
-          <input id="agenda-periodo" type="month" min="0001-01" max="9999-12" value={mes} onChange={(event) => cambiarMes(event.target.value)} className="h-8 w-44 rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" />
+          <input id="agenda-periodo" type="month" min="0001-01" max="9999-12" value={mes} onChange={(event) => cambiarMes(event.target.value)} className="h-8 min-w-0 flex-1 rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:h-10 sm:w-44 sm:flex-none" />
           <Button variant="outline" size="icon" aria-label="Mes siguiente" disabled={mes === "9999-12"} onClick={() => cambiarMes(desplazarMes(mes, 1))}><ChevronRight /></Button>
           {mes !== mesActualArgentina() ? <Button variant="ghost" onClick={() => cambiarMes(mesActualArgentina())}>Hoy</Button> : null}
         </div> : null}
@@ -112,7 +113,7 @@ export default function AgendaScreen() {
 
       {conMes ? <h2 className="text-lg font-semibold first-letter:uppercase">{vista === "todas" && (filtros.desde || filtros.hasta) ? "Rango de fechas elegido" : nombreMes(mes)}</h2> : null}
 
-      {vista === "pendientes" ? <AgendaPendientes filtros={{ ...filtros, estado: "", desde: "", hasta: "" }}onDetail={setDetalle} onAgregar={agregar} />
+      {vista === "pendientes" ? <AgendaPendientes filtros={{ ...filtros, estado: "", desde: "", hasta: "" }} onDetail={setDetalle} onAgregar={agregar} />
         : vista === "calendario" ? <AgendaCalendario key={`${mes}-${JSON.stringify(filtros)}`} mes={mes} filtros={{ ...filtros, desde: "", hasta: "" }} onDetail={setDetalle} />
           : <ListadoMes mes={mes} filtros={filtros} page={page} setPage={setPage} onDetail={setDetalle} />}
     </div>

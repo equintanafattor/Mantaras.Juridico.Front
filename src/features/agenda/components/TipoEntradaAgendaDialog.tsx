@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { DIALOG_ACCIONES } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,7 +41,7 @@ function Formulario({ tipo, onSaved }: { tipo?: TipoEntradaAgendaResponse; onSav
       <p className="text-xs text-muted-foreground">Los nombres se guardan en mayúsculas. Un nombre usado por un tipo inactivo queda reservado. Los cambios se reflejan también en las entradas vinculadas.</p>
     </fieldset>
     {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
-    <div className="flex justify-end gap-2"><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar tipo"}</Button></div>
+    <div className={DIALOG_ACCIONES}><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar tipo"}</Button></div>
   </form>;
 }
 function Edicion({ id, onSaved }: { id: number; onSaved: () => void }) {
@@ -56,7 +57,7 @@ function ConfirmacionEstado({ tipo, onSaved }: { tipo: TipoEntradaAgendaResponse
   const { onClose, onPending } = useEventosConfiguracionAgenda();
   const mutacion = useCambiarActivoTipoEntradaAgenda(), lock = useRef(false);
   const [error, setError] = useState<string>();
-  return <div className="space-y-4"><p className="break-words font-medium">{tipo.nombre}</p><p className="text-sm">{tipo.activo ? "Las entradas y recordatorios existentes se conservan. Este tipo dejará de estar disponible para nuevas entradas y generaciones por reglas hasta que lo reactives." : "El tipo volverá a estar disponible para nuevas entradas y generaciones por reglas activas."}</p>{error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}<div className="flex justify-end gap-2"><Button variant="outline" disabled={mutacion.isPending} onClick={onClose}>Cancelar</Button><Button variant={tipo.activo ? "destructive" : "default"} disabled={mutacion.isPending} onClick={async () => {
+  return <div className="space-y-4"><p className="break-words font-medium">{tipo.nombre}</p><p className="text-sm">{tipo.activo ? "Las entradas y recordatorios existentes se conservan. Este tipo dejará de estar disponible para nuevas entradas y generaciones por reglas hasta que lo reactives." : "El tipo volverá a estar disponible para nuevas entradas y generaciones por reglas activas."}</p>{error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}<div className={DIALOG_ACCIONES}><Button variant="outline" disabled={mutacion.isPending} onClick={onClose}>Cancelar</Button><Button variant={tipo.activo ? "destructive" : "default"} disabled={mutacion.isPending} onClick={async () => {
     if (lock.current) return; lock.current = true; onPending(true); setError(undefined);
     try { await mutacion.mutateAsync({ id: tipo.tipoEntradaAgendaId, activo: !tipo.activo }); onSaved(); }
     catch (err) { setError(err instanceof Error ? err.message : "No pudimos cambiar el estado."); }

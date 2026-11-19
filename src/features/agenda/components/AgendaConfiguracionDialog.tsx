@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DIALOG_PANEL, DIALOG_PANEL_ENCABEZADO, Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 
 export type EventosConfiguracionAgenda = { onClose: () => void; onDirty: (value: boolean) => void; onPending: (value: boolean) => void };
 const EventosContext = createContext<EventosConfiguracionAgenda | null>(null);
@@ -22,10 +24,12 @@ export default function AgendaConfiguracionDialog({ titulo, descripcion, onClose
     return () => window.removeEventListener("beforeunload", proteger);
   }, [dirty, pending]);
   return <Dialog open onOpenChange={(open, details) => { if (!open) { if (estado.current.pending || estado.current.dirty) details.cancel(); cerrar(); } }}>
-    <DialogContent showCloseButton={!pending} className="max-h-[92dvh] overflow-y-auto sm:max-w-2xl">
-      <DialogHeader><DialogTitle>{titulo}</DialogTitle><DialogDescription>{descripcion}</DialogDescription></DialogHeader>
-      <EventosContext.Provider value={{ onClose: cerrar, onDirty: value => { estado.current.dirty = value; setDirty(value); }, onPending: value => { estado.current.pending = value; setPending(value); } }}>{children}</EventosContext.Provider>
-      <Dialog open={confirmar} onOpenChange={setConfirmar}><DialogContent className="sm:max-w-md"><DialogHeader><DialogTitle>¿Descartar los cambios?</DialogTitle><DialogDescription>{avisoCierre ?? "Los cambios sin guardar se perderán."}</DialogDescription></DialogHeader><div className="flex flex-wrap justify-end gap-2"><Button variant="outline" onClick={() => setConfirmar(false)}>Seguir editando</Button><Button variant="destructive" onClick={onClose}>Descartar cambios</Button></div></DialogContent></Dialog>
+    <DialogContent showCloseButton={!pending} className={cn(DIALOG_PANEL, TACTIL, "sm:max-w-2xl")}>
+      <DialogHeader className={DIALOG_PANEL_ENCABEZADO}><DialogTitle className="break-words leading-snug">{titulo}</DialogTitle><DialogDescription className="break-words">{descripcion}</DialogDescription></DialogHeader>
+      <DialogBody>
+        <EventosContext.Provider value={{ onClose: cerrar, onDirty: value => { estado.current.dirty = value; setDirty(value); }, onPending: value => { estado.current.pending = value; setPending(value); } }}>{children}</EventosContext.Provider>
+      </DialogBody>
+      <Dialog open={confirmar} onOpenChange={setConfirmar}><DialogContent className={cn(TACTIL, "sm:max-w-md")}><DialogHeader><DialogTitle>¿Descartar los cambios?</DialogTitle><DialogDescription>{avisoCierre ?? "Los cambios sin guardar se perderán."}</DialogDescription></DialogHeader><div className="flex flex-wrap justify-end gap-2"><Button variant="outline" onClick={() => setConfirmar(false)}>Seguir editando</Button><Button variant="destructive" onClick={onClose}>Descartar cambios</Button></div></DialogContent></Dialog>
     </DialogContent>
   </Dialog>;
 }

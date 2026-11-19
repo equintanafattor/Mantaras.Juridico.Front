@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 import { useReglasVencimiento } from "../hooks/useReglasVencimiento";
 import { useOpcionesAgenda } from "../hooks/useOpcionesAgenda";
 import DiasInhabilesAgendaPanel from "./DiasInhabilesAgendaPanel";
@@ -21,8 +23,8 @@ export default function AgendaConfiguracionScreen() {
   const [mensaje, setMensaje] = useState<string>();
   const reglas = useReglasVencimiento(soloActivas), opciones = useOpcionesAgenda();
   const tipo = opciones.data?.tiposEntrada.find(item => item.id === Number(tipoId));
-  return <div className="mx-auto max-w-5xl space-y-6">
-    <header className="flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">Configuración de Agenda</h1></div><Link href="/agenda" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Volver a Agenda</Link></header>
+  return <div className={cn("mx-auto max-w-5xl space-y-6", TACTIL)}>
+    <header className="flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">Configuración de Agenda</h1></div><Link href="/agenda" className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium pointer-coarse:min-h-10 hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Volver a Agenda</Link></header>
     {mensaje ? <p role="status" className="text-sm">{mensaje}</p> : null}
     <TiposEntradaAgendaPanel />
     <DiasInhabilesAgendaPanel />
@@ -32,9 +34,9 @@ export default function AgendaConfiguracionScreen() {
     </section>
     <section className="space-y-4 rounded-lg border bg-card p-5 sm:p-6" aria-label="Reglas de vencimiento">
       <header className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-semibold">Reglas de vencimiento</h2><p className="mt-1 text-sm text-muted-foreground">Calculan un vencimiento a partir de una fecha (por ejemplo, 10 días hábiles desde la notificación).</p></div><div className="flex flex-wrap gap-2"><Button variant="outline" disabled={reglas.isFetching} onClick={() => void reglas.refetch()}>Actualizar</Button><Button onClick={() => { setMensaje(undefined); setEditor({}); }}>Nueva regla</Button></div></header>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={soloActivas} onChange={e => setSoloActivas(e.target.checked)} />Mostrar sólo reglas activas</label>
+      <label className="flex items-center gap-2 text-sm pointer-coarse:min-h-10"><input type="checkbox" className="size-4 accent-primary" checked={soloActivas} onChange={e => setSoloActivas(e.target.checked)} />Mostrar sólo reglas activas</label>
       {reglas.isPending ? <Skeleton className="h-36 w-full" aria-label="Cargando reglas" /> : reglas.isError ? <div role="alert" className="space-y-2"><p>{reglas.error.message}</p><Button variant="outline" disabled={reglas.isFetching} onClick={() => void reglas.refetch()}>Reintentar</Button></div> : reglas.data.length === 0 ? <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">No hay reglas para esta consulta.</p> : <ul className="space-y-3" aria-busy={reglas.isFetching}>{reglas.data.map(regla => <li key={regla.reglaVencimientoId} className="space-y-3 rounded-md border p-4">
-        <div className="flex flex-wrap gap-2"><Badge variant={regla.activo ? "secondary" : "outline"}>{regla.activo ? "Activa" : "Inactiva"}</Badge>{regla.codigo ? <Badge variant="outline">Regla del sistema · se usa al registrar envíos de cobro</Badge> : null}<Badge variant="outline">{regla.tipoEntradaNombre}</Badge><Badge variant="outline">{regla.prioridadGenerada}</Badge></div>
+        <div className="flex flex-wrap gap-2 [&>span]:h-auto [&>span]:max-w-full [&>span]:whitespace-normal [&>span]:text-left"><Badge variant={regla.activo ? "secondary" : "outline"}>{regla.activo ? "Activa" : "Inactiva"}</Badge>{regla.codigo ? <Badge variant="outline">Regla del sistema · se usa al registrar envíos de cobro</Badge> : null}<Badge variant="outline">{regla.tipoEntradaNombre}</Badge><Badge variant="outline">{regla.prioridadGenerada}</Badge></div>
         <h3 className="break-words font-medium">{regla.nombre}</h3>
         {regla.descripcion ? <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">{regla.descripcion}</p> : null}
         <p className="text-sm">{regla.cantidadDias} días {regla.tipoComputo === "DiasHabiles" ? "hábiles" : "corridos"} {regla.sentidoCalculo === "Antes" ? "antes" : "después"} de la fecha base · {regla.horaSugerida ? `Hora: ${regla.horaSugerida}` : "Sin hora sugerida"}</p>

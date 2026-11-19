@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DIALOG_ACCIONES } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api/apiClient";
@@ -72,7 +73,7 @@ function Formulario({ contexto, onSaved, onUncertain }: { contexto?: ContextoAge
     } catch (err) { setError(err instanceof Error ? err.message : "No pudimos aplicar la regla."); }
     finally { lock.current = false; setPending(false); onPending(false); }
   }
-  if (resultado) return <div className="space-y-4"><p role="status" className="rounded-md border p-4 text-sm">Agendado: <strong>{resultado.aplicacion.entrada.titulo}</strong>, vence el <strong>{mostrarFechaAgenda(resultado.aplicacion.fechaCalculada)}</strong>.</p><p className="text-sm text-muted-foreground">Se agregaron los avisos automáticos que correspondan.</p><div className="flex flex-wrap justify-end gap-2"><Button variant="outline" onClick={onClose}>Cerrar</Button><Button onClick={() => onSaved(resultado)}>Ver detalle</Button></div></div>;
+  if (resultado) return <div className="space-y-4"><p role="status" className="rounded-md border p-4 text-sm">Agendado: <strong>{resultado.aplicacion.entrada.titulo}</strong>, vence el <strong>{mostrarFechaAgenda(resultado.aplicacion.fechaCalculada)}</strong>.</p><p className="text-sm text-muted-foreground">Se agregaron los avisos automáticos que correspondan.</p><div className={DIALOG_ACCIONES}><Button variant="outline" onClick={onClose}>Cerrar</Button><Button onClick={() => onSaved(resultado)}>Ver detalle</Button></div></div>;
   return <form className="space-y-4" onSubmit={generar}>
     <fieldset disabled={pending || incierto} className="min-w-0 space-y-4">
       <div className="space-y-2"><Label htmlFor="aplicar-regla">Regla *</Label><select id="aplicar-regla" required className="h-9 w-full rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" disabled={!reglasManuales} value={form.reglaId ?? ""} onChange={e => cambiar("reglaId", e.target.value ? Number(e.target.value) : null)}><option value="">Elegir regla</option>{reglasManuales?.map(item => <option key={item.reglaVencimientoId} value={item.reglaVencimientoId}>{item.nombre} · {item.tipoEntradaNombre}</option>)}{form.reglaId && reglas.data && !regla ? <option value={form.reglaId} disabled>Regla no disponible</option> : null}</select></div>
@@ -87,7 +88,7 @@ function Formulario({ contexto, onSaved, onUncertain }: { contexto?: ContextoAge
     </fieldset>
     {incierto ? <p role="status" className="rounded-md border p-3 text-sm">No pudimos confirmar el resultado. Reintentá esta misma solicitud para recuperar el vencimiento si ya se creó. Los datos quedan bloqueados hasta resolver este intento.</p> : null}
     {error ? <p role="alert" className="whitespace-pre-wrap text-sm text-destructive">{error}</p> : null}
-    <div className="flex flex-wrap justify-end gap-2"><Button type="button" variant="outline" disabled={pending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={pending || !incierto && (!regla || !opciones.data)}>{pending ? "Calculando…" : incierto ? "Reintentar" : "Calcular y agendar"}</Button></div>
+    <div className={DIALOG_ACCIONES}><Button type="button" variant="outline" disabled={pending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={pending || !incierto && (!regla || !opciones.data)}>{pending ? "Calculando…" : incierto ? "Reintentar" : "Calcular y agendar"}</Button></div>
   </form>;
 }
 export default function AplicarReglaAgendaDialog({ contexto, onClose, onSaved }: { contexto?: ContextoAgenda; onClose: () => void; onSaved: (resultado: ResultadoAplicarReglaAgenda) => void }) {

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { DIALOG_ACCIONES } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { obtenerRecordatoriosPredeterminados, type OrigenRecordatoriosPredeterminados } from "../api/recordatoriosApi";
 import { agendaKeys } from "../hooks/agendaKeys";
@@ -30,7 +31,7 @@ function Formulario({ destino, inicial, onSaved }: { destino: DestinoPredetermin
     <fieldset disabled={guardar.isPending} className="min-w-0"><AgendaRecordatoriosAlta predeterminados items={items} tieneVencimiento onChange={(next, resetDraft) => { setItems(next); if (resetDraft) setDraft(false); setError(undefined); onDirty(firmaPredeterminadosAgenda(next) !== firmaPredeterminadosAgenda(original) || (!resetDraft && draft)); }} onDraftChange={value => { setDraft(value); onDirty(firmaPredeterminadosAgenda(items) !== firmaPredeterminadosAgenda(original) || value); }} /></fieldset>
     <p className="text-xs text-muted-foreground">Esta lista reemplaza la configuración de futuros avisos. Guardarla vacía desactiva los predeterminados de este origen. Los recordatorios de entradas existentes se conservan. Los avisos basados en vencimiento se generan sólo si la nueva entrada tiene esa fecha.</p>
     {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
-    <div className="flex justify-end gap-2"><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar configuración"}</Button></div>
+    <div className={DIALOG_ACCIONES}><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar configuración"}</Button></div>
   </form>;
 }
 function Carga({ destino, ...props }: { destino: DestinoPredeterminadosAgenda; onSaved: () => void }) {

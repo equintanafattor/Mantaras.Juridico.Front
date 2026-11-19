@@ -5,6 +5,8 @@ import Link from "next/link";
 import { CalendarDays, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 import { useAgendaPendientes } from "../hooks/useAgendaPendientes";
 import { filtrosAgendaContexto, type ContextoAgenda } from "../lib/agendaContexto";
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
@@ -29,12 +31,12 @@ export default function AgendaContexto({ contexto, activo }: { contexto: Context
   const hoy = consulta.data?.hoy ?? "";
   const ordenadas = consulta.data ? agruparPendientes(consulta.data.entradas, hoy).flatMap(grupo => grupo.entradas) : [];
 
-  return <section className="rounded-lg border bg-card p-5 sm:p-6" aria-labelledby={`agenda-contexto-${contexto.tipo}`}>
+  return <section className={cn("rounded-lg border bg-card p-4 sm:p-6", TACTIL)} aria-labelledby={`agenda-contexto-${contexto.tipo}`}>
     <header className="flex flex-wrap items-center justify-between gap-3">
       <h2 id={`agenda-contexto-${contexto.tipo}`} className="flex items-center gap-2 font-semibold"><CalendarDays className="size-5" aria-hidden="true" />Agenda{ordenadas.length > 0 ? ` · ${ordenadas.length} pendiente${ordenadas.length === 1 ? "" : "s"}` : ""}</h2>
       <div className="flex flex-wrap gap-2">
         {activo ? <Button type="button" size="sm" onClick={() => { setMensaje(undefined); setEditor({ modo: "entrada", contexto }); }}><Plus />Agregar</Button> : null}
-        <Link href="/agenda" className="inline-flex h-7 items-center rounded-md border px-2.5 text-[0.8rem] font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Ver agenda</Link>
+        <Link href="/agenda" className="inline-flex h-7 items-center rounded-md border px-2.5 text-[0.8rem] font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:h-10">Ver agenda</Link>
       </div>
     </header>
     <div className="mt-4 space-y-3" aria-busy={consulta.isFetching}>

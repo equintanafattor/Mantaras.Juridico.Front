@@ -322,7 +322,7 @@ function DetalleSkeleton() {
         <Skeleton className="h-5 w-48" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-6">
           <Skeleton className="h-56 w-full" />
           <Skeleton className="h-52 w-full" />

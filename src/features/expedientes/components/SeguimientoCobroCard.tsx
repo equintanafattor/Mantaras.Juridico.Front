@@ -5,6 +5,8 @@ import { BellRing, HandCoins, Send } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 
 import {
   formatearFechaCobro,
@@ -44,7 +46,7 @@ export default function SeguimientoCobroCard({
   const envio = expediente.envioCobro ?? null;
 
   return (
-    <section className="overflow-hidden rounded-lg border bg-card">
+    <section className={cn("@container overflow-hidden rounded-lg border bg-card", TACTIL)}>
       <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-5 py-4">
         <div className="flex items-center gap-3">
           <HandCoins className="size-4 text-primary" />
@@ -54,7 +56,7 @@ export default function SeguimientoCobroCard({
         {envio && (
           <Link
             href="/cobro"
-            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+            className="text-xs font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring pointer-coarse:py-2"
           >
             Ver listado de cobro
           </Link>
@@ -63,7 +65,7 @@ export default function SeguimientoCobroCard({
 
       {envio ? (
         <div className="space-y-5 p-5">
-          <dl className="grid gap-5 sm:grid-cols-3">
+          <dl className="grid gap-5 @lg:grid-cols-3">
             <div>
               <dt className="text-xs font-medium text-muted-foreground">
                 Documento enviado
@@ -93,7 +95,7 @@ export default function SeguimientoCobroCard({
             </div>
           </dl>
 
-          <div className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-t pt-4 @md:flex-row @md:items-center @md:justify-between">
             <p className="text-xs text-muted-foreground">
               Registrado el {formatearFechaHora(envio.fechaRegistro)}
               {envio.usuarioRegistro ? ` por ${envio.usuarioRegistro}` : ""}
@@ -111,7 +113,7 @@ export default function SeguimientoCobroCard({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 p-5 @md:flex-row @md:items-center @md:justify-between">
           <p className="text-sm text-muted-foreground">
             {expediente.activo
               ? "Todavía no se registró el envío de una cédula u oficio de cobro."

@@ -16,6 +16,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TACTIL } from "@/lib/tactil";
+import { cn } from "@/lib/utils";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ApiError } from "@/lib/api/apiClient";
 
@@ -148,7 +150,7 @@ export default function ExpedientesCobroScreen() {
     router.push(`/expedientes/${expedienteId}`);
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+    <div className={cn("mx-auto flex w-full max-w-6xl flex-col gap-6", TACTIL)}>
       <section className="rounded-lg border border-sky-800/15 border-l-4 border-l-sky-700 bg-sky-50/45 p-5 dark:bg-sky-950/10">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Expedientes de cobro
@@ -272,7 +274,7 @@ export default function ExpedientesCobroScreen() {
               isFetching ? "opacity-60 transition-opacity" : "transition-opacity"
             }
           >
-            <div className="grid gap-3 lg:hidden">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:hidden">
               {data.items.map((expediente) => (
                 <article
                   key={expediente.expedienteId}

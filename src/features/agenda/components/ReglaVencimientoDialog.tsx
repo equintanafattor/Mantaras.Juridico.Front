@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { DIALOG_ACCIONES } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,17 +43,17 @@ function Formulario({ regla, onSaved }: { regla?: ReglaVencimientoResponse; onSa
       <div className="space-y-2"><Label htmlFor="regla-tipo">Categoría *</Label><select id="regla-tipo" required disabled={!opciones.data} className={SELECT_CLASS} value={form.tipoEntradaAgendaId || ""} onChange={e => cambiar("tipoEntradaAgendaId", Number(e.target.value))}><option value="">Seleccionar</option>{opciones.data?.tiposEntrada.filter(item => item.activo || item.id === form.tipoEntradaAgendaId).map(item => <option key={item.id} value={item.id} disabled={!item.activo}>{item.nombre}{item.activo ? "" : " (inactivo)"}</option>)}{form.tipoEntradaAgendaId > 0 && opciones.data && !opciones.data.tiposEntrada.some(item => item.id === form.tipoEntradaAgendaId) ? <option value={form.tipoEntradaAgendaId} disabled>Categoría no disponible</option> : null}</select></div>
       {opciones.isError ? <div role="alert"><p>No pudimos cargar las categorías.</p><Button type="button" variant="outline" onClick={() => void opciones.refetch()}>Reintentar</Button></div> : null}
       <div className="space-y-2"><Label htmlFor="regla-descripcion">Descripción</Label><Textarea id="regla-descripcion" maxLength={1000} value={form.descripcion} onChange={e => cambiar("descripcion", e.target.value)} /></div>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 @lg:grid-cols-3">
         <div className="space-y-2"><Label htmlFor="regla-dias">Cantidad de días *</Label><Input id="regla-dias" type="number" min={0} max={36500} step={1} required value={form.cantidadDias} onChange={e => cambiar("cantidadDias", e.target.value)} /></div>
         <div className="space-y-2"><Label htmlFor="regla-computo">Cómputo</Label><select id="regla-computo" className={SELECT_CLASS} value={form.tipoComputo} onChange={e => cambiar("tipoComputo", e.target.value as ReglaAgendaForm["tipoComputo"])}><option value="DiasHabiles">Días hábiles</option><option value="DiasCorridos">Días corridos</option></select></div>
         <div className="space-y-2"><Label htmlFor="regla-sentido">Desde la fecha base</Label><select id="regla-sentido" className={SELECT_CLASS} value={form.sentidoCalculo} onChange={e => cambiar("sentidoCalculo", e.target.value as ReglaAgendaForm["sentidoCalculo"])}><option value="Despues">Después</option><option value="Antes">Antes</option></select></div>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2"><div className="space-y-2"><Label htmlFor="regla-prioridad">Prioridad generada</Label><select id="regla-prioridad" className={SELECT_CLASS} value={form.prioridadGenerada} onChange={e => cambiar("prioridadGenerada", e.target.value as ReglaAgendaForm["prioridadGenerada"])}>{["Baja", "Normal", "Alta", "Urgente"].map(p => <option key={p}>{p}</option>)}</select></div><div className="space-y-2"><Label htmlFor="regla-hora">Hora sugerida</Label><Input id="regla-hora" type="time" step={1} value={form.horaSugerida} onChange={e => cambiar("horaSugerida", e.target.value)} /></div></div>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.activo} onChange={e => cambiar("activo", e.target.checked)} />Regla activa</label>
+      <div className="grid gap-4 @md:grid-cols-2"><div className="space-y-2"><Label htmlFor="regla-prioridad">Prioridad generada</Label><select id="regla-prioridad" className={SELECT_CLASS} value={form.prioridadGenerada} onChange={e => cambiar("prioridadGenerada", e.target.value as ReglaAgendaForm["prioridadGenerada"])}>{["Baja", "Normal", "Alta", "Urgente"].map(p => <option key={p}>{p}</option>)}</select></div><div className="space-y-2"><Label htmlFor="regla-hora">Hora sugerida</Label><Input id="regla-hora" type="time" step={1} value={form.horaSugerida} onChange={e => cambiar("horaSugerida", e.target.value)} /></div></div>
+      <label className="flex items-center gap-2 text-sm pointer-coarse:min-h-10"><input type="checkbox" checked={form.activo} onChange={e => cambiar("activo", e.target.checked)} />Regla activa</label>
       <p className="text-xs text-muted-foreground">Los días hábiles excluyen sábados, domingos y días inhábiles registrados. Dejar la hora vacía permite crear un vencimiento sin hora. Los cambios se aplican a futuras generaciones.</p>
     </fieldset>
     {error ? <p role="alert" className="whitespace-pre-wrap text-sm text-destructive">{error}</p> : null}
-    <div className="flex justify-end gap-2"><Button type="button" variant="outline" disabled={pending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={pending || !opciones.data}>{pending ? "Guardando…" : "Guardar regla"}</Button></div>
+    <div className={DIALOG_ACCIONES}><Button type="button" variant="outline" disabled={pending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={pending || !opciones.data}>{pending ? "Guardando…" : "Guardar regla"}</Button></div>
   </form>;
 }
 function Edicion({ id, ...props }: { id: number; onSaved: () => void }) {
