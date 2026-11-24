@@ -2,6 +2,7 @@ import type { DatosAdministrativos } from "@/features/catalogos/types/types";
 
 import type { CrearCasoRequest } from "@/features/casos/types/types";
 import type { EstadoEntradaAgenda } from "@/features/agenda/types/types";
+import type { AdvertenciaCalculo } from "@/features/agenda/types/diasInhabiles";
 
 export type TipoExpediente =
   | "Principal"
@@ -128,6 +129,8 @@ export type EnvioCobroResponse = {
   seguimientoVencido: boolean;
   fechaRegistro: string;
   usuarioRegistro: string | null;
+  // Se calcula una vez al registrar y no se recalcula si después se importa el año.
+  advertencias?: AdvertenciaCalculo[];
 };
 
 export type ExpedienteCobroResponse = {

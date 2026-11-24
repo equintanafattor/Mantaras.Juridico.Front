@@ -1,0 +1,82 @@
+[
+  {
+    "nombre": "390: panel sin scroll horizontal",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "390: diálogo sin scroll horizontal",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "390: botones táctiles ≥ 40 px",
+    "ok": true,
+    "detalle": "40px "
+  },
+  {
+    "nombre": "390: fila de revisión con área táctil ≥ 44 px",
+    "ok": true,
+    "detalle": "126px"
+  },
+  {
+    "nombre": "390: tocar el texto de la fila marca la casilla",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "390: volver a tocar la desmarca",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "390: confirmar visible sin desplazarse (pie fijo)",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "390: botones del panel ≥ 40 px",
+    "ok": true,
+    "detalle": "40px "
+  },
+  {
+    "nombre": "768: panel sin scroll horizontal",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "768: diálogo sin scroll horizontal",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "768: botones táctiles ≥ 40 px",
+    "ok": true,
+    "detalle": "40px "
+  },
+  {
+    "nombre": "768: fila de revisión con área táctil ≥ 44 px",
+    "ok": true,
+    "detalle": "90px"
+  },
+  {
+    "nombre": "768: tocar el texto de la fila marca la casilla",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "768: volver a tocar la desmarca",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "768: confirmar visible sin desplazarse (pie fijo)",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "768: botones del panel ≥ 40 px",
+    "ok": true,
+    "detalle": "40px "
+  }
+]

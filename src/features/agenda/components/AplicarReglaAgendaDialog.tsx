@@ -15,6 +15,7 @@ import { mostrarFechaAgenda } from "../lib/periodoAgenda";
 import type { ContextoAgenda } from "../lib/agendaContexto";
 import type { SeleccionAgenda } from "../lib/filtrosAgenda";
 import type { AplicacionReglaVencimientoResponse, ResumenEntradaAgenda } from "../types/types";
+import AdvertenciasCalculo from "./AdvertenciasCalculo";
 import AgendaConfiguracionDialog, { useEventosConfiguracionAgenda } from "./AgendaConfiguracionDialog";
 import AgendaRelacionFiltro from "./AgendaRelacionFiltro";
 
@@ -73,7 +74,7 @@ function Formulario({ contexto, onSaved, onUncertain }: { contexto?: ContextoAge
     } catch (err) { setError(err instanceof Error ? err.message : "No pudimos aplicar la regla."); }
     finally { lock.current = false; setPending(false); onPending(false); }
   }
-  if (resultado) return <div className="flex flex-1 flex-col gap-4"><p role="status" className="rounded-md border p-4 text-sm">Agendado: <strong>{resultado.aplicacion.entrada.titulo}</strong>, vence el <strong>{mostrarFechaAgenda(resultado.aplicacion.fechaCalculada)}</strong>.</p><p className="text-sm text-muted-foreground">Se agregaron los avisos automáticos que correspondan.</p><div className={DIALOG_ACCIONES}><Button variant="outline" onClick={onClose}>Cerrar</Button><Button onClick={() => onSaved(resultado)}>Ver detalle</Button></div></div>;
+  if (resultado) return <div className="flex flex-1 flex-col gap-4"><p role="status" className="rounded-md border p-4 text-sm">Agendado: <strong>{resultado.aplicacion.entrada.titulo}</strong>, vence el <strong>{mostrarFechaAgenda(resultado.aplicacion.fechaCalculada)}</strong>.</p><AdvertenciasCalculo advertencias={resultado.aplicacion.advertencias} /><p className="text-sm text-muted-foreground">Se agregaron los avisos automáticos que correspondan.</p><div className={DIALOG_ACCIONES}><Button variant="outline" onClick={onClose}>Cerrar</Button><Button onClick={() => onSaved(resultado)}>Ver detalle</Button></div></div>;
   return <form className="flex flex-1 flex-col gap-4" onSubmit={generar}>
     <fieldset disabled={pending || incierto} className="min-w-0 space-y-4">
       <div className="space-y-2"><Label htmlFor="aplicar-regla">Regla *</Label><select id="aplicar-regla" required className="h-9 w-full rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" disabled={!reglasManuales} value={form.reglaId ?? ""} onChange={e => cambiar("reglaId", e.target.value ? Number(e.target.value) : null)}><option value="">Elegir regla</option>{reglasManuales?.map(item => <option key={item.reglaVencimientoId} value={item.reglaVencimientoId}>{item.nombre} · {item.tipoEntradaNombre}</option>)}{form.reglaId && reglas.data && !regla ? <option value={form.reglaId} disabled>Regla no disponible</option> : null}</select></div>

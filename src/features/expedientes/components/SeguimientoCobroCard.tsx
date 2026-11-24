@@ -5,6 +5,7 @@ import { BellRing, HandCoins, Send } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import AdvertenciasCalculo from "@/features/agenda/components/AdvertenciasCalculo";
 import { TACTIL } from "@/lib/tactil";
 import { cn } from "@/lib/utils";
 
@@ -94,6 +95,8 @@ export default function SeguimientoCobroCard({
               </dd>
             </div>
           </dl>
+
+          <AdvertenciasCalculo advertencias={envio.advertencias} />
 
           <div className="flex flex-col gap-3 border-t pt-4 @md:flex-row @md:items-center @md:justify-between">
             <p className="text-xs text-muted-foreground">

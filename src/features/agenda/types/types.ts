@@ -1,4 +1,5 @@
 // Fechas locales: yyyy-MM-dd. Horas locales: HH:mm:ss. Fechas UTC: ISO 8601.
+import type { AdvertenciaCalculo } from "./diasInhabiles";
 
 export type EstadoEntradaAgenda = "Pendiente" | "EnCurso" | "Pospuesta" | "Completada" | "Cancelada";
 
@@ -122,6 +123,7 @@ export type AplicacionReglaVencimientoResponse = {
   observacionOrigenId: number | null;
   claveIdempotencia: string;
   entrada: EntradaAgendaResponse;
+  advertencias?: AdvertenciaCalculo[];
 };
 
 export type EntradaAgendaListadoResponse = {

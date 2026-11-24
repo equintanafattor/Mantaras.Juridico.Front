@@ -1,0 +1,62 @@
+[
+  {
+    "nombre": "refresco: cobertura 2025 importada",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "listado distingue origen importado",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "listado distingue origen manual",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "repetición: nuevos 0",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "guardando: botón bloqueado con 'Importando…'",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "guardando: cambiar año y cancelar bloqueados",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "repetición: sin duplicados en la base",
+    "ok": true,
+    "detalle": "17 → 17; yaAplicada=true"
+  },
+  {
+    "nombre": "doble clic: un solo POST de confirmación",
+    "ok": true,
+    "detalle": "1 POST"
+  },
+  {
+    "nombre": "fuente 503: aviso claro y reintentar",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "fuente 503: reintentar recupera la vista previa",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "fuente 502: aviso claro y reintentar",
+    "ok": true,
+    "detalle": ""
+  },
+  {
+    "nombre": "fuente 502: reintentar recupera la vista previa",
+    "ok": true,
+    "detalle": ""
+  }
+]
