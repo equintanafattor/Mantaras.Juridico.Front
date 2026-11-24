@@ -143,3 +143,12 @@ La simulación del teclado (foco en un campo y alto de ventana al 55 %) aproxima
 - `resultados-guardados.json`: los 8 pasos de guardado con lo verificado en la API.
 - `capturas/`: selección de capturas de los cambios (calendario, vista Todas, diálogos con teclado simulado, cobro y guardados).
 - `scripts/`: carga de datos, auditoría, guardados y `proxy-lan.mjs` para probar desde la red local.
+## Días inhábiles en el calendario
+
+El 24 de noviembre de 2026 se verificó el calendario en Chromium contra la API .NET local y un PostgreSQL recién inicializado para QA, en un puerto separado. La importación ejecutó la vista previa y la confirmación de la API con la copia del calendario oficial 2026 incluida en las pruebas del backend, servida por HTTP local.
+
+- Alta, edición, desactivación y reactivación de un día manual desde Configuración. Al volver a Agenda por navegación interna, se comprobó el GET de días activos y que el mismo documento seguía abierto.
+- Importación de feriados de 2026. El calendario mostró el feriado importado del 1 de enero y el día manual reactivado del 8 de enero. Los tres eventos de prueba siguieron visibles en sus fechas durante las cinco operaciones.
+- Build, lint y las diez pruebas de período, calendario e importación aprobados.
+
+La suite general tiene un fallo preexistente en `tests/casos-administrativos.test.mjs`, en «alta sin campos nuevos envía null explícito y preserva participantes». El payload de alta incluye `numeroBeneficio: null` y el objeto esperado omite esa propiedad. El test y la lógica de Casos Administrativos coinciden con la versión de `main` previa al cambio.
