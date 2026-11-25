@@ -1,6 +1,7 @@
 "use client";
 
 import AgendaContexto from "@/features/agenda/components/AgendaContexto";
+import { nombreJuzgado } from "@/features/catalogos/lib/juzgado";
 import { FormEvent, useState } from "react";
 import {
   AlertCircle,
@@ -480,7 +481,7 @@ export default function ExpedienteDetalleScreen({
                   "Sin número de expediente judicial"}
               </span>
               <span aria-hidden="true">·</span>
-              <span>{expediente.juzgado?.trim() || "Juzgado no informado"}</span>
+              <span>{nombreJuzgado(expediente) ?? "Juzgado no informado"}</span>
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -692,7 +693,7 @@ export default function ExpedienteDetalleScreen({
 
                   <Dato
                     label="Juzgado o tribunal"
-                    value={mostrarValor(expediente.juzgado)}
+                    value={mostrarValor(nombreJuzgado(expediente))}
                   />
 
                   <Dato

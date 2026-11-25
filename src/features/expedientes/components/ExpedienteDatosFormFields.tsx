@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CatalogoNombreSelect from "@/features/catalogos/components/CatalogoNombreSelect";
+import JuzgadoSelect from "@/features/catalogos/components/JuzgadoSelect";
 
 import type { ExpedienteFormState } from "./ExpedienteFormFields";
 
@@ -76,16 +77,12 @@ export default function ExpedienteDatosFormFields({
         />
       </div>
 
-      <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor={`${idPrefix}-juzgado`}>Juzgado</Label>
-
-        <Input
-          id={`${idPrefix}-juzgado`}
+      <div className="sm:col-span-2">
+        <JuzgadoSelect
           value={form.juzgado}
+          original={form.juzgadoOriginal}
           disabled={disabled}
-          maxLength={500}
-          placeholder="Juzgado o tribunal interviniente"
-          onChange={(event) => actualizarCampo("juzgado", event.target.value)}
+          onChange={(juzgado) => actualizarCampo("juzgado", juzgado)}
         />
       </div>
 

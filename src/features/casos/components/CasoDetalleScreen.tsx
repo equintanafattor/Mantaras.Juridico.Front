@@ -2,6 +2,7 @@
 
 import AgendaContexto from "@/features/agenda/components/AgendaContexto";
 import DatosAdministrativosResumen from "@/features/catalogos/components/DatosAdministrativosResumen";
+import { nombreJuzgado } from "@/features/catalogos/lib/juzgado";
 
 import { esCasoFormValido } from "@/features/casos/lib/casoForm";
 
@@ -217,7 +218,7 @@ function ExpedienteCard({
         </p>
 
         <p className="mt-1 text-xs text-muted-foreground">
-          {mostrarValor(expediente.juzgado)}
+          {mostrarValor(nombreJuzgado(expediente))}
 
           {expediente.fechaInicio
             ? ` · ${formatearFecha(expediente.fechaInicio)}`

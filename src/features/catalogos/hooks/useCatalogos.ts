@@ -30,7 +30,7 @@ export function useModificarCatalogo(tipo: TipoCatalogo) {
       else await cambiarEstadoCatalogo(tipo, op.id, op.activar);
     },
     onSuccess: async () => {
-      await Promise.all(["catalogos", "casos", "cliente", "clientes"].map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
+      await Promise.all(["catalogos", "casos", "cliente", "clientes", "expedientes"].map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
     },
   });
 }

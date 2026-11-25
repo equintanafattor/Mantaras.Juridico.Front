@@ -3,7 +3,8 @@ export type TipoCatalogo =
   | "administrativos"
   | "fases"
   | "tramites"
-  | "estadosLegales";
+  | "estadosLegales"
+  | "juzgados";
 
 export type CatalogoItem = {
   id: number;
@@ -19,6 +20,7 @@ export const CATALOGOS = {
   fases: { ruta: "/api/opciones-catalogo/fases-internas", campoId: "opcionCatalogoId", titulo: "Fases internas", limite: 200 },
   tramites: { ruta: "/api/opciones-catalogo/tipos-tramite", campoId: "opcionCatalogoId", titulo: "Tipos de trámite", limite: 200 },
   estadosLegales: { ruta: "/api/opciones-catalogo/estados-legales", campoId: "opcionCatalogoId", titulo: "Estados legales", limite: 200 },
+  juzgados: { ruta: "/api/juzgados", campoId: "juzgadoId", titulo: "Juzgados", limite: 500 },
 } as const;
 
 export type ReferenciaCatalogo = Pick<CatalogoItem, "id" | "nombre" | "activo">;

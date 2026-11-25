@@ -129,7 +129,7 @@ function crearExpedientePrincipalRequestDesdeForm(
   return {
     numeroExpediente: normalizarOpcional(form.numeroExpediente),
     caratula: form.caratula.trim(),
-    juzgado: normalizarOpcional(form.juzgado),
+    juzgadoId: form.juzgado?.id ?? null,
     fechaInicio: normalizarOpcional(form.fechaInicio),
     estadoLegal: normalizarOpcional(form.estadoLegal),
     tipoTramite: normalizarOpcional(form.tipoTramite),
@@ -339,7 +339,7 @@ function ResumenCreacion({
 
           <div>
             <dt className="text-xs text-muted-foreground">Juzgado</dt>
-            <dd className="mt-1">{mostrarResumen(expediente.juzgado)}</dd>
+            <dd className="mt-1">{mostrarResumen(expediente.juzgado?.nombre ?? "")}</dd>
           </div>
 
           <div>

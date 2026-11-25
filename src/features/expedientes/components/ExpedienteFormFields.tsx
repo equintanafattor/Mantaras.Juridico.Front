@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCasos } from "@/features/casos/hooks/useCasos";
+import { referenciaJuzgado } from "@/features/catalogos/lib/juzgado";
+import type { ReferenciaCatalogo } from "@/features/catalogos/types/types";
 
 import { useExpedientes } from "../hooks/useExpedientes";
 import type {
@@ -24,7 +26,9 @@ export type ExpedienteFormState = {
   tipoExpediente: TipoExpediente;
   numeroExpediente: string;
   caratula: string;
-  juzgado: string;
+  juzgado: ReferenciaCatalogo | null;
+  /** Juzgado guardado al abrir la edición: se puede conservar aunque esté inactivo. */
+  juzgadoOriginal: ReferenciaCatalogo | null;
   fechaInicio: string;
   estadoLegal: string;
   tipoTramite: string;
@@ -36,7 +40,8 @@ export const FORM_EXPEDIENTE_INICIAL: ExpedienteFormState = {
   tipoExpediente: "Principal",
   numeroExpediente: "",
   caratula: "",
-  juzgado: "",
+  juzgado: null,
+  juzgadoOriginal: null,
   fechaInicio: "",
   estadoLegal: "",
   tipoTramite: "",
@@ -51,7 +56,8 @@ export function crearFormDesdeExpediente(
     tipoExpediente: expediente.tipoExpediente,
     numeroExpediente: expediente.numeroExpediente ?? "",
     caratula: expediente.caratula,
-    juzgado: expediente.juzgado ?? "",
+    juzgado: referenciaJuzgado(expediente),
+    juzgadoOriginal: referenciaJuzgado(expediente),
     fechaInicio: expediente.fechaInicio ?? "",
     estadoLegal: expediente.estadoLegal ?? "",
     tipoTramite: expediente.tipoTramite ?? "",
@@ -98,7 +104,7 @@ export function crearRequestDesdeForm(
     tipoExpediente: form.tipoExpediente,
     numeroExpediente: normalizarOpcional(form.numeroExpediente),
     caratula: form.caratula.trim(),
-    juzgado: normalizarOpcional(form.juzgado),
+    juzgadoId: form.juzgado?.id ?? null,
     fechaInicio: normalizarOpcional(form.fechaInicio),
     estadoLegal: normalizarOpcional(form.estadoLegal),
     tipoTramite: normalizarOpcional(form.tipoTramite),

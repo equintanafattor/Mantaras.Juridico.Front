@@ -36,7 +36,9 @@ export type ExpedienteResponse = {
   tipoExpediente: TipoExpediente;
   numeroExpediente: string | null;
   caratula: string;
-  juzgado: string | null;
+  juzgadoId: number | null;
+  juzgadoNombre: string | null;
+  juzgadoActivo: boolean | null;
   fechaInicio: string | null;
   estadoLegal: string | null;
   tipoTramite: string | null;
@@ -76,7 +78,7 @@ export type CrearExpedienteRequest = {
   tipoExpediente: TipoExpediente;
   numeroExpediente: string | null;
   caratula: string;
-  juzgado: string | null;
+  juzgadoId: number | null;
   fechaInicio: string | null;
   estadoLegal: string | null;
   tipoTramite: string | null;
@@ -139,7 +141,9 @@ export type ExpedienteCobroResponse = {
   tipoExpediente: TipoExpediente;
   numeroExpediente: string | null;
   caratula: string;
-  juzgado: string | null;
+  juzgadoId: number | null;
+  juzgadoNombre: string | null;
+  juzgadoActivo: boolean | null;
   estadoLegal: string | null;
   activo: boolean;
   envioCobro: EnvioCobroResponse;

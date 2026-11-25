@@ -7,6 +7,7 @@ type CatalogoResponse = Omit<CatalogoItem, "id"> & {
   tipoBeneficioId?: number;
   tipoExpedienteAdministrativoId?: number;
   opcionCatalogoId?: number;
+  juzgadoId?: number;
 };
 
 function mapear(tipo: TipoCatalogo, item: CatalogoResponse): CatalogoItem {

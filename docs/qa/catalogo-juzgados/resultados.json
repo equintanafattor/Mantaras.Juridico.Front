@@ -1,0 +1,435 @@
+{
+  "fecha": "2026-11-25T20:04:13.135Z",
+  "creados": [
+    {
+      "juzgadoId": 15,
+      "altaId": 26
+    },
+    {
+      "juzgadoId": 16,
+      "altaId": 27
+    }
+  ],
+  "resultados": [
+    {
+      "nombre": "[Escritorio] catálogo sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] alta: mensaje de guardado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] alta: listado muestra el nombre normalizado en mayúsculas",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] alta: persistido en la API",
+      "ok": true,
+      "detalle": "juzgadoId 15"
+    },
+    {
+      "nombre": "[Escritorio] duplicado (mayúsculas/espacios): rechazado con 409",
+      "ok": true,
+      "detalle": "Ya existe un juzgado con ese nombre. Si está inactivo, reactivá el registro existente."
+    },
+    {
+      "nombre": "[Escritorio] edición: listado muestra el nombre nuevo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] baja: deja de figurar entre activos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] baja: figura como Inactivo al incluir inactivos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] duplicado contra inactivo: rechazado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] restauración: vuelve a Activo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] restauración: persistida en la API",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] estado vacío del listado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] migración: PRUEBA JZ 03 muestra el juzgado unificado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] migración: PRUEBA JZ 07 (null) sin juzgado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] detalle: encabezado muestra el juzgado migrado",
+      "ok": true,
+      "detalle": "JUZGADO FEDERAL N.º 1 DE PARANÁ"
+    },
+    {
+      "nombre": "[Escritorio] detalle: dato Juzgado muestra el migrado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] edición: precarga el juzgado migrado",
+      "ok": true,
+      "detalle": "JUZGADO FEDERAL N.º 1 DE PARANÁ"
+    },
+    {
+      "nombre": "[Escritorio] búsqueda: encuentra sin distinguir mayúsculas ni tildes",
+      "ok": true,
+      "detalle": "1 opción(es)"
+    },
+    {
+      "nombre": "[Escritorio] selector abierto sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] búsqueda: estado sin resultados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] selección con teclado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] PUT envía juzgadoId del elegido",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":15,\"status\":200}"
+    },
+    {
+      "nombre": "[Escritorio] detalle muestra el juzgado elegido",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] renombre: encabezado del detalle",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] renombre: dato del detalle",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] renombre: detalle del expediente administrativo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] renombre: listado de expedientes lo encuentra por juzgado",
+      "ok": true,
+      "detalle": "QUINTANA, EMMANUEL c/ ANSES s/ REAJUSTES VARIOS"
+    },
+    {
+      "nombre": "[Escritorio] inactivo: detalle lo marca (inactivo)",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] inactivo: precargado en edición",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] inactivo: ofrecido como valor guardado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] inactivo: PUT conserva el mismo id y responde 200",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":15,\"status\":200,\"juzgadoActivo\":false}"
+    },
+    {
+      "nombre": "[Escritorio] inactivo: no se ofrece en otro expediente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] quitar: el selector queda vacío",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] quitar: PUT envía juzgadoId null explícito",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":null,\"status\":200}"
+    },
+    {
+      "nombre": "[Escritorio] quitar: detalle muestra Juzgado no informado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] quitar: la API lo desvinculó",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] quitar: el inactivo ya no se ofrece",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] alta: el inactivo no se ofrece",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] alta: selección con búsqueda",
+      "ok": true,
+      "detalle": "CÁMARA FEDERAL DE APELACIONES DE PARANÁ"
+    },
+    {
+      "nombre": "[Escritorio] alta: POST envía juzgadoId y la respuesta trae el nombre",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":1,\"status\":201,\"juzgadoNombre\":\"CÁMARA FEDERAL DE APELACIONES DE PARANÁ\"}"
+    },
+    {
+      "nombre": "[Escritorio] error: aviso de carga con Reintentar",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] error: reintento recupera las opciones",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] catálogo sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] alta: mensaje de guardado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] alta: listado muestra el nombre normalizado en mayúsculas",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] alta: persistido en la API",
+      "ok": true,
+      "detalle": "juzgadoId 16"
+    },
+    {
+      "nombre": "[Celular] duplicado (mayúsculas/espacios): rechazado con 409",
+      "ok": true,
+      "detalle": "Ya existe un juzgado con ese nombre. Si está inactivo, reactivá el registro existente."
+    },
+    {
+      "nombre": "[Celular] edición: listado muestra el nombre nuevo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] baja: deja de figurar entre activos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] baja: figura como Inactivo al incluir inactivos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] duplicado contra inactivo: rechazado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] restauración: vuelve a Activo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] restauración: persistida en la API",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] estado vacío del listado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] migración: PRUEBA JZ 03 muestra el juzgado unificado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] migración: PRUEBA JZ 07 (null) sin juzgado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] detalle: encabezado muestra el juzgado migrado",
+      "ok": true,
+      "detalle": "JUZGADO FEDERAL SANTA FE 1"
+    },
+    {
+      "nombre": "[Celular] detalle: dato Juzgado muestra el migrado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] edición: precarga el juzgado migrado",
+      "ok": true,
+      "detalle": "JUZGADO FEDERAL SANTA FE 1"
+    },
+    {
+      "nombre": "[Celular] búsqueda: encuentra sin distinguir mayúsculas ni tildes",
+      "ok": true,
+      "detalle": "1 opción(es)"
+    },
+    {
+      "nombre": "[Celular] selector abierto sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] búsqueda: estado sin resultados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] selección con teclado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] PUT envía juzgadoId del elegido",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":16,\"status\":200}"
+    },
+    {
+      "nombre": "[Celular] detalle muestra el juzgado elegido",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] renombre: encabezado del detalle",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] renombre: dato del detalle",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] renombre: detalle del expediente administrativo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] renombre: listado de expedientes lo encuentra por juzgado",
+      "ok": true,
+      "detalle": "FRO 012345/2027"
+    },
+    {
+      "nombre": "[Celular] inactivo: detalle lo marca (inactivo)",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] inactivo: precargado en edición",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] inactivo: ofrecido como valor guardado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] inactivo: PUT conserva el mismo id y responde 200",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":16,\"status\":200,\"juzgadoActivo\":false}"
+    },
+    {
+      "nombre": "[Celular] inactivo: no se ofrece en otro expediente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] quitar: el selector queda vacío",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] quitar: PUT envía juzgadoId null explícito",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":null,\"status\":200}"
+    },
+    {
+      "nombre": "[Celular] quitar: detalle muestra Juzgado no informado",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] quitar: la API lo desvinculó",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] quitar: el inactivo ya no se ofrece",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] alta: el inactivo no se ofrece",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] alta: selección con búsqueda",
+      "ok": true,
+      "detalle": "CÁMARA FEDERAL DE APELACIONES DE PARANÁ"
+    },
+    {
+      "nombre": "[Celular] alta: POST envía juzgadoId y la respuesta trae el nombre",
+      "ok": true,
+      "detalle": "{\"juzgadoId\":1,\"status\":201,\"juzgadoNombre\":\"CÁMARA FEDERAL DE APELACIONES DE PARANÁ\"}"
+    },
+    {
+      "nombre": "[Celular] error: aviso de carga con Reintentar",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] error: reintento recupera las opciones",
+      "ok": true,
+      "detalle": ""
+    }
+  ]
+}

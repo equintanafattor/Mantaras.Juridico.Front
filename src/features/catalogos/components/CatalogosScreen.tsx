@@ -59,9 +59,11 @@ function CatalogoPanel({ tipo }: { tipo: TipoCatalogo }) {
       setNombre("");
       setPage(1);
       setMensaje(
-        tipo === "beneficios" || tipo === "administrativos"
-          ? "Nombre guardado. Los expedientes administrativos mostrarán el nombre actualizado."
-          : "Nombre guardado. Los expedientes nuevos podrán usar esta opción; los valores históricos se conservan.",
+        tipo === "juzgados"
+          ? "Juzgado guardado. Los expedientes judiciales mostrarán el nombre actualizado."
+          : tipo === "beneficios" || tipo === "administrativos"
+            ? "Nombre guardado. Los expedientes administrativos mostrarán el nombre actualizado."
+            : "Nombre guardado. Los expedientes nuevos podrán usar esta opción; los valores históricos se conservan.",
       );
     } catch {
       // Mostrar el error de la API debajo, conservando el borrador.
@@ -88,7 +90,9 @@ function CatalogoPanel({ tipo }: { tipo: TipoCatalogo }) {
       <header className="border-b p-5">
         <h2 id={`${id}-titulo`} className="font-semibold">{config.titulo}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Los nombres de registros inactivos también quedan reservados.
+          {tipo === "juzgados"
+            ? "Se guardan en mayúsculas. Los nombres de juzgados inactivos también quedan reservados: si ya existe, reactivalo."
+            : "Los nombres de registros inactivos también quedan reservados."}
         </p>
       </header>
 
@@ -225,7 +229,7 @@ function CatalogoPanel({ tipo }: { tipo: TipoCatalogo }) {
             </DialogTitle>
             <DialogDescription>
               {confirmacion?.activo
-                ? "Seguirá visible en los expedientes administrativos que ya lo usan, pero no se ofrecerá para nuevas asignaciones."
+                ? `Seguirá visible en los expedientes ${tipo === "juzgados" ? "judiciales" : "administrativos"} que ya lo usan, pero no se ofrecerá para nuevas asignaciones.`
                 : "Volverá a ofrecerse para nuevas asignaciones."}
             </DialogDescription>
           </DialogHeader>
@@ -267,13 +271,14 @@ export default function CatalogosScreen() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <header className="border-b pb-6">
-        <h1 className="text-2xl font-semibold sm:text-3xl">Catálogos administrativos</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Catálogos</h1>
       </header>
       <CatalogoPanel tipo="beneficios" />
       <CatalogoPanel tipo="administrativos" />
       <CatalogoPanel tipo="fases" />
       <CatalogoPanel tipo="tramites" />
       <CatalogoPanel tipo="estadosLegales" />
+      <CatalogoPanel tipo="juzgados" />
     </div>
   );
 }

@@ -26,7 +26,9 @@ export type ExpedienteClienteDetalleResponse = {
   expedientePadreId: number | null;
   numeroExpediente: string | null;
   caratula: string | null;
-  juzgado: string | null;
+  juzgadoId: number | null;
+  juzgadoNombre: string | null;
+  juzgadoActivo: boolean | null;
   fechaInicio: string | null;
   estadoLegal: string | number;
   activo: boolean;
