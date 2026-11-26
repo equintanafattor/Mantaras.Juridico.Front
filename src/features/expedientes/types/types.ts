@@ -135,8 +135,22 @@ export type EnvioCobroResponse = {
   advertencias?: AdvertenciaCalculo[];
 };
 
+export type ClienteExpedienteCobroResponse = {
+  clienteId: number;
+  nombre: string;
+  apellido: string;
+  nombreCompleto: string;
+  dni: string | null;
+  cuil: string | null;
+  activo: boolean;
+  esPrincipal: boolean;
+};
+
 export type ExpedienteCobroResponse = {
   expedienteId: number;
+  clientes: ClienteExpedienteCobroResponse[];
+  // Lo resuelve backend; null si no hay cliente o si hay varios sin un principal inequívoco.
+  clientePrincipalId: number | null;
   casos: CasoExpedienteResponse[];
   tipoExpediente: TipoExpediente;
   numeroExpediente: string | null;

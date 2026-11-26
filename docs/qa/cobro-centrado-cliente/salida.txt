@@ -1,0 +1,104 @@
+Datos XOG7JD: X=67 (21 judiciales), ambiguo=336 (Y=68, Z=69), W=70+V=71 en 337
+OK   API: una fila por judicial (23 con el sello) — 23
+OK   API: X único → clientePrincipalId = X
+OK   API: ambiguo → null con 2 clientes
+OK   API: W principal y V secundario
+OK   API: nombreCompleto Apellido, Nombre
+OK   API: busca por DNI del cliente — 21
+OK   API: existe el judicial sin cliente (preparado por backend) — id 314
+
+===== Escritorio (1440x900) =====
+OK   [Escritorio] encabezado Cliente primero
+OK   [Escritorio] ayuda de búsqueda visible
+OK   [Escritorio] búsqueda por sello: 23 filas en 2 páginas — 23 expedientes de cobro · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Escritorio] sin scroll horizontal
+OK   [Escritorio] página 2: 3 filas — 3
+OK   [Escritorio] búsqueda por DNI: 21 judiciales de X, una fila cada uno
+OK   [Escritorio] fila X: cliente como dato principal
+OK   [Escritorio] fila X: carátula y número como secundario
+OK   [Escritorio] fila X: documento Oficio y señal de vencido — Unico XOG7JD, QaXOG7JD DNI 50957211 PRUEBA COBRO XOG7JD X 00 QA-XOG7JD-00 Oficio 02/01/2025 19/06/2025 Pendiente Vencido Venció hace 525 días Ver seguimiento
+OK   [Escritorio] fila X: fecha de envío
+OK   [Escritorio] clic en la fila abre la ficha del cliente — /clientes/67
+OK   [Escritorio] enlace al judicial abre el judicial, no el cliente — /expedientes/315
+OK   [Escritorio] Ver seguimiento abre el diálogo y no navega — /cobro
+OK   [Escritorio] al cerrar el diálogo sigue en cobro
+OK   [Escritorio] enlace del nombre abre el cliente — /clientes/67
+OK   [Escritorio] W principal y 'y 1 cliente más'
+OK   [Escritorio] fila con principal único navega al principal — /clientes/70
+OK   [Escritorio] ambiguo: aviso de varios clientes
+OK   [Escritorio] ambiguo: un enlace por cliente
+OK   [Escritorio] ambiguo: sin chevron ni cursor de navegación
+OK   [Escritorio] ambiguo: clic en la fila no navega — /cobro
+OK   [Escritorio] ambiguo: el enlace elegido abre ese cliente — /clientes/69
+OK   [Escritorio] sin cliente: lo indica claramente
+OK   [Escritorio] sin cliente: la fila no navega — /cobro
+OK   [Escritorio] sin cliente: conserva el acceso al judicial — /expedientes/314
+OK   [Escritorio] teclado: Enter en el cliente abre su ficha — /clientes/70
+OK   [Escritorio] sin scroll horizontal al final
+
+===== Celular (390x844) =====
+OK   [Celular] encabezado Cliente primero
+OK   [Celular] ayuda de búsqueda visible
+OK   [Celular] búsqueda por sello: 23 filas en 2 páginas — 23 expedientes de cobro · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Celular] sin scroll horizontal
+OK   [Celular] página 2: 3 filas — 3
+OK   [Celular] búsqueda por DNI: 21 judiciales de X, una fila cada uno
+OK   [Celular] fila X: cliente como dato principal
+OK   [Celular] fila X: carátula y número como secundario
+OK   [Celular] fila X: documento Oficio y señal de vencido — Unico XOG7JD, QaXOG7JD DNI 50957211 PRUEBA COBRO XOG7JD X 00 QA-XOG7JD-00 Documento Oficio Envío 02/01/2025 Seguimiento 19/06/2025 Pendiente Vencido Venció hace 525 días Ver seguimiento
+OK   [Celular] fila X: fecha de envío
+OK   [Celular] clic en la fila abre la ficha del cliente — /clientes/67
+OK   [Celular] enlace al judicial abre el judicial, no el cliente — /expedientes/315
+OK   [Celular] Ver seguimiento abre el diálogo y no navega — /cobro
+OK   [Celular] al cerrar el diálogo sigue en cobro
+OK   [Celular] enlace del nombre abre el cliente — /clientes/67
+OK   [Celular] W principal y 'y 1 cliente más'
+OK   [Celular] fila con principal único navega al principal — /clientes/70
+OK   [Celular] ambiguo: aviso de varios clientes
+OK   [Celular] ambiguo: un enlace por cliente
+OK   [Celular] ambiguo: sin chevron ni cursor de navegación
+OK   [Celular] ambiguo: clic en la fila no navega — /cobro
+OK   [Celular] ambiguo: el enlace elegido abre ese cliente — /clientes/69
+OK   [Celular] sin cliente: lo indica claramente
+OK   [Celular] sin cliente: la fila no navega — /cobro
+OK   [Celular] sin cliente: conserva el acceso al judicial — /expedientes/314
+OK   [Celular] sin scroll horizontal al final
+
+===== Tablet (768x1024) =====
+OK   [Tablet] encabezado Cliente primero
+OK   [Tablet] ayuda de búsqueda visible
+OK   [Tablet] búsqueda por sello: 23 filas en 2 páginas — 23 expedientes de cobro · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Tablet] sin scroll horizontal
+OK   [Tablet] página 2: 3 filas — 3
+OK   [Tablet] búsqueda por DNI: 21 judiciales de X, una fila cada uno
+OK   [Tablet] fila X: cliente como dato principal
+OK   [Tablet] fila X: carátula y número como secundario
+OK   [Tablet] fila X: documento Oficio y señal de vencido — Unico XOG7JD, QaXOG7JD DNI 50957211 PRUEBA COBRO XOG7JD X 00 QA-XOG7JD-00 Documento Oficio Envío 02/01/2025 Seguimiento 19/06/2025 Pendiente Vencido Venció hace 525 días Ver seguimiento
+OK   [Tablet] fila X: fecha de envío
+OK   [Tablet] clic en la fila abre la ficha del cliente — /clientes/67
+OK   [Tablet] enlace al judicial abre el judicial, no el cliente — /expedientes/315
+OK   [Tablet] Ver seguimiento abre el diálogo y no navega — /cobro
+OK   [Tablet] al cerrar el diálogo sigue en cobro
+OK   [Tablet] enlace del nombre abre el cliente — /clientes/67
+OK   [Tablet] W principal y 'y 1 cliente más'
+OK   [Tablet] fila con principal único navega al principal — /clientes/70
+OK   [Tablet] ambiguo: aviso de varios clientes
+OK   [Tablet] ambiguo: un enlace por cliente
+OK   [Tablet] ambiguo: sin chevron ni cursor de navegación
+OK   [Tablet] ambiguo: clic en la fila no navega — /cobro
+OK   [Tablet] ambiguo: el enlace elegido abre ese cliente — /clientes/69
+OK   [Tablet] sin cliente: lo indica claramente
+OK   [Tablet] sin cliente: la fila no navega — /cobro
+OK   [Tablet] sin cliente: conserva el acceso al judicial — /expedientes/314
+OK   [Tablet] sin scroll horizontal al final
+
+86/86 OK

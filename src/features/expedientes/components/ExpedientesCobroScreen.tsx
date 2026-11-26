@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -9,7 +10,11 @@ import {
   ChevronRight,
   HandCoins,
   RotateCcw,
+  Scale,
   Search,
+  UserRound,
+  UsersRound,
+  UserX,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +32,18 @@ import {
   resumenAlertaCobro,
   TIPO_DOCUMENTO_COBRO_LABELS,
 } from "../lib/cobro";
-import type { ExpedienteCobroResponse } from "../types/types";
+import {
+  destinoClienteCobro,
+  documentoCliente,
+  esClicEnControl,
+  rutaCliente,
+  rutaExpediente,
+  type DestinoClienteCobro,
+} from "../lib/clienteCobro";
+import type {
+  ClienteExpedienteCobroResponse,
+  ExpedienteCobroResponse,
+} from "../types/types";
 
 import AlertaSeguimientoCobroDialog from "./AlertaSeguimientoCobroDialog";
 import SeguimientoCobroEstado from "./SeguimientoCobroEstado";
@@ -41,18 +57,6 @@ const FILTROS_SEGUIMIENTO: Record<FiltroSeguimiento, boolean | undefined> = {
   pendientes: false,
   vencidos: true,
 };
-
-function resumirCasos(expediente: ExpedienteCobroResponse) {
-  if (expediente.casos.length === 0) {
-    return "Sin expediente administrativo";
-  }
-
-  const [primero, ...resto] = expediente.casos;
-
-  return resto.length > 0
-    ? `${primero.titulo} y ${resto.length} más`
-    : primero.titulo;
-}
 
 function mensajeError(error: unknown) {
   if (error instanceof ApiError && error.status === 404) {
@@ -72,6 +76,124 @@ function ExpedienteInactivoBadge() {
   );
 }
 
+const ENLACE =
+  "rounded-sm hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+function ClienteInactivoBadge() {
+  return (
+    <Badge variant="outline" className="rounded-sm bg-muted text-muted-foreground">
+      Cliente inactivo
+    </Badge>
+  );
+}
+
+function EnlaceCliente({
+  cliente,
+  className,
+}: {
+  cliente: ClienteExpedienteCobroResponse;
+  className?: string;
+}) {
+  return (
+    <Link href={rutaCliente(cliente.clienteId)} className={cn(ENLACE, className)}>
+      {cliente.nombreCompleto}
+    </Link>
+  );
+}
+
+/** Información principal de la fila: el cliente, o lo que corresponda si no hay uno inequívoco. */
+function ClienteCobro({ destino }: { destino: DestinoClienteCobro }) {
+  if (destino.tipo === "sin-cliente") {
+    return (
+      <div className="flex items-start gap-2">
+        <UserX className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-500" />
+        <div>
+          <p className="font-medium text-amber-800 dark:text-amber-400">
+            Sin cliente asociado
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Se asocia desde el expediente administrativo.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (destino.tipo === "varios") {
+    return (
+      <div className="flex items-start gap-2">
+        <UsersRound className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-muted-foreground">
+            {destino.clientes.length} clientes, sin principal único. Elegí uno:
+          </p>
+          <ul className="mt-1 space-y-1">
+            {destino.clientes.map((cliente) => (
+              <li key={cliente.clienteId} className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <EnlaceCliente
+                  cliente={cliente}
+                  className="font-medium pointer-coarse:inline-flex pointer-coarse:min-h-10 pointer-coarse:items-center"
+                />
+                {documentoCliente(cliente) && (
+                  <span className="text-xs text-muted-foreground">{documentoCliente(cliente)}</span>
+                )}
+                {!cliente.activo && <ClienteInactivoBadge />}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
+  const { cliente, otros } = destino;
+  const documento = documentoCliente(cliente);
+
+  return (
+    <div className="flex items-start gap-2">
+      <UserRound className="mt-0.5 size-4 shrink-0 text-muted-foreground group-hover:text-primary" />
+      <div className="min-w-0">
+        <EnlaceCliente cliente={cliente} className="font-medium leading-5 group-hover:text-primary" />
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+          {documento && <span>{documento}</span>}
+          {otros.length > 0 && (
+            <span title={otros.map((otro) => otro.nombreCompleto).join(" · ")}>
+              {otros.length === 1 ? "y 1 cliente más" : `y ${otros.length} clientes más`}
+            </span>
+          )}
+          {!cliente.activo && <ClienteInactivoBadge />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Información secundaria: el judicial, con enlace explícito a su detalle. */
+function JudicialCobro({
+  expediente,
+  className,
+}: {
+  expediente: ExpedienteCobroResponse;
+  className?: string;
+}) {
+  return (
+    <div className={cn("min-w-0 text-sm", className)}>
+      <Link
+        href={rutaExpediente(expediente.expedienteId)}
+        className={cn(ENLACE, "inline-flex items-start gap-1.5 text-muted-foreground pointer-coarse:min-h-10")}
+        aria-label={`Abrir expediente judicial ${expediente.caratula}`}
+      >
+        <Scale className="mt-0.5 size-3.5 shrink-0" />
+        <span className="line-clamp-2">{expediente.caratula}</span>
+      </Link>
+      <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 pl-5 text-xs text-muted-foreground">
+        <span>{expediente.numeroExpediente || "Sin número"}</span>
+        {!expediente.activo && <ExpedienteInactivoBadge />}
+      </div>
+    </div>
+  );
+}
+
 function BotonAlerta({ onClick }: { onClick: () => void }) {
   return (
     <Button
@@ -79,7 +201,7 @@ function BotonAlerta({ onClick }: { onClick: () => void }) {
       variant="outline"
       size="sm"
       onClick={(event) => {
-        // No abrir el judicial al hacer clic en el seguimiento.
+        // No abrir la ficha del cliente al hacer clic en el seguimiento.
         event.stopPropagation();
         onClick();
       }}
@@ -146,8 +268,17 @@ export default function ExpedientesCobroScreen() {
     setPage(1);
   };
 
-  const abrirExpediente = (expedienteId: number) =>
-    router.push(`/expedientes/${expedienteId}`);
+  // La fila (o tarjeta) abre la ficha del cliente solo si hay uno inequívoco.
+  // Los enlaces y botones internos conservan su propia acción.
+  const abrirCliente = (
+    event: MouseEvent<HTMLElement>,
+    destino: DestinoClienteCobro,
+  ) => {
+    if (destino.tipo !== "cliente") return;
+    if (esClicEnControl(event.target, event.currentTarget)) return;
+    if (window.getSelection()?.toString()) return;
+    router.push(rutaCliente(destino.cliente.clienteId));
+  };
 
   return (
     <div className={cn("mx-auto flex w-full max-w-6xl flex-col gap-6", TACTIL)}>
@@ -171,9 +302,10 @@ export default function ExpedientesCobroScreen() {
                 setBusqueda(event.target.value);
                 setPage(1);
               }}
-              placeholder="Buscar por número, carátula, juzgado, expediente administrativo o cliente..."
+              placeholder="Buscar por cliente, DNI, CUIL, carátula o número…"
               className="h-10 bg-background pl-9"
               aria-label="Buscar expedientes de cobro"
+              aria-describedby="ayuda-busqueda-cobro"
             />
           </div>
 
@@ -217,6 +349,11 @@ export default function ExpedientesCobroScreen() {
             </Button>
           )}
         </div>
+
+        <p id="ayuda-busqueda-cobro" className="mt-2 text-xs text-muted-foreground">
+          Busca por nombre, apellido, DNI o CUIL del cliente; carátula, número, juzgado,
+          estado legal y observaciones del judicial, y título del expediente administrativo.
+        </p>
       </section>
 
       {isError ? (
@@ -275,64 +412,60 @@ export default function ExpedientesCobroScreen() {
             }
           >
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:hidden">
-              {data.items.map((expediente) => (
-                <article
-                  key={expediente.expedienteId}
-                  className="rounded-lg border bg-card p-4"
-                >
-                  <button
-                    type="button"
-                    className="group block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    onClick={() => abrirExpediente(expediente.expedienteId)}
+              {data.items.map((expediente) => {
+                const destino = destinoClienteCobro(expediente);
+                const navegable = destino.tipo === "cliente";
+
+                return (
+                  <article
+                    key={expediente.expedienteId}
+                    data-expediente-id={expediente.expedienteId}
+                    onClick={(event) => abrirCliente(event, destino)}
+                    className={cn(
+                      "group rounded-lg border bg-card p-4",
+                      navegable && "cursor-pointer transition-colors hover:border-primary/40 hover:bg-secondary/15",
+                    )}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h2 className="font-medium leading-6 group-hover:text-primary">
-                          {expediente.caratula}
-                        </h2>
+                      <div className="min-w-0 flex-1">
+                        <ClienteCobro destino={destino} />
+                      </div>
+                      {navegable && (
+                        <ChevronRight className="mt-1 size-4 shrink-0 text-muted-foreground/60 group-hover:text-primary" />
+                      )}
+                    </div>
 
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {expediente.numeroExpediente || "Sin número"}
-                        </p>
+                    <JudicialCobro expediente={expediente} className="mt-3 border-t pt-3" />
 
-                        <p className="mt-1 truncate text-xs text-muted-foreground">
-                          {resumirCasos(expediente)}
-                        </p>
+                    <dl className="mt-3 grid grid-cols-2 gap-3 border-t pt-3 text-sm">
+                      <div>
+                        <dt className="text-xs text-muted-foreground">Documento</dt>
+                        <dd className="mt-1">
+                          {TIPO_DOCUMENTO_COBRO_LABELS[expediente.envioCobro.tipoDocumento]}
+                        </dd>
                       </div>
 
-                      <ChevronRight className="mt-1 size-4 shrink-0 text-muted-foreground/60 group-hover:text-primary" />
-                    </div>
-                  </button>
+                      <div>
+                        <dt className="text-xs text-muted-foreground">Envío</dt>
+                        <dd className="mt-1">
+                          {formatearFechaCobro(expediente.envioCobro.fechaEnvio)}
+                        </dd>
+                      </div>
 
-                  <dl className="mt-4 grid grid-cols-2 gap-3 border-t pt-3 text-sm">
-                    <div>
-                      <dt className="text-xs text-muted-foreground">Documento</dt>
-                      <dd className="mt-1">
-                        {TIPO_DOCUMENTO_COBRO_LABELS[expediente.envioCobro.tipoDocumento]}
-                      </dd>
-                    </div>
+                      <div className="col-span-2">
+                        <dt className="text-xs text-muted-foreground">Seguimiento</dt>
+                        <dd className="mt-1">
+                          <SeguimientoCobroEstado envio={expediente.envioCobro} compacto />
+                        </dd>
+                      </div>
+                    </dl>
 
-                    <div>
-                      <dt className="text-xs text-muted-foreground">Envío</dt>
-                      <dd className="mt-1">
-                        {formatearFechaCobro(expediente.envioCobro.fechaEnvio)}
-                      </dd>
+                    <div className="mt-4 flex justify-end border-t pt-3">
+                      <BotonAlerta onClick={() => setAlerta(expediente)} />
                     </div>
-
-                    <div className="col-span-2">
-                      <dt className="text-xs text-muted-foreground">Seguimiento</dt>
-                      <dd className="mt-1">
-                        <SeguimientoCobroEstado envio={expediente.envioCobro} compacto />
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
-                    {!expediente.activo ? <ExpedienteInactivoBadge /> : <span />}
-                    <BotonAlerta onClick={() => setAlerta(expediente)} />
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
 
             <div className="hidden overflow-hidden rounded-lg border bg-card lg:block">
@@ -340,63 +473,58 @@ export default function ExpedientesCobroScreen() {
                 <table className="w-full text-sm">
                   <thead className="border-b bg-muted/40 text-left text-xs text-muted-foreground">
                     <tr>
+                      <th className="px-5 py-3 font-medium">Cliente</th>
                       <th className="px-5 py-3 font-medium">Expediente judicial</th>
                       <th className="px-5 py-3 font-medium">Documento</th>
                       <th className="px-5 py-3 font-medium">Envío</th>
                       <th className="px-5 py-3 font-medium">Seguimiento</th>
                       <th className="px-5 py-3 text-right font-medium">
-                        <span className="sr-only">Seguimiento</span>
+                        <span className="sr-only">Acciones</span>
                       </th>
                     </tr>
                   </thead>
 
                   <tbody className="divide-y">
-                    {data.items.map((expediente) => (
-                      <tr
-                        key={expediente.expedienteId}
-                        tabIndex={0}
-                        role="button"
-                        onClick={() => abrirExpediente(expediente.expedienteId)}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            abrirExpediente(expediente.expedienteId);
-                          }
-                        }}
-                        className="group cursor-pointer transition-colors hover:bg-secondary/25 focus-visible:bg-secondary/25 focus-visible:outline-none"
-                      >
-                        <td className="px-5 py-4">
-                          <div className="max-w-96 font-medium leading-5 group-hover:text-primary">
-                            {expediente.caratula}
-                          </div>
+                    {data.items.map((expediente) => {
+                      const destino = destinoClienteCobro(expediente);
+                      const navegable = destino.tipo === "cliente";
 
-                          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-                            <span>{expediente.numeroExpediente || "Sin número"}</span>
-                            <span aria-hidden="true">·</span>
-                            <span className="max-w-64 truncate">
-                              {resumirCasos(expediente)}
-                            </span>
-                            {!expediente.activo && <ExpedienteInactivoBadge />}
-                          </div>
-                        </td>
+                      return (
+                        <tr
+                          key={expediente.expedienteId}
+                          data-expediente-id={expediente.expedienteId}
+                          onClick={(event) => abrirCliente(event, destino)}
+                          className={cn(
+                            "group align-top",
+                            navegable && "cursor-pointer transition-colors hover:bg-secondary/25",
+                          )}
+                        >
+                          <td className="w-[28%] px-5 py-4">
+                            <ClienteCobro destino={destino} />
+                          </td>
 
-                        <td className="whitespace-nowrap px-5 py-4">
-                          {TIPO_DOCUMENTO_COBRO_LABELS[expediente.envioCobro.tipoDocumento]}
-                        </td>
+                          <td className="px-5 py-4">
+                            <JudicialCobro expediente={expediente} className="max-w-80" />
+                          </td>
 
-                        <td className="whitespace-nowrap px-5 py-4 text-muted-foreground">
-                          {formatearFechaCobro(expediente.envioCobro.fechaEnvio)}
-                        </td>
+                          <td className="whitespace-nowrap px-5 py-4">
+                            {TIPO_DOCUMENTO_COBRO_LABELS[expediente.envioCobro.tipoDocumento]}
+                          </td>
 
-                        <td className="px-5 py-4">
-                          <SeguimientoCobroEstado envio={expediente.envioCobro} compacto />
-                        </td>
+                          <td className="whitespace-nowrap px-5 py-4 text-muted-foreground">
+                            {formatearFechaCobro(expediente.envioCobro.fechaEnvio)}
+                          </td>
 
-                        <td className="px-5 py-4 text-right">
-                          <BotonAlerta onClick={() => setAlerta(expediente)} />
-                        </td>
-                      </tr>
-                    ))}
+                          <td className="px-5 py-4">
+                            <SeguimientoCobroEstado envio={expediente.envioCobro} compacto />
+                          </td>
+
+                          <td className="px-5 py-4 text-right">
+                            <BotonAlerta onClick={() => setAlerta(expediente)} />
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

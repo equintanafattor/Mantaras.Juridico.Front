@@ -1,0 +1,437 @@
+{
+  "sello": "XOG7JD",
+  "total": 86,
+  "fallas": 0,
+  "resultados": [
+    {
+      "nombre": "API: una fila por judicial (23 con el sello)",
+      "ok": true,
+      "detalle": "23"
+    },
+    {
+      "nombre": "API: X único → clientePrincipalId = X",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: ambiguo → null con 2 clientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: W principal y V secundario",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: nombreCompleto Apellido, Nombre",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: busca por DNI del cliente",
+      "ok": true,
+      "detalle": "21"
+    },
+    {
+      "nombre": "API: existe el judicial sin cliente (preparado por backend)",
+      "ok": true,
+      "detalle": "id 314"
+    },
+    {
+      "nombre": "[Escritorio] encabezado Cliente primero",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] ayuda de búsqueda visible",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] búsqueda por sello: 23 filas en 2 páginas",
+      "ok": true,
+      "detalle": "23 expedientes de cobro · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] página 2: 3 filas",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Escritorio] búsqueda por DNI: 21 judiciales de X, una fila cada uno",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] fila X: cliente como dato principal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] fila X: carátula y número como secundario",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] fila X: documento Oficio y señal de vencido",
+      "ok": true,
+      "detalle": "Unico XOG7JD, QaXOG7JD DNI 50957211 PRUEBA COBRO XOG7JD X 00 QA-XOG7JD-00 Oficio 02/01/2025 19/06/2025 Pendiente Vencido Venció hace 525 días Ver seguimiento"
+    },
+    {
+      "nombre": "[Escritorio] fila X: fecha de envío",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] clic en la fila abre la ficha del cliente",
+      "ok": true,
+      "detalle": "/clientes/67"
+    },
+    {
+      "nombre": "[Escritorio] enlace al judicial abre el judicial, no el cliente",
+      "ok": true,
+      "detalle": "/expedientes/315"
+    },
+    {
+      "nombre": "[Escritorio] Ver seguimiento abre el diálogo y no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Escritorio] al cerrar el diálogo sigue en cobro",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] enlace del nombre abre el cliente",
+      "ok": true,
+      "detalle": "/clientes/67"
+    },
+    {
+      "nombre": "[Escritorio] W principal y 'y 1 cliente más'",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] fila con principal único navega al principal",
+      "ok": true,
+      "detalle": "/clientes/70"
+    },
+    {
+      "nombre": "[Escritorio] ambiguo: aviso de varios clientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] ambiguo: un enlace por cliente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] ambiguo: sin chevron ni cursor de navegación",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] ambiguo: clic en la fila no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Escritorio] ambiguo: el enlace elegido abre ese cliente",
+      "ok": true,
+      "detalle": "/clientes/69"
+    },
+    {
+      "nombre": "[Escritorio] sin cliente: lo indica claramente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] sin cliente: la fila no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Escritorio] sin cliente: conserva el acceso al judicial",
+      "ok": true,
+      "detalle": "/expedientes/314"
+    },
+    {
+      "nombre": "[Escritorio] teclado: Enter en el cliente abre su ficha",
+      "ok": true,
+      "detalle": "/clientes/70"
+    },
+    {
+      "nombre": "[Escritorio] sin scroll horizontal al final",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] encabezado Cliente primero",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] ayuda de búsqueda visible",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] búsqueda por sello: 23 filas en 2 páginas",
+      "ok": true,
+      "detalle": "23 expedientes de cobro · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] página 2: 3 filas",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Celular] búsqueda por DNI: 21 judiciales de X, una fila cada uno",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] fila X: cliente como dato principal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] fila X: carátula y número como secundario",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] fila X: documento Oficio y señal de vencido",
+      "ok": true,
+      "detalle": "Unico XOG7JD, QaXOG7JD DNI 50957211 PRUEBA COBRO XOG7JD X 00 QA-XOG7JD-00 Documento Oficio Envío 02/01/2025 Seguimiento 19/06/2025 Pendiente Vencido Venció hace 525 días Ver seguimiento"
+    },
+    {
+      "nombre": "[Celular] fila X: fecha de envío",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] clic en la fila abre la ficha del cliente",
+      "ok": true,
+      "detalle": "/clientes/67"
+    },
+    {
+      "nombre": "[Celular] enlace al judicial abre el judicial, no el cliente",
+      "ok": true,
+      "detalle": "/expedientes/315"
+    },
+    {
+      "nombre": "[Celular] Ver seguimiento abre el diálogo y no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Celular] al cerrar el diálogo sigue en cobro",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] enlace del nombre abre el cliente",
+      "ok": true,
+      "detalle": "/clientes/67"
+    },
+    {
+      "nombre": "[Celular] W principal y 'y 1 cliente más'",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] fila con principal único navega al principal",
+      "ok": true,
+      "detalle": "/clientes/70"
+    },
+    {
+      "nombre": "[Celular] ambiguo: aviso de varios clientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] ambiguo: un enlace por cliente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] ambiguo: sin chevron ni cursor de navegación",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] ambiguo: clic en la fila no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Celular] ambiguo: el enlace elegido abre ese cliente",
+      "ok": true,
+      "detalle": "/clientes/69"
+    },
+    {
+      "nombre": "[Celular] sin cliente: lo indica claramente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] sin cliente: la fila no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Celular] sin cliente: conserva el acceso al judicial",
+      "ok": true,
+      "detalle": "/expedientes/314"
+    },
+    {
+      "nombre": "[Celular] sin scroll horizontal al final",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] encabezado Cliente primero",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] ayuda de búsqueda visible",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] búsqueda por sello: 23 filas en 2 páginas",
+      "ok": true,
+      "detalle": "23 expedientes de cobro · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] página 2: 3 filas",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Tablet] búsqueda por DNI: 21 judiciales de X, una fila cada uno",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] fila X: cliente como dato principal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] fila X: carátula y número como secundario",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] fila X: documento Oficio y señal de vencido",
+      "ok": true,
+      "detalle": "Unico XOG7JD, QaXOG7JD DNI 50957211 PRUEBA COBRO XOG7JD X 00 QA-XOG7JD-00 Documento Oficio Envío 02/01/2025 Seguimiento 19/06/2025 Pendiente Vencido Venció hace 525 días Ver seguimiento"
+    },
+    {
+      "nombre": "[Tablet] fila X: fecha de envío",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] clic en la fila abre la ficha del cliente",
+      "ok": true,
+      "detalle": "/clientes/67"
+    },
+    {
+      "nombre": "[Tablet] enlace al judicial abre el judicial, no el cliente",
+      "ok": true,
+      "detalle": "/expedientes/315"
+    },
+    {
+      "nombre": "[Tablet] Ver seguimiento abre el diálogo y no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Tablet] al cerrar el diálogo sigue en cobro",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] enlace del nombre abre el cliente",
+      "ok": true,
+      "detalle": "/clientes/67"
+    },
+    {
+      "nombre": "[Tablet] W principal y 'y 1 cliente más'",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] fila con principal único navega al principal",
+      "ok": true,
+      "detalle": "/clientes/70"
+    },
+    {
+      "nombre": "[Tablet] ambiguo: aviso de varios clientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] ambiguo: un enlace por cliente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] ambiguo: sin chevron ni cursor de navegación",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] ambiguo: clic en la fila no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Tablet] ambiguo: el enlace elegido abre ese cliente",
+      "ok": true,
+      "detalle": "/clientes/69"
+    },
+    {
+      "nombre": "[Tablet] sin cliente: lo indica claramente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] sin cliente: la fila no navega",
+      "ok": true,
+      "detalle": "/cobro"
+    },
+    {
+      "nombre": "[Tablet] sin cliente: conserva el acceso al judicial",
+      "ok": true,
+      "detalle": "/expedientes/314"
+    },
+    {
+      "nombre": "[Tablet] sin scroll horizontal al final",
+      "ok": true,
+      "detalle": ""
+    }
+  ]
+}
