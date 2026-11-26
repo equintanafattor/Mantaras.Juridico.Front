@@ -1,0 +1,467 @@
+{
+  "fecha": "2026-11-26T15:35:50.304Z",
+  "sello": "XPRHQY",
+  "datos": {
+    "juzgadoA": 118,
+    "juzgadoB": 119,
+    "expedientes": [
+      443,
+      444,
+      445,
+      446,
+      447,
+      448,
+      449,
+      450,
+      451,
+      452,
+      453,
+      454,
+      455
+    ]
+  },
+  "esperado": {
+    "aActivos": 11,
+    "aTodos": 12,
+    "b": 1,
+    "aBusqueda": 1,
+    "sinFiltro": 101
+  },
+  "resultados": [
+    {
+      "nombre": "API: el filtro A cuenta solo sus expedientes activos",
+      "ok": true,
+      "detalle": "11"
+    },
+    {
+      "nombre": "API: A con inactivos incluye el dado de baja",
+      "ok": true,
+      "detalle": "12"
+    },
+    {
+      "nombre": "API: filtra por un juzgado inactivo",
+      "ok": true,
+      "detalle": "1"
+    },
+    {
+      "nombre": "[Escritorio] inicial: muestra Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] inicial: no envía juzgadoId",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] lista: primera opción Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] búsqueda: encuentra A y B",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] búsqueda: B marcado Inactivo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] lista abierta sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] búsqueda: sin coincidencias",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] selección A: envía juzgadoId y page=1",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Escritorio] selección A: total y páginas del servidor",
+      "ok": true,
+      "detalle": "11 expedientes judiciales · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] selección A: 10 filas de la página 1",
+      "ok": true,
+      "detalle": "10"
+    },
+    {
+      "nombre": "[Escritorio] selección A: el selector muestra el elegido",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] paginación: page=2 mantiene juzgadoId",
+      "ok": true,
+      "detalle": "{\"page\":\"2\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Escritorio] paginación: la página 2 trae el resto",
+      "ok": true,
+      "detalle": "1"
+    },
+    {
+      "nombre": "[Escritorio] cambio de selección: vuelve a page=1",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"119\"}"
+    },
+    {
+      "nombre": "[Escritorio] juzgado inactivo: filtra sus expedientes",
+      "ok": true,
+      "detalle": "1 expediente judicial · Página 1 de 1\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] juzgado inactivo: el selector lo marca",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] combinación: + incluir inactivos",
+      "ok": true,
+      "detalle": "12 expedientes judiciales · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] combinación: + búsqueda",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\",\"busqueda\":\"XPRHQY 03\"}"
+    },
+    {
+      "nombre": "[Escritorio] combinación: + expediente administrativo propio",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"casoId\":\"1\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Escritorio] resultados vacíos: mensaje con Limpiar filtros",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"casoId\":\"164\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Escritorio] limpiar: vuelve a Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] limpiar: no vuelve a pedir con juzgadoId ni casoId",
+      "ok": true,
+      "detalle": "0 petición(es) nuevas"
+    },
+    {
+      "nombre": "[Escritorio] limpiar: total sin filtros",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] limpiar (barra): quita el juzgado",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] opción Todos los juzgados: quita el filtro",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Escritorio] error de catálogo: aviso con Reintentar y listado utilizable",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] error de catálogo: el reintento recupera el filtro",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] inicial: muestra Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] inicial: no envía juzgadoId",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] lista: primera opción Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] búsqueda: encuentra A y B",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] búsqueda: B marcado Inactivo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] lista abierta sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] búsqueda: sin coincidencias",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] selección A: envía juzgadoId y page=1",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Celular] selección A: total y páginas del servidor",
+      "ok": true,
+      "detalle": "11 expedientes judiciales · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] selección A: 10 filas de la página 1",
+      "ok": true,
+      "detalle": "10"
+    },
+    {
+      "nombre": "[Celular] selección A: el selector muestra el elegido",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] paginación: page=2 mantiene juzgadoId",
+      "ok": true,
+      "detalle": "{\"page\":\"2\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Celular] paginación: la página 2 trae el resto",
+      "ok": true,
+      "detalle": "1"
+    },
+    {
+      "nombre": "[Celular] cambio de selección: vuelve a page=1",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"119\"}"
+    },
+    {
+      "nombre": "[Celular] juzgado inactivo: filtra sus expedientes",
+      "ok": true,
+      "detalle": "1 expediente judicial · Página 1 de 1\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] juzgado inactivo: el selector lo marca",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] combinación: + incluir inactivos",
+      "ok": true,
+      "detalle": "12 expedientes judiciales · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] combinación: + búsqueda",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\",\"busqueda\":\"XPRHQY 03\"}"
+    },
+    {
+      "nombre": "[Celular] combinación: + expediente administrativo propio",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"casoId\":\"1\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Celular] resultados vacíos: mensaje con Limpiar filtros",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"casoId\":\"164\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Celular] limpiar: vuelve a Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] limpiar: no vuelve a pedir con juzgadoId ni casoId",
+      "ok": true,
+      "detalle": "0 petición(es) nuevas"
+    },
+    {
+      "nombre": "[Celular] limpiar: total sin filtros",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] limpiar (barra): quita el juzgado",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] opción Todos los juzgados: quita el filtro",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Celular] error de catálogo: aviso con Reintentar y listado utilizable",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] error de catálogo: el reintento recupera el filtro",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] inicial: muestra Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] inicial: no envía juzgadoId",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] lista: primera opción Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] búsqueda: encuentra A y B",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] búsqueda: B marcado Inactivo",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] lista abierta sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] búsqueda: sin coincidencias",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] selección A: envía juzgadoId y page=1",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Tablet] selección A: total y páginas del servidor",
+      "ok": true,
+      "detalle": "11 expedientes judiciales · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] selección A: 10 filas de la página 1",
+      "ok": true,
+      "detalle": "10"
+    },
+    {
+      "nombre": "[Tablet] selección A: el selector muestra el elegido",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] paginación: page=2 mantiene juzgadoId",
+      "ok": true,
+      "detalle": "{\"page\":\"2\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Tablet] paginación: la página 2 trae el resto",
+      "ok": true,
+      "detalle": "1"
+    },
+    {
+      "nombre": "[Tablet] cambio de selección: vuelve a page=1",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"119\"}"
+    },
+    {
+      "nombre": "[Tablet] juzgado inactivo: filtra sus expedientes",
+      "ok": true,
+      "detalle": "1 expediente judicial · Página 1 de 1\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] juzgado inactivo: el selector lo marca",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] combinación: + incluir inactivos",
+      "ok": true,
+      "detalle": "12 expedientes judiciales · Página 1 de 2\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] combinación: + búsqueda",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"juzgadoId\":\"118\",\"busqueda\":\"XPRHQY 03\"}"
+    },
+    {
+      "nombre": "[Tablet] combinación: + expediente administrativo propio",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"casoId\":\"1\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Tablet] resultados vacíos: mensaje con Limpiar filtros",
+      "ok": true,
+      "detalle": "{\"page\":\"1\",\"pageSize\":\"10\",\"soloActivos\":\"true\",\"casoId\":\"164\",\"juzgadoId\":\"118\"}"
+    },
+    {
+      "nombre": "[Tablet] limpiar: vuelve a Todos los juzgados",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] limpiar: no vuelve a pedir con juzgadoId ni casoId",
+      "ok": true,
+      "detalle": "0 petición(es) nuevas"
+    },
+    {
+      "nombre": "[Tablet] limpiar: total sin filtros",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] limpiar (barra): quita el juzgado",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] opción Todos los juzgados: quita el filtro",
+      "ok": true,
+      "detalle": "101 expedientes judiciales · Página 1 de 11\n\nAnterior\nSiguiente"
+    },
+    {
+      "nombre": "[Tablet] error de catálogo: aviso con Reintentar y listado utilizable",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Tablet] error de catálogo: el reintento recupera el filtro",
+      "ok": true,
+      "detalle": ""
+    }
+  ]
+}

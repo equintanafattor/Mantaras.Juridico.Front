@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { buscarCatalogo, cambiarEstadoCatalogo, guardarCatalogo, obtenerOpcionesCatalogo } from "../api/catalogosApi";
 import type { TipoCatalogo } from "../types/types";
 
-export function useOpcionesCatalogo(tipo: TipoCatalogo) {
+export function useOpcionesCatalogo(tipo: TipoCatalogo, incluirInactivos = false) {
   return useQuery({
-    queryKey: ["catalogos", tipo, "opciones"],
-    queryFn: ({ signal }) => obtenerOpcionesCatalogo(tipo, signal),
+    queryKey: ["catalogos", tipo, "opciones", incluirInactivos ? "todos" : "activos"],
+    queryFn: ({ signal }) => obtenerOpcionesCatalogo(tipo, signal, incluirInactivos),
     staleTime: 0,
     refetchOnWindowFocus: true,
   });

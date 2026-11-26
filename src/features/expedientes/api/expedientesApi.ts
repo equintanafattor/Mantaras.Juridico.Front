@@ -27,6 +27,10 @@ export async function buscarExpedientes(
     query.set("casoId", params.casoId.toString());
   }
 
+  if (params.juzgadoId !== undefined) {
+    query.set("juzgadoId", params.juzgadoId.toString());
+  }
+
   const busqueda = params.busqueda?.trim();
 
   if (busqueda) {

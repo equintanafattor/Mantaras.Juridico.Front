@@ -15,6 +15,7 @@ export function useExpedientes(
       params.page,
       params.pageSize,
       params.casoId,
+      params.juzgadoId,
       params.busqueda,
       params.soloActivos,
     ],

@@ -1,0 +1,151 @@
+Datos: juzgados A=118 B=119 (inactivo); 12 expedientes en A (1 de baja), 1 en B; sello XPRHQY
+Esperado (API): {"aActivos":11,"aTodos":12,"b":1,"aBusqueda":1,"sinFiltro":101}
+OK   API: el filtro A cuenta solo sus expedientes activos — 11
+OK   API: A con inactivos incluye el dado de baja — 12
+OK   API: filtra por un juzgado inactivo — 1
+
+===== Escritorio (1440x900) =====
+OK   [Escritorio] inicial: muestra Todos los juzgados
+OK   [Escritorio] inicial: no envía juzgadoId
+OK   [Escritorio] sin scroll horizontal
+OK   [Escritorio] lista: primera opción Todos los juzgados
+OK   [Escritorio] búsqueda: encuentra A y B
+OK   [Escritorio] búsqueda: B marcado Inactivo
+OK   [Escritorio] lista abierta sin scroll horizontal
+OK   [Escritorio] búsqueda: sin coincidencias
+OK   [Escritorio] selección A: envía juzgadoId y page=1 — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"118"}
+OK   [Escritorio] selección A: total y páginas del servidor — 11 expedientes judiciales · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Escritorio] selección A: 10 filas de la página 1 — 10
+OK   [Escritorio] selección A: el selector muestra el elegido
+OK   [Escritorio] paginación: page=2 mantiene juzgadoId — {"page":"2","pageSize":"10","soloActivos":"true","juzgadoId":"118"}
+OK   [Escritorio] paginación: la página 2 trae el resto — 1
+OK   [Escritorio] cambio de selección: vuelve a page=1 — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"119"}
+OK   [Escritorio] juzgado inactivo: filtra sus expedientes — 1 expediente judicial · Página 1 de 1
+
+Anterior
+Siguiente
+OK   [Escritorio] juzgado inactivo: el selector lo marca
+OK   [Escritorio] combinación: + incluir inactivos — 12 expedientes judiciales · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Escritorio] combinación: + búsqueda — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"118","busqueda":"XPRHQY 03"}
+OK   [Escritorio] combinación: + expediente administrativo propio — {"page":"1","pageSize":"10","soloActivos":"true","casoId":"1","juzgadoId":"118"}
+OK   [Escritorio] resultados vacíos: mensaje con Limpiar filtros — {"page":"1","pageSize":"10","soloActivos":"true","casoId":"164","juzgadoId":"118"}
+OK   [Escritorio] limpiar: vuelve a Todos los juzgados
+OK   [Escritorio] limpiar: no vuelve a pedir con juzgadoId ni casoId — 0 petición(es) nuevas
+OK   [Escritorio] limpiar: total sin filtros — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Escritorio] limpiar (barra): quita el juzgado — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Escritorio] opción Todos los juzgados: quita el filtro — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Escritorio] error de catálogo: aviso con Reintentar y listado utilizable
+OK   [Escritorio] error de catálogo: el reintento recupera el filtro
+
+===== Celular (390x844) =====
+OK   [Celular] inicial: muestra Todos los juzgados
+OK   [Celular] inicial: no envía juzgadoId
+OK   [Celular] sin scroll horizontal
+OK   [Celular] lista: primera opción Todos los juzgados
+OK   [Celular] búsqueda: encuentra A y B
+OK   [Celular] búsqueda: B marcado Inactivo
+OK   [Celular] lista abierta sin scroll horizontal
+OK   [Celular] búsqueda: sin coincidencias
+OK   [Celular] selección A: envía juzgadoId y page=1 — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"118"}
+OK   [Celular] selección A: total y páginas del servidor — 11 expedientes judiciales · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Celular] selección A: 10 filas de la página 1 — 10
+OK   [Celular] selección A: el selector muestra el elegido
+OK   [Celular] paginación: page=2 mantiene juzgadoId — {"page":"2","pageSize":"10","soloActivos":"true","juzgadoId":"118"}
+OK   [Celular] paginación: la página 2 trae el resto — 1
+OK   [Celular] cambio de selección: vuelve a page=1 — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"119"}
+OK   [Celular] juzgado inactivo: filtra sus expedientes — 1 expediente judicial · Página 1 de 1
+
+Anterior
+Siguiente
+OK   [Celular] juzgado inactivo: el selector lo marca
+OK   [Celular] combinación: + incluir inactivos — 12 expedientes judiciales · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Celular] combinación: + búsqueda — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"118","busqueda":"XPRHQY 03"}
+OK   [Celular] combinación: + expediente administrativo propio — {"page":"1","pageSize":"10","soloActivos":"true","casoId":"1","juzgadoId":"118"}
+OK   [Celular] resultados vacíos: mensaje con Limpiar filtros — {"page":"1","pageSize":"10","soloActivos":"true","casoId":"164","juzgadoId":"118"}
+OK   [Celular] limpiar: vuelve a Todos los juzgados
+OK   [Celular] limpiar: no vuelve a pedir con juzgadoId ni casoId — 0 petición(es) nuevas
+OK   [Celular] limpiar: total sin filtros — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Celular] limpiar (barra): quita el juzgado — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Celular] opción Todos los juzgados: quita el filtro — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Celular] error de catálogo: aviso con Reintentar y listado utilizable
+OK   [Celular] error de catálogo: el reintento recupera el filtro
+
+===== Tablet (768x1024) =====
+OK   [Tablet] inicial: muestra Todos los juzgados
+OK   [Tablet] inicial: no envía juzgadoId
+OK   [Tablet] sin scroll horizontal
+OK   [Tablet] lista: primera opción Todos los juzgados
+OK   [Tablet] búsqueda: encuentra A y B
+OK   [Tablet] búsqueda: B marcado Inactivo
+OK   [Tablet] lista abierta sin scroll horizontal
+OK   [Tablet] búsqueda: sin coincidencias
+OK   [Tablet] selección A: envía juzgadoId y page=1 — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"118"}
+OK   [Tablet] selección A: total y páginas del servidor — 11 expedientes judiciales · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Tablet] selección A: 10 filas de la página 1 — 10
+OK   [Tablet] selección A: el selector muestra el elegido
+OK   [Tablet] paginación: page=2 mantiene juzgadoId — {"page":"2","pageSize":"10","soloActivos":"true","juzgadoId":"118"}
+OK   [Tablet] paginación: la página 2 trae el resto — 1
+OK   [Tablet] cambio de selección: vuelve a page=1 — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"119"}
+OK   [Tablet] juzgado inactivo: filtra sus expedientes — 1 expediente judicial · Página 1 de 1
+
+Anterior
+Siguiente
+OK   [Tablet] juzgado inactivo: el selector lo marca
+OK   [Tablet] combinación: + incluir inactivos — 12 expedientes judiciales · Página 1 de 2
+
+Anterior
+Siguiente
+OK   [Tablet] combinación: + búsqueda — {"page":"1","pageSize":"10","soloActivos":"true","juzgadoId":"118","busqueda":"XPRHQY 03"}
+OK   [Tablet] combinación: + expediente administrativo propio — {"page":"1","pageSize":"10","soloActivos":"true","casoId":"1","juzgadoId":"118"}
+OK   [Tablet] resultados vacíos: mensaje con Limpiar filtros — {"page":"1","pageSize":"10","soloActivos":"true","casoId":"164","juzgadoId":"118"}
+OK   [Tablet] limpiar: vuelve a Todos los juzgados
+OK   [Tablet] limpiar: no vuelve a pedir con juzgadoId ni casoId — 0 petición(es) nuevas
+OK   [Tablet] limpiar: total sin filtros — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Tablet] limpiar (barra): quita el juzgado — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Tablet] opción Todos los juzgados: quita el filtro — 101 expedientes judiciales · Página 1 de 11
+
+Anterior
+Siguiente
+OK   [Tablet] error de catálogo: aviso con Reintentar y listado utilizable
+OK   [Tablet] error de catálogo: el reintento recupera el filtro
+
+87/87 OK

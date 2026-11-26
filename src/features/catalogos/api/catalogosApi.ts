@@ -25,8 +25,8 @@ export async function buscarCatalogo(tipo: TipoCatalogo, page: number, busqueda:
   return { ...data, items: data.items.map((item) => mapear(tipo, item)) };
 }
 
-export async function obtenerOpcionesCatalogo(tipo: TipoCatalogo, signal?: AbortSignal): Promise<CatalogoItem[]> {
-  return leerOpciones((page) => buscarCatalogo(tipo, page, "", true, signal));
+export async function obtenerOpcionesCatalogo(tipo: TipoCatalogo, signal?: AbortSignal, incluirInactivos = false): Promise<CatalogoItem[]> {
+  return leerOpciones((page) => buscarCatalogo(tipo, page, "", !incluirInactivos, signal), incluirInactivos);
 }
 
 export async function guardarCatalogo(tipo: TipoCatalogo, nombre: string, id?: number): Promise<CatalogoItem> {

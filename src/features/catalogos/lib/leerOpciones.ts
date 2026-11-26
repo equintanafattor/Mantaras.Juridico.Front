@@ -6,9 +6,10 @@ type Pagina = {
   items: CatalogoItem[];
 };
 
-/** Complete active options, never expose a partially loaded catalog. */
+/** Complete options (active only by default), never expose a partially loaded catalog. */
 export async function leerOpciones(
   leerPagina: (page: number) => Promise<Pagina>,
+  incluirInactivos = false,
 ): Promise<CatalogoItem[]> {
   const items: CatalogoItem[] = [];
   const ids = new Set<number>();
@@ -21,7 +22,7 @@ export async function leerOpciones(
     for (const item of nuevos) {
       if (!ids.has(item.id)) {
         ids.add(item.id);
-        if (item.activo) items.push(item);
+        if (incluirInactivos || item.activo) items.push(item);
       }
     }
     if (!data.hasNextPage) return items;

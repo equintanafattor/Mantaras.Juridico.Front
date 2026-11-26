@@ -21,6 +21,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 import { useCasos } from "@/features/casos/hooks/useCasos";
+import JuzgadoFiltro from "@/features/catalogos/components/JuzgadoFiltro";
+import type { ReferenciaCatalogo } from "@/features/catalogos/types/types";
 
 import { useExpedientes } from "../hooks/useExpedientes";
 import type { ExpedienteResponse, TipoExpediente } from "../types/types";
@@ -191,6 +193,7 @@ export default function ExpedientesScreen() {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
   const [casoId, setCasoId] = useState<number | "">("");
+  const [juzgado, setJuzgado] = useState<ReferenciaCatalogo | null>(null);
   const [soloActivos, setSoloActivos] = useState(true);
   const [page, setPage] = useState(1);
 
@@ -209,12 +212,16 @@ export default function ExpedientesScreen() {
       page,
       pageSize: PAGE_SIZE,
       casoId: casoId === "" ? undefined : casoId,
+      juzgadoId: juzgado?.id,
       busqueda: busquedaDebounced || undefined,
       soloActivos,
     });
 
   const hayFiltros =
-    busqueda.trim().length > 0 || casoId !== "" || !soloActivos;
+    busqueda.trim().length > 0 ||
+    casoId !== "" ||
+    juzgado !== null ||
+    !soloActivos;
 
   const cambiarBusqueda = (value: string) => {
     setBusqueda(value);
@@ -226,6 +233,11 @@ export default function ExpedientesScreen() {
     setPage(1);
   };
 
+  const cambiarJuzgado = (value: ReferenciaCatalogo | null) => {
+    setJuzgado(value);
+    setPage(1);
+  };
+
   const cambiarFiltroActivos = (incluirInactivos: boolean) => {
     setSoloActivos(!incluirInactivos);
     setPage(1);
@@ -234,6 +246,7 @@ export default function ExpedientesScreen() {
   const limpiarFiltros = () => {
     setBusqueda("");
     setCasoId("");
+    setJuzgado(null);
     setSoloActivos(true);
     setPage(1);
   };
@@ -258,7 +271,7 @@ export default function ExpedientesScreen() {
         className="rounded-lg border bg-card p-4"
       >
         <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
-          <div className="relative min-w-0 flex-1 md:basis-full lg:basis-0">
+          <div className="relative min-w-0 flex-1 md:basis-full">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
             <Input
@@ -286,6 +299,12 @@ export default function ExpedientesScreen() {
               </option>
             ))}
           </select>
+
+          <JuzgadoFiltro
+            value={juzgado}
+            onChange={cambiarJuzgado}
+            className="md:min-w-56 md:flex-1"
+          />
 
           <label className="flex h-10 cursor-pointer items-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-3 text-sm">
             <input
@@ -537,6 +556,7 @@ export default function ExpedientesScreen() {
         onExpedienteCreado={() => {
           setBusqueda("");
           setCasoId("");
+          setJuzgado(null);
           setSoloActivos(true);
           setPage(1);
         }}

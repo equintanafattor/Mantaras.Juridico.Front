@@ -68,6 +68,7 @@ export type BuscarExpedientesParams = {
   page: number;
   pageSize: number;
   casoId?: number;
+  juzgadoId?: number;
   busqueda?: string;
   soloActivos: boolean;
 };
