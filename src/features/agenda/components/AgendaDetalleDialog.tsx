@@ -93,8 +93,8 @@ export default function AgendaDetalleDialog({ entrada, onClose, onEdit, onStateC
         {error ? <div role="alert" className="space-y-2 rounded-md border border-destructive/40 px-3 py-2 text-sm text-destructive"><p className="whitespace-pre-wrap">{error}</p><Button variant="outline" size="sm" disabled={bloqueado} onClick={() => void detalle.refetch()}>Actualizar detalle</Button></div> : null}
 
         <dl className="grid gap-3 text-sm @lg:grid-cols-3">
-          {data.fechaVencimiento ? <div><dt className="text-xs text-muted-foreground">Vence</dt><dd className="font-medium"><time dateTime={data.fechaVencimiento}>{fechaHoraLarga(data.fechaVencimiento, data.horaVencimiento)}</time></dd></div> : null}
-          <div><dt className="text-xs text-muted-foreground">{data.fechaVencimiento ? "Inicio" : "Fecha"}</dt><dd><time dateTime={data.fechaInicio}>{fechaHoraLarga(data.fechaInicio, data.horaInicio)}</time></dd></div>
+          {data.fechaVencimiento ? <div><dt className="text-xs text-muted-foreground">Fecha límite</dt><dd className="font-medium"><time dateTime={data.fechaVencimiento}>{fechaHoraLarga(data.fechaVencimiento, data.horaVencimiento)}</time>{data.horaVencimiento ? null : <span className="font-normal text-muted-foreground"> · sin hora</span>}</dd></div> : null}
+          <div><dt className="text-xs text-muted-foreground">{data.fechaVencimiento ? "Inicio" : "Fecha del evento"}</dt><dd><time dateTime={data.fechaInicio}>{fechaHoraLarga(data.fechaInicio, data.horaInicio)}</time>{data.horaInicio ? null : <span className="text-muted-foreground"> · sin hora</span>}</dd></div>
           {data.fechaFin || data.horaFin ? <div><dt className="text-xs text-muted-foreground">Termina</dt><dd>{data.fechaFin && data.fechaFin !== data.fechaInicio ? fechaHoraLarga(data.fechaFin, data.horaFin) : data.horaFin ? data.horaFin.slice(0, 5) : "—"}</dd></div> : null}
         </dl>
 

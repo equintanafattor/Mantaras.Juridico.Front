@@ -1,0 +1,389 @@
+{
+  "sello": "XZM7IT",
+  "fecha": "2026-11-26T20:11:39.968Z",
+  "datos": {
+    "categoria": 29,
+    "regla": 26,
+    "entradas": {
+      "futura": 212,
+      "pasada": 213,
+      "completada": 214,
+      "cancelada": 215,
+      "regla": 216
+    }
+  },
+  "total": 74,
+  "fallas": 0,
+  "resultados": [
+    {
+      "nombre": "API: E1 tiene 3 avisos programados (2 automáticos + 1 manual)",
+      "ok": true,
+      "detalle": "Pendiente,Pendiente,Pendiente"
+    },
+    {
+      "nombre": "API: los automáticos comparten fechaCreacion con la entrada; el manual no",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: E2 tiene 2 avisos pendientes de ver (estado Vencido)",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: E5 (regla) tiene avisos de categoría y de regla con la fecha de creación de la entrada",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Escritorio] Agenda: bloque «Avisos pendientes de ver» con el total de la API",
+      "ok": true,
+      "detalle": "Avisos pendientes de ver (8) / API 8"
+    },
+    {
+      "nombre": "[Escritorio] Agenda: explica que no se envían por correo ni WhatsApp",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Agenda: sin términos viejos (Alertas, atender)",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Agenda: muestra fecha del aviso y fecha límite (sin hora) de E2",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Agenda: no lista avisos de entradas completadas o canceladas",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] sin scroll horizontal en Agenda",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Abrir entrada abre el detalle de la entrada asociada",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Detalle: «Fecha límite» con «sin hora»",
+      "ok": true,
+      "detalle": "Fecha límite 25/11/2026 · sin hora Inicio 23/11/2026 · sin hora"
+    },
+    {
+      "nombre": "[Escritorio] Detalle: avisos «Pendiente de ver» con «Fecha del aviso»",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Detalle: origen automático de la categoría",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Detalle: explica que no se envían por correo ni WhatsApp y que no completa la entrada",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Abrir el detalle y los avisos no los marca como vistos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Marcar como visto: mensaje aclara que la entrada sigue pendiente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] API: el aviso quedó Visto (Atendido) y la entrada sigue Pendiente",
+      "ok": true,
+      "detalle": "Atendido / Pendiente"
+    },
+    {
+      "nombre": "[Escritorio] Detalle: el aviso muestra «Visto» con fecha y usuario",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Futura: avisos «Programado» según la API",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Escritorio] Futura: identifica el manual y los automáticos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Futura: fecha del aviso 1 día antes de la fecha límite a las 15:30",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Futura: el aviso sin hora usa las 09:00 y el manual las 08:00",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Futura: ofrece «Marcar como visto» en cada programado, con aclaración",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Futura: marcar un programado lo deja Visto y la entrada sigue Pendiente",
+      "ok": true,
+      "detalle": "Atendido / Pendiente"
+    },
+    {
+      "nombre": "[Escritorio] Futura: vista previa concreta al agregar un aviso",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Regla: un aviso atribuido a la regla de vencimiento",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] completada: explica que sus avisos no aparecen en Pendientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] completada: conserva el estado real de sus avisos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] cancelada: explica que sus avisos no aparecen en Pendientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] cancelada: conserva el estado real de sus avisos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Formulario: resumen con 2 avisos automáticos y fechas concretas",
+      "ok": true,
+      "detalle": "Cuándo aparecerán los avisos mar, 01/12/2026, 09:00 En el momento del inicio · automático de la categoría mié, 02/12/2026, 11:00 1 día antes de la fecha límite · automático de la categoría Aparecen dentro del sistema (Agenda › Pendientes y panel de inicio), no por correo ni WhatsApp. Horarios de Argentina. Como la fecha no tiene hora, los avisos se calculan desde las 9:00."
+    },
+    {
+      "nombre": "[Escritorio] Formulario: aclara canal interno y horario de Argentina",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Formulario: opciones avanzadas siguen disponibles",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Panel: «Avisos pendientes de ver» con el mismo total que la API y Agenda",
+      "ok": true,
+      "detalle": "Avisos pendientes de ver (7)"
+    },
+    {
+      "nombre": "[Escritorio] Panel: «Abrir entrada» abre el detalle",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] sin scroll horizontal en el panel",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Configuración: «Avisos automáticos» y aclaración del canal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Sin PATCH /atender salvo el «Marcar como visto» explícito",
+      "ok": true,
+      "detalle": "2"
+    },
+    {
+      "nombre": "[Celular] Agenda: bloque «Avisos pendientes de ver» con el total de la API",
+      "ok": true,
+      "detalle": "Avisos pendientes de ver (7) / API 7"
+    },
+    {
+      "nombre": "[Celular] Agenda: explica que no se envían por correo ni WhatsApp",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Agenda: sin términos viejos (Alertas, atender)",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Agenda: muestra fecha del aviso y fecha límite (sin hora) de E2",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Agenda: no lista avisos de entradas completadas o canceladas",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] sin scroll horizontal en Agenda",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Abrir entrada abre el detalle de la entrada asociada",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Detalle: «Fecha límite» con «sin hora»",
+      "ok": true,
+      "detalle": "Fecha límite 25/11/2026 · sin hora Inicio 23/11/2026 · sin hora"
+    },
+    {
+      "nombre": "[Celular] Detalle: avisos «Pendiente de ver» con «Fecha del aviso»",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Detalle: origen automático de la categoría",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Detalle: explica que no se envían por correo ni WhatsApp y que no completa la entrada",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Abrir el detalle y los avisos no los marca como vistos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Marcar como visto: mensaje aclara que la entrada sigue pendiente",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] API: el aviso quedó Visto (Atendido) y la entrada sigue Pendiente",
+      "ok": true,
+      "detalle": "Atendido / Pendiente"
+    },
+    {
+      "nombre": "[Celular] Detalle: el aviso muestra «Visto» con fecha y usuario",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: avisos «Programado» según la API",
+      "ok": true,
+      "detalle": "2"
+    },
+    {
+      "nombre": "[Celular] Futura: identifica el manual y los automáticos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: fecha del aviso 1 día antes de la fecha límite a las 15:30",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: el aviso sin hora usa las 09:00 y el manual las 08:00",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: ofrece «Marcar como visto» en cada programado, con aclaración",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: marcar un programado lo deja Visto y la entrada sigue Pendiente",
+      "ok": true,
+      "detalle": "Atendido / Pendiente"
+    },
+    {
+      "nombre": "[Celular] Futura: vista previa concreta al agregar un aviso",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Regla: un aviso atribuido a la regla de vencimiento",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] completada: explica que sus avisos no aparecen en Pendientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] completada: conserva el estado real de sus avisos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] cancelada: explica que sus avisos no aparecen en Pendientes",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] cancelada: conserva el estado real de sus avisos",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Formulario: resumen con 2 avisos automáticos y fechas concretas",
+      "ok": true,
+      "detalle": "Cuándo aparecerán los avisos mar, 01/12/2026, 09:00 En el momento del inicio · automático de la categoría mié, 02/12/2026, 11:00 1 día antes de la fecha límite · automático de la categoría Aparecen dentro del sistema (Agenda › Pendientes y panel de inicio), no por correo ni WhatsApp. Horarios de Argentina. Como la fecha no tiene hora, los avisos se calculan desde las 9:00."
+    },
+    {
+      "nombre": "[Celular] Formulario: aclara canal interno y horario de Argentina",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Formulario: opciones avanzadas siguen disponibles",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Panel: «Avisos pendientes de ver» con el mismo total que la API y Agenda",
+      "ok": true,
+      "detalle": "Avisos pendientes de ver (6)"
+    },
+    {
+      "nombre": "[Celular] Panel: «Abrir entrada» abre el detalle",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] sin scroll horizontal en el panel",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Configuración: «Avisos automáticos» y aclaración del canal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Sin PATCH /atender salvo el «Marcar como visto» explícito",
+      "ok": true,
+      "detalle": "2"
+    }
+  ]
+}

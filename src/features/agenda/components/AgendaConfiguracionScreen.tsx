@@ -29,7 +29,7 @@ export default function AgendaConfiguracionScreen() {
     <TiposEntradaAgendaPanel />
     <DiasInhabilesAgendaPanel />
     <section className="space-y-4 rounded-lg border bg-card p-5 sm:p-6" aria-label="Avisos automáticos por categoría">
-      <div><h2 className="font-semibold">Avisos automáticos por categoría</h2><p className="mt-1 text-sm text-muted-foreground">Se agregan solos a todo lo que se agende con esa categoría.</p></div>
+      <div><h2 className="font-semibold">Avisos automáticos por categoría</h2><p className="mt-1 text-sm text-muted-foreground">Se crean solos en cada entrada nueva de esa categoría y aparecen dentro del sistema (no por correo ni WhatsApp).</p></div>
       {opciones.isPending ? <Skeleton className="h-10 w-full" aria-label="Cargando categorías" /> : opciones.isError ? <div role="alert"><p>{opciones.error.message}</p><Button variant="outline" onClick={() => void opciones.refetch()}>Reintentar</Button></div> : <div className="flex flex-wrap items-end gap-3"><div className="min-w-0 flex-1 space-y-2"><Label htmlFor="agenda-config-tipo">Categoría</Label><select id="agenda-config-tipo" className="h-9 w-full rounded-md border bg-background px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring" value={tipoId} onChange={e => setTipoId(e.target.value)}><option value="">Elegir categoría</option>{opciones.data.tiposEntrada.map(item => <option key={item.id} value={item.id}>{item.nombre}{item.activo ? "" : " (inactivo)"}</option>)}</select></div><Button variant="outline" disabled={!tipo} onClick={() => { if (tipo) { setMensaje(undefined); setDestino({ origen: "tipos-entrada", id: tipo.id, nombre: tipo.nombre }); } }}>Configurar avisos</Button></div>}
     </section>
     <section className="space-y-4 rounded-lg border bg-card p-5 sm:p-6" aria-label="Reglas de vencimiento">
@@ -40,7 +40,7 @@ export default function AgendaConfiguracionScreen() {
         <h3 className="break-words font-medium">{regla.nombre}</h3>
         {regla.descripcion ? <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">{regla.descripcion}</p> : null}
         <p className="text-sm">{regla.cantidadDias} días {regla.tipoComputo === "DiasHabiles" ? "hábiles" : "corridos"} {regla.sentidoCalculo === "Antes" ? "antes" : "después"} de la fecha base · {regla.horaSugerida ? `Hora: ${regla.horaSugerida}` : "Sin hora sugerida"}</p>
-        <div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={() => { setMensaje(undefined); setEditor({ id: regla.reglaVencimientoId }); }}>Editar regla</Button><Button variant="outline" size="sm" onClick={() => { setMensaje(undefined); setDestino({ origen: "reglas-vencimiento", id: regla.reglaVencimientoId, nombre: regla.nombre }); }}>Avisos</Button></div>
+        <div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={() => { setMensaje(undefined); setEditor({ id: regla.reglaVencimientoId }); }}>Editar regla</Button><Button variant="outline" size="sm" onClick={() => { setMensaje(undefined); setDestino({ origen: "reglas-vencimiento", id: regla.reglaVencimientoId, nombre: regla.nombre }); }}>Avisos automáticos</Button></div>
       </li>)}</ul>}
     </section>
     {editor ? <ReglaVencimientoDialog key={editor.id ?? "nueva"} id={editor.id} onClose={() => setEditor(undefined)} onSaved={() => { setEditor(undefined); setMensaje("Regla guardada. La consulta se actualizó."); }} /> : null}

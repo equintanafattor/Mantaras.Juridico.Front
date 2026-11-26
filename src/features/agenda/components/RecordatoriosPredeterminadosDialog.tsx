@@ -29,7 +29,7 @@ function Formulario({ destino, inicial, onSaved }: { destino: DestinoPredetermin
     finally { lock.current = false; onPending(false); }
   }}>
     <fieldset disabled={guardar.isPending} className="min-w-0"><AgendaRecordatoriosAlta predeterminados items={items} tieneVencimiento onChange={(next, resetDraft) => { setItems(next); if (resetDraft) setDraft(false); setError(undefined); onDirty(firmaPredeterminadosAgenda(next) !== firmaPredeterminadosAgenda(original) || (!resetDraft && draft)); }} onDraftChange={value => { setDraft(value); onDirty(firmaPredeterminadosAgenda(items) !== firmaPredeterminadosAgenda(original) || value); }} /></fieldset>
-    <p className="text-xs text-muted-foreground">Esta lista reemplaza la configuración de futuros avisos. Guardarla vacía desactiva los predeterminados de este origen. Los recordatorios de entradas existentes se conservan. Los avisos basados en vencimiento se generan sólo si la nueva entrada tiene esa fecha.</p>
+    <p className="text-xs text-muted-foreground">Estos avisos se crean solos en cada entrada nueva{destino.origen === "tipos-entrada" ? " de esta categoría" : " que genere esta regla"}. Guardar la lista vacía los desactiva. Los avisos de entradas que ya existen no cambian. Los basados en la fecha límite se crean sólo si la entrada tiene esa fecha. Aparecen dentro del sistema; no se envían por correo ni WhatsApp.</p>
     {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
     <div className={DIALOG_ACCIONES}><Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button><Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar configuración"}</Button></div>
   </form>;
@@ -41,5 +41,5 @@ function Carga({ destino, ...props }: { destino: DestinoPredeterminadosAgenda; o
   return <Formulario destino={destino} inicial={consulta.data} {...props} />;
 }
 export default function RecordatoriosPredeterminadosDialog({ destino, onClose, onSaved }: { destino: DestinoPredeterminadosAgenda; onClose: () => void; onSaved: () => void }) {
-  return <AgendaConfiguracionDialog titulo="Recordatorios predeterminados" descripcion={`${destino.origen === "tipos-entrada" ? "Tipo" : "Regla"}: ${destino.nombre}`} onClose={onClose}><Carga destino={destino} onSaved={onSaved} /></AgendaConfiguracionDialog>;
+  return <AgendaConfiguracionDialog titulo="Avisos automáticos" descripcion={`${destino.origen === "tipos-entrada" ? "Categoría" : "Regla de vencimiento"}: ${destino.nombre}`} onClose={onClose}><Carga destino={destino} onSaved={onSaved} /></AgendaConfiguracionDialog>;
 }

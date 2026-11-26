@@ -22,6 +22,7 @@ import type { CrearRecordatorioAgendaRequest, ResumenEntradaAgenda } from "../ty
 import { mostrarFechaAgenda } from "../lib/periodoAgenda";
 import AgendaFormFields from "./AgendaFormFields";
 import AgendaRecordatoriosAlta from "./AgendaRecordatoriosAlta";
+import ResumenAvisosFormulario from "./ResumenAvisosFormulario";
 
 export type EditorAgenda = { modo: "entrada" | "vencimiento"; contexto?: ContextoAgenda } | { modo: "editar"; entrada: ResumenEntradaAgenda };
 export type ResultadoGuardadoAgenda = { texto: string; entrada: ResumenEntradaAgenda };
@@ -118,6 +119,7 @@ function Formulario({ inicial, id, vencimientoManual, onClose, onPending, onSave
         const neutro = (f: AgendaForm) => JSON.stringify({ ...f, clase: null, tipoEntradaAgendaId: null });
         onUsarRegla(neutro(form) !== neutro(original) || recordatorios.length > 0 || draftDirty);
       } : undefined} masOpciones={masOpciones} onChange={actualizar} />
+      {id === undefined ? <ResumenAvisosFormulario form={form} adicionales={recordatorios} categoria={opciones.data?.tiposEntrada.find(x => x.id === form.tipoEntradaAgendaId)?.nombre} /> : null}
       {cambianFechas ? <div className="space-y-2 rounded-md border border-amber-600/40 bg-amber-50/50 p-3 dark:bg-amber-950/10"><p className="text-sm">Cambiaste fechas u horas. Los avisos ya programados <strong>no se mueven solos</strong>: después de guardar, revisalos en el detalle y usá Reprogramar o Quitar.</p><label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1 size-4 accent-primary" checked={fechasConfirmadas === firmaFechas} onChange={e => setFechasConfirmadas(e.target.checked ? firmaFechas : undefined)} />Entendido, voy a revisar los avisos.</label></div> : null}
     </fieldset>
     {entradaGuardada && progreso.pendientes.length > 0 ? <p role="status" className="rounded-md border p-3 text-sm">Ya se guardó, pero faltan {progreso.pendientes.length === 1 ? "1 aviso" : `${progreso.pendientes.length} avisos`}. Tocá «Reintentar» para agregarlos o «Cerrar» para seguir sin ellos.</p> : null}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AlertTriangle, CalendarDays } from "lucide-react";
 import { EstadoEtiqueta, PrioridadEtiqueta } from "@/features/agenda/components/AgendaEtiquetas";
+import AvisosPendientesDeVer from "@/features/agenda/components/AvisosPendientesDeVer";
 import { fechaHoyAgenda } from "@/features/agenda/lib/agendaForm";
 import { diasEntre, mostrarFechaCorta, mostrarHora } from "@/features/agenda/lib/situacionAgenda";
 import type { ResumenEntradaAgenda } from "@/features/agenda/types/types";
@@ -37,6 +38,7 @@ export default function AgendaResumenPanel({ agenda, onSelect }: { agenda: Panel
           <dd className={cn("mt-1 text-2xl font-semibold", destacado && "text-destructive")}>{item.value}</dd>
         </div>;
       })}</dl>
+      <AvisosPendientesDeVer onDetail={onSelect} limite={5} className="p-3" />
       <h3 className="text-sm font-semibold">Hoy y lo que viene</h3>
       {agenda.elementosProximos.length === 0 ? <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">Nada para hoy ni para los próximos días.{agenda.vencidos + (agenda.atrasados ?? 0) > 0 ? " Revisá lo vencido o atrasado en Agenda." : ""}</p> : <ul className="divide-y rounded-md border">{agenda.elementosProximos.map(item => {
         const hora = mostrarHora(item.horaReferencia);

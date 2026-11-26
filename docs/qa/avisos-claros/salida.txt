@@ -1,0 +1,82 @@
+Datos XZM7IT: categoría 29, regla 26, entradas E1=212 E2=213 E3=214 E4=215 E5=216
+Avisos de corridas anteriores marcados como vistos: 3
+OK   API: E1 tiene 3 avisos programados (2 automáticos + 1 manual) — Pendiente,Pendiente,Pendiente
+OK   API: los automáticos comparten fechaCreacion con la entrada; el manual no
+OK   API: E2 tiene 2 avisos pendientes de ver (estado Vencido)
+OK   API: E5 (regla) tiene avisos de categoría y de regla con la fecha de creación de la entrada — 3
+
+===== Escritorio (1440x900) =====
+OK   [Escritorio] Agenda: bloque «Avisos pendientes de ver» con el total de la API — Avisos pendientes de ver (8) / API 8
+OK   [Escritorio] Agenda: explica que no se envían por correo ni WhatsApp
+OK   [Escritorio] Agenda: sin términos viejos (Alertas, atender)
+OK   [Escritorio] Agenda: muestra fecha del aviso y fecha límite (sin hora) de E2
+OK   [Escritorio] Agenda: no lista avisos de entradas completadas o canceladas
+OK   [Escritorio] sin scroll horizontal en Agenda
+OK   [Escritorio] Abrir entrada abre el detalle de la entrada asociada
+OK   [Escritorio] Detalle: «Fecha límite» con «sin hora» — Fecha límite 25/11/2026 · sin hora Inicio 23/11/2026 · sin hora
+OK   [Escritorio] Detalle: avisos «Pendiente de ver» con «Fecha del aviso»
+OK   [Escritorio] Detalle: origen automático de la categoría
+OK   [Escritorio] Detalle: explica que no se envían por correo ni WhatsApp y que no completa la entrada
+OK   [Escritorio] Abrir el detalle y los avisos no los marca como vistos
+OK   [Escritorio] Marcar como visto: mensaje aclara que la entrada sigue pendiente
+OK   [Escritorio] API: el aviso quedó Visto (Atendido) y la entrada sigue Pendiente — Atendido / Pendiente
+OK   [Escritorio] Detalle: el aviso muestra «Visto» con fecha y usuario
+OK   [Escritorio] Futura: avisos «Programado» según la API — 3
+OK   [Escritorio] Futura: identifica el manual y los automáticos
+OK   [Escritorio] Futura: fecha del aviso 1 día antes de la fecha límite a las 15:30
+OK   [Escritorio] Futura: el aviso sin hora usa las 09:00 y el manual las 08:00
+OK   [Escritorio] Futura: ofrece «Marcar como visto» en cada programado, con aclaración
+OK   [Escritorio] Futura: marcar un programado lo deja Visto y la entrada sigue Pendiente — Atendido / Pendiente
+OK   [Escritorio] Futura: vista previa concreta al agregar un aviso
+OK   [Escritorio] Regla: un aviso atribuido a la regla de vencimiento
+OK   [Escritorio] completada: explica que sus avisos no aparecen en Pendientes
+OK   [Escritorio] completada: conserva el estado real de sus avisos
+OK   [Escritorio] cancelada: explica que sus avisos no aparecen en Pendientes
+OK   [Escritorio] cancelada: conserva el estado real de sus avisos
+OK   [Escritorio] Formulario: resumen con 2 avisos automáticos y fechas concretas — Cuándo aparecerán los avisos mar, 01/12/2026, 09:00 En el momento del inicio · automático de la categoría mié, 02/12/2026, 11:00 1 día antes de la fecha límite · automático de la categoría Aparecen dentro del sistema (Agenda › Pendientes y panel de inicio), no por correo ni WhatsApp. Horarios de Argentina. Como la fecha no tiene hora, los avisos se calculan desde las 9:00.
+OK   [Escritorio] Formulario: aclara canal interno y horario de Argentina
+OK   [Escritorio] Formulario: opciones avanzadas siguen disponibles
+OK   [Escritorio] Panel: «Avisos pendientes de ver» con el mismo total que la API y Agenda — Avisos pendientes de ver (7)
+OK   [Escritorio] Panel: «Abrir entrada» abre el detalle
+OK   [Escritorio] sin scroll horizontal en el panel
+OK   [Escritorio] Configuración: «Avisos automáticos» y aclaración del canal
+OK   [Escritorio] Sin PATCH /atender salvo el «Marcar como visto» explícito — 2
+
+===== Celular (390x844) =====
+OK   [Celular] Agenda: bloque «Avisos pendientes de ver» con el total de la API — Avisos pendientes de ver (7) / API 7
+OK   [Celular] Agenda: explica que no se envían por correo ni WhatsApp
+OK   [Celular] Agenda: sin términos viejos (Alertas, atender)
+OK   [Celular] Agenda: muestra fecha del aviso y fecha límite (sin hora) de E2
+OK   [Celular] Agenda: no lista avisos de entradas completadas o canceladas
+OK   [Celular] sin scroll horizontal en Agenda
+OK   [Celular] Abrir entrada abre el detalle de la entrada asociada
+OK   [Celular] Detalle: «Fecha límite» con «sin hora» — Fecha límite 25/11/2026 · sin hora Inicio 23/11/2026 · sin hora
+OK   [Celular] Detalle: avisos «Pendiente de ver» con «Fecha del aviso»
+OK   [Celular] Detalle: origen automático de la categoría
+OK   [Celular] Detalle: explica que no se envían por correo ni WhatsApp y que no completa la entrada
+OK   [Celular] Abrir el detalle y los avisos no los marca como vistos
+OK   [Celular] Marcar como visto: mensaje aclara que la entrada sigue pendiente
+OK   [Celular] API: el aviso quedó Visto (Atendido) y la entrada sigue Pendiente — Atendido / Pendiente
+OK   [Celular] Detalle: el aviso muestra «Visto» con fecha y usuario
+OK   [Celular] Futura: avisos «Programado» según la API — 2
+OK   [Celular] Futura: identifica el manual y los automáticos
+OK   [Celular] Futura: fecha del aviso 1 día antes de la fecha límite a las 15:30
+OK   [Celular] Futura: el aviso sin hora usa las 09:00 y el manual las 08:00
+OK   [Celular] Futura: ofrece «Marcar como visto» en cada programado, con aclaración
+OK   [Celular] Futura: marcar un programado lo deja Visto y la entrada sigue Pendiente — Atendido / Pendiente
+OK   [Celular] Futura: vista previa concreta al agregar un aviso
+OK   [Celular] Regla: un aviso atribuido a la regla de vencimiento
+OK   [Celular] completada: explica que sus avisos no aparecen en Pendientes
+OK   [Celular] completada: conserva el estado real de sus avisos
+OK   [Celular] cancelada: explica que sus avisos no aparecen en Pendientes
+OK   [Celular] cancelada: conserva el estado real de sus avisos
+OK   [Celular] Formulario: resumen con 2 avisos automáticos y fechas concretas — Cuándo aparecerán los avisos mar, 01/12/2026, 09:00 En el momento del inicio · automático de la categoría mié, 02/12/2026, 11:00 1 día antes de la fecha límite · automático de la categoría Aparecen dentro del sistema (Agenda › Pendientes y panel de inicio), no por correo ni WhatsApp. Horarios de Argentina. Como la fecha no tiene hora, los avisos se calculan desde las 9:00.
+OK   [Celular] Formulario: aclara canal interno y horario de Argentina
+OK   [Celular] Formulario: opciones avanzadas siguen disponibles
+OK   [Celular] Panel: «Avisos pendientes de ver» con el mismo total que la API y Agenda — Avisos pendientes de ver (6)
+OK   [Celular] Panel: «Abrir entrada» abre el detalle
+OK   [Celular] sin scroll horizontal en el panel
+OK   [Celular] Configuración: «Avisos automáticos» y aclaración del canal
+OK   [Celular] Sin PATCH /atender salvo el «Marcar como visto» explícito — 2
+
+74/74 OK

@@ -154,7 +154,8 @@ export default function RegistrarEnvioCobroDialog({
               <div className="space-y-2 text-muted-foreground">
                 <p>
                   Se agregará el expediente al listado de cobro y se generará una
-                  alerta interna a los 120 días hábiles desde la fecha de envío.
+                  entrada de agenda que vence a los 120 días hábiles desde la fecha de envío,
+                  con sus avisos automáticos dentro del sistema.
                   Si la fecha es antigua y ese plazo ya pasó, el seguimiento
                   quedará vencido desde el registro.
                 </p>

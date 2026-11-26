@@ -16,9 +16,9 @@ export function requestDesdeReglaAgenda(form: ReglaAgendaForm): GuardarReglaVenc
   return { ...form, nombre: form.nombre.trim(), descripcion: form.descripcion.trim() || null, cantidadDias: Number(form.cantidadDias), horaSugerida: form.horaSugerida ? form.horaSugerida.length === 5 ? `${form.horaSugerida}:00` : form.horaSugerida : null };
 }
 export function requestPredeterminadosAgenda(items: CrearRecordatorioAgendaRequest[]) {
-  if (items.length > 10) throw new Error("Podés configurar hasta diez recordatorios predeterminados.");
+  if (items.length > 10) throw new Error("Podés configurar hasta diez avisos automáticos.");
   const recordatorios = items.map(item => requestDesdeRecordatorioForm(item.baseCalculo, String(item.minutosAnticipacion), "Minutos", true));
-  if (new Set(recordatorios.map(item => `${item.baseCalculo}-${item.minutosAnticipacion}`)).size !== recordatorios.length) throw new Error("Hay recordatorios repetidos.");
+  if (new Set(recordatorios.map(item => `${item.baseCalculo}-${item.minutosAnticipacion}`)).size !== recordatorios.length) throw new Error("Hay avisos repetidos.");
   return { recordatorios };
 }
 export function firmaPredeterminadosAgenda(items: CrearRecordatorioAgendaRequest[]) {

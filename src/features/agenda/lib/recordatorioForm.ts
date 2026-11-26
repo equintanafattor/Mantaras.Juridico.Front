@@ -2,13 +2,7 @@ import type { BaseCalculoRecordatorioAgenda, CrearRecordatorioAgendaRequest } fr
 export type UnidadAnticipacionAgenda = "Minutos" | "Horas" | "Dias";
 export const FACTORES_ANTICIPACION: Record<UnidadAnticipacionAgenda, number> = { Minutos: 1, Horas: 60, Dias: 1440 };
 export const MAX_MINUTOS_RECORDATORIO = 525600;
-// "2 días antes del vencimiento", "En el momento del inicio".
-export function describirAnticipacion(minutos: number, base: BaseCalculoRecordatorioAgenda) {
-  const destino = base === "Inicio" ? "del inicio" : "del vencimiento";
-  if (minutos === 0) return `En el momento ${destino}`;
-  const [valor, unidad] = minutos % 1440 === 0 ? [minutos / 1440, "día"] : minutos % 60 === 0 ? [minutos / 60, "hora"] : [minutos, "minuto"];
-  return `${valor} ${unidad}${valor === 1 ? "" : "s"} antes ${destino}`;
-}
+export { describirAnticipacion } from "./avisosAgenda";
 export function requestDesdeRecordatorioForm(baseCalculo: BaseCalculoRecordatorioAgenda, cantidad: string, unidad: UnidadAnticipacionAgenda, tieneVencimiento: boolean): CrearRecordatorioAgendaRequest {
   if (baseCalculo !== "Inicio" && baseCalculo !== "Vencimiento") throw new Error("Seleccioná una base de cálculo válida.");
   if (baseCalculo === "Vencimiento" && !tieneVencimiento) throw new Error("La entrada necesita una fecha de vencimiento para usar esa base.");
