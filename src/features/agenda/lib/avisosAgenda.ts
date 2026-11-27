@@ -77,39 +77,21 @@ export function calcularFechaAviso(entrada: FechasEntrada, aviso: CrearRecordato
   return new Date(base.getTime() - aviso.minutosAnticipacion * 60_000);
 }
 
-export type OrigenAviso =
-  | { tipo: "manual" }
-  | { tipo: "automatico"; fuente: "categoria"; descripcion: string }
-  | { tipo: "automatico"; fuente: "regla-o-configuracion-anterior" }
-  | { tipo: "automatico"; fuente: "desconocida" };
+export const ORIGEN_NO_DISPONIBLE = "Origen no disponible";
 
 /**
- * Origen de un aviso. La API no lo informa: backend crea los automáticos solo al crear la entrada,
- * con la misma fecha de creación que ella (categoría y, si la generó una regla, también la regla).
- * Los que se agregan a mano se crean después. Si el aviso coincide con la configuración actual
- * de la categoría, se atribuye a la categoría; si no, a la regla, a una configuración anterior o a una
- * reprogramación (reprogramar conserva la fecha de creación). Necesidad de backend: informar el origen.
+ * Texto del origen informado por la API (RecordatorioAgendaResponse.origen y origenNombre).
+ * No se deduce nada: ante "Desconocido" (históricos), null, un campo ausente o un valor no previsto,
+ * se muestra "Origen no disponible".
  */
-export function origenAviso(
-  aviso: { fechaCreacion: string; fechaProgramadaUtc: string },
-  entrada: FechasEntrada & { fechaCreacion: string },
-  predeterminadosCategoria?: RecordatorioPredeterminadoResponse[],
-): OrigenAviso {
-  const creadoCon = Date.parse(aviso.fechaCreacion) === Date.parse(entrada.fechaCreacion);
-  if (!creadoCon) return { tipo: "manual" };
-  if (!predeterminadosCategoria) return { tipo: "automatico", fuente: "desconocida" };
-  const programado = Date.parse(aviso.fechaProgramadaUtc);
-  const coincide = predeterminadosCategoria.find(item => item.activo && calcularFechaAviso(entrada, item)?.getTime() === programado);
-  return coincide
-    ? { tipo: "automatico", fuente: "categoria", descripcion: describirAnticipacion(coincide.minutosAnticipacion, coincide.baseCalculo) }
-    : { tipo: "automatico", fuente: "regla-o-configuracion-anterior" };
-}
-
-export function describirOrigenAviso(origen: OrigenAviso, categoria: string): string {
-  if (origen.tipo === "manual") return "Agregado a mano";
-  if (origen.fuente === "categoria") return `Automático · categoría «${categoria}» (${origen.descripcion.toLowerCase()})`;
-  if (origen.fuente === "regla-o-configuracion-anterior") return "Automático · creado con la entrada; no coincide con los avisos actuales de la categoría: viene de la regla de vencimiento que generó la entrada, de una configuración anterior o fue reprogramado";
-  return "Automático · creado junto con la entrada";
+export function describirOrigenAviso(aviso: { origen?: string | null; origenNombre?: string | null }): string {
+  const nombre = aviso.origenNombre?.trim();
+  switch (aviso.origen) {
+    case "Manual": return "Agregado a mano";
+    case "Categoria": return nombre ? `Automático · categoría «${nombre}»` : ORIGEN_NO_DISPONIBLE;
+    case "Regla": return nombre ? `Automático · regla «${nombre}»` : ORIGEN_NO_DISPONIBLE;
+    default: return ORIGEN_NO_DISPONIBLE;
+  }
 }
 
 export type AvisoResumen = { clave: string; descripcion: string; fecha: Date | null; automatico: boolean; motivoSinFecha?: string };

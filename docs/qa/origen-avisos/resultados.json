@@ -1,0 +1,157 @@
+{
+  "sello": "YZ6APE",
+  "fecha": "2026-11-27T12:46:34.014Z",
+  "datos": {
+    "categoria": 56,
+    "regla": 53,
+    "entradas": {
+      "futura": 408,
+      "regla": 409,
+      "historica": 182
+    }
+  },
+  "total": 28,
+  "fallas": 0,
+  "resultados": [
+    {
+      "nombre": "API: entrada futura con 2 de categoría y 1 manual",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: el nombre es el actual tras renombrar la categoría",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: reprogramar conserva el origen (categoría y manual)",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: entrada de regla con 1 de regla y 2 de categoría",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: Manual sin id ni nombre",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "API: históricos vienen Desconocido, sin id ni nombre",
+      "ok": true,
+      "detalle": "3 avisos"
+    },
+    {
+      "nombre": "[Escritorio] Futura: «Agregado a mano» en el manual",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Futura: «Automático · categoría «X»» con el nombre actual",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Reprogramado de categoría conserva su origen",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Reprogramado manual conserva su origen",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Sin textos de la deducción anterior",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] «Marcar como visto» sin cambios: en cada aviso no visto",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Escritorio] Regla: «Automático · regla «X»»",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Regla: los de categoría siguen como categoría",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] Histórico: todos «Origen no disponible»",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Escritorio] Histórico: no se deduce «Automático» ni «Agregado a mano»",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Escritorio] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: «Agregado a mano» en el manual",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Futura: «Automático · categoría «X»» con el nombre actual",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Reprogramado de categoría conserva su origen",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Reprogramado manual conserva su origen",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Sin textos de la deducción anterior",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] «Marcar como visto» sin cambios: en cada aviso no visto",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Celular] Regla: «Automático · regla «X»»",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Regla: los de categoría siguen como categoría",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] Histórico: todos «Origen no disponible»",
+      "ok": true,
+      "detalle": "3"
+    },
+    {
+      "nombre": "[Celular] Histórico: no se deduce «Automático» ni «Agregado a mano»",
+      "ok": true,
+      "detalle": ""
+    },
+    {
+      "nombre": "[Celular] sin scroll horizontal",
+      "ok": true,
+      "detalle": ""
+    }
+  ]
+}

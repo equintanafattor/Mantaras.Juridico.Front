@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calcularFechaAviso, describirOrigenAviso, ESTADO_AVISO, fechaHoraAviso, instanteArgentina, origenAviso, resumenAvisosFormulario } from '../src/features/agenda/lib/avisosAgenda.ts';
+import { calcularFechaAviso, describirOrigenAviso, ESTADO_AVISO, fechaHoraAviso, instanteArgentina, resumenAvisosFormulario } from '../src/features/agenda/lib/avisosAgenda.ts';
 
 const entrada = { fechaInicio: '2026-12-01', horaInicio: null, fechaVencimiento: '2026-12-10', horaVencimiento: '15:30:00', fechaCreacion: '2026-11-26T12:00:00.123456Z' };
 
@@ -19,14 +19,18 @@ test('la fecha del aviso se muestra en horario de Argentina', () => {
   assert.match(fechaHoraAviso('2026-12-09T18:30:00Z'), /09\/12\/2026.*15:30/);
 });
 
-test('origen: creado junto con la entrada = automático; si coincide con la categoría se atribuye a ella', () => {
-  const categoria = [{ recordatorioPredeterminadoId: 1, baseCalculo: 'Vencimiento', minutosAnticipacion: 1440, activo: true }];
-  const auto = { fechaCreacion: entrada.fechaCreacion, fechaProgramadaUtc: '2026-12-09T18:30:00Z' };
-  assert.equal(origenAviso(auto, entrada, categoria).fuente, 'categoria');
-  assert.match(describirOrigenAviso(origenAviso(auto, entrada, categoria), 'Plazo'), /categoría «Plazo»/);
-  assert.equal(origenAviso({ ...auto, fechaProgramadaUtc: '2026-12-10T12:00:00Z' }, entrada, categoria).fuente, 'regla-o-configuracion-anterior');
-  assert.equal(origenAviso(auto, entrada).fuente, 'desconocida');
-  assert.deepEqual(origenAviso({ ...auto, fechaCreacion: '2026-11-26T12:05:00Z' }, entrada, categoria), { tipo: 'manual' });
+test('el origen sale del contrato, sin deducirlo de fechas', () => {
+  assert.equal(describirOrigenAviso({ origen: 'Manual', origenNombre: null }), 'Agregado a mano');
+  assert.equal(describirOrigenAviso({ origen: 'Categoria', origenNombre: 'Plazo procesal' }), 'Automático · categoría «Plazo procesal»');
+  assert.equal(describirOrigenAviso({ origen: 'Regla', origenNombre: 'Seguimiento de cobro' }), 'Automático · regla «Seguimiento de cobro»');
+});
+
+test('históricos, campos ausentes o valores desconocidos: "Origen no disponible"', () => {
+  for (const aviso of [{ origen: 'Desconocido', origenId: null, origenNombre: null }, { origen: null, origenNombre: null }, {}, { origen: 'Categoria', origenNombre: null }, { origen: 'Regla', origenNombre: '  ' }, { origen: 'Otro', origenNombre: 'X' }]) {
+    assert.equal(describirOrigenAviso(aviso), 'Origen no disponible', JSON.stringify(aviso));
+  }
+  // Ni siquiera con la misma fecha de creación que la entrada se infiere "automático".
+  assert.equal(describirOrigenAviso({ fechaCreacion: '2026-11-26T12:00:00Z' }), 'Origen no disponible');
 });
 
 test('el resumen del formulario ordena, deduplica como backend y explica los que no se crean', () => {

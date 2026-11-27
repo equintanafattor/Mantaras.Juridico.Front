@@ -13,6 +13,9 @@ export type EstadoRecordatorioAgenda = "Pendiente" | "Vencido" | "Atendido";
 
 export type CanalRecordatorioAgenda = "Interno";
 
+// Origen persistido por backend. "Desconocido" = avisos anteriores a que se registrara el origen.
+export type OrigenRecordatorioAgenda = "Manual" | "Categoria" | "Regla" | "Desconocido";
+
 export type TipoComputoPlazo = "DiasCorridos" | "DiasHabiles";
 
 export type SentidoCalculoPlazo = "Despues" | "Antes";
@@ -211,6 +214,11 @@ export type RecordatorioAgendaResponse = {
   usuarioAtendioId: number | null;
   fechaCreacion: string;
   activo: boolean;
+  // Siempre vienen en el contrato actual. Opcionales para tolerar una API anterior al contrato.
+  origen?: OrigenRecordatorioAgenda | null;
+  // Nombre actual de la categoría o regla (refleja renombres y bajas); null con Manual o Desconocido.
+  origenNombre?: string | null;
+  origenId?: number | null;
 };
 
 export type RecordatorioPredeterminadoResponse = {

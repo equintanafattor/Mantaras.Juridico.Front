@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAtenderRecordatorioAgenda, useCrearRecordatorioAgenda, useRecordatoriosAgenda, useRecordatoriosPredeterminados } from "../hooks/useRecordatoriosAgenda";
-import { AVISOS_SOLO_EN_SISTEMA, BASE_AVISO, calcularFechaAviso, describirOrigenAviso, entradaCerrada, ESTADO_AVISO, fechaHoraAviso, origenAviso } from "../lib/avisosAgenda";
+import { useAtenderRecordatorioAgenda, useCrearRecordatorioAgenda, useRecordatoriosAgenda } from "../hooks/useRecordatoriosAgenda";
+import { AVISOS_SOLO_EN_SISTEMA, BASE_AVISO, calcularFechaAviso, describirOrigenAviso, entradaCerrada, ESTADO_AVISO, fechaHoraAviso } from "../lib/avisosAgenda";
 import { NOMBRES_ESTADO_AGENDA } from "../lib/estadosAgenda";
 import { FACTORES_ANTICIPACION, MAX_MINUTOS_RECORDATORIO, requestDesdeRecordatorioForm, type UnidadAnticipacionAgenda } from "../lib/recordatorioForm";
 import type { BaseCalculoRecordatorioAgenda, EntradaAgendaResponse, EstadoRecordatorioAgenda, OpcionAgendaResponse } from "../types/types";
@@ -38,7 +38,6 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
   const [accion, setAccion] = useState<AccionRecordatorioAgenda>();
   const lock = useRef(false);
   const consulta = useRecordatoriosAgenda({ entradaAgendaId: entrada.entradaAgendaId, estado: estado || undefined, page, pageSize: 5 }, 60_000);
-  const categoria = useRecordatoriosPredeterminados("tipos-entrada", entrada.tipoEntradaAgendaId);
   const crear = useCrearRecordatorioAgenda();
   const atender = useAtenderRecordatorioAgenda();
   const ocupado = crear.isPending || atender.isPending;
@@ -69,13 +68,12 @@ export default function AgendaRecordatorios({ entrada, disabled, nombresUsuarios
     {consulta.isPending ? <p role="status" className="text-sm text-muted-foreground">Cargando avisos…</p> : consulta.isError ? <div role="alert" className="space-y-2 text-sm"><p>{consulta.error.message}</p><Button type="button" variant="outline" size="sm" disabled={bloqueado || consulta.isFetching} onClick={() => void consulta.refetch()}>Reintentar</Button></div> : <div className="space-y-3" aria-busy={consulta.isFetching}>
       <p className="text-xs text-muted-foreground" role="status">{consulta.data.totalItems === 1 ? "1 aviso" : `${consulta.data.totalItems} avisos`}</p>
       {consulta.data.items.length === 0 ? <p className="text-sm text-muted-foreground">No hay avisos para mostrar.</p> : <ul className="space-y-2">{consulta.data.items.map(item => {
-        const origen = origenAviso(item, entrada, categoria.data);
         return <li key={item.recordatorioAgendaId} data-aviso-id={item.recordatorioAgendaId} className="space-y-2 rounded-md border p-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0"><p className="text-xs text-muted-foreground">Fecha del aviso</p><time dateTime={item.fechaProgramadaUtc} className="text-sm font-medium">{fechaHoraAviso(item.fechaProgramadaUtc)}</time></div>
             <EstadoAvisoEtiqueta estado={item.estado} />
           </div>
-          <p className="text-xs text-muted-foreground">{describirOrigenAviso(origen, entrada.tipoEntradaNombre)}</p>
+          <p className="text-xs text-muted-foreground">{describirOrigenAviso(item)}</p>
           {item.estado === "Pendiente" ? <p className="text-xs text-muted-foreground">Si lo marcás como visto antes de su fecha, ya no aparecerá como pendiente de ver.</p> : null}
           {item.fechaAtendidoUtc ? <p className="text-xs text-muted-foreground">Visto el {fechaHoraAviso(item.fechaAtendidoUtc)}{item.usuarioAtendioId ? ` por ${nombresUsuarios?.find(x => x.id === item.usuarioAtendioId)?.nombre ?? `usuario #${item.usuarioAtendioId}`}` : ""}.</p> : null}
           {!item.atendido ? <div className="flex flex-wrap gap-2">

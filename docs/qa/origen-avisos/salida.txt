@@ -1,0 +1,35 @@
+Datos YZ6APE: categoría 56, regla 53, entradas futura=408 regla=409 histórica=182
+OK   API: entrada futura con 2 de categoría y 1 manual
+OK   API: el nombre es el actual tras renombrar la categoría
+OK   API: reprogramar conserva el origen (categoría y manual)
+OK   API: entrada de regla con 1 de regla y 2 de categoría
+OK   API: Manual sin id ni nombre
+OK   API: históricos vienen Desconocido, sin id ni nombre — 3 avisos
+
+===== Escritorio (1440x900) =====
+OK   [Escritorio] Futura: «Agregado a mano» en el manual
+OK   [Escritorio] Futura: «Automático · categoría «X»» con el nombre actual
+OK   [Escritorio] Reprogramado de categoría conserva su origen
+OK   [Escritorio] Reprogramado manual conserva su origen
+OK   [Escritorio] Sin textos de la deducción anterior
+OK   [Escritorio] «Marcar como visto» sin cambios: en cada aviso no visto — 3
+OK   [Escritorio] Regla: «Automático · regla «X»»
+OK   [Escritorio] Regla: los de categoría siguen como categoría
+OK   [Escritorio] Histórico: todos «Origen no disponible» — 3
+OK   [Escritorio] Histórico: no se deduce «Automático» ni «Agregado a mano»
+OK   [Escritorio] sin scroll horizontal
+
+===== Celular (390x844) =====
+OK   [Celular] Futura: «Agregado a mano» en el manual
+OK   [Celular] Futura: «Automático · categoría «X»» con el nombre actual
+OK   [Celular] Reprogramado de categoría conserva su origen
+OK   [Celular] Reprogramado manual conserva su origen
+OK   [Celular] Sin textos de la deducción anterior
+OK   [Celular] «Marcar como visto» sin cambios: en cada aviso no visto — 3
+OK   [Celular] Regla: «Automático · regla «X»»
+OK   [Celular] Regla: los de categoría siguen como categoría
+OK   [Celular] Histórico: todos «Origen no disponible» — 3
+OK   [Celular] Histórico: no se deduce «Automático» ni «Agregado a mano»
+OK   [Celular] sin scroll horizontal
+
+28/28 OK
